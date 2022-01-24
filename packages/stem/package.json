@@ -1,0 +1,37 @@
+{
+  "name": "petals-stem",
+  "version": "1.0.4",
+  "description": "A pure-JavaScript implementation of the Scratch block editor, allowing you to programmatically load, modify and save Scratch projects.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p .",
+    "watch": "tsc -w -p .",
+    "prepack": "yarn build"
+  },
+  "author": "roobscoob",
+  "contributors": [
+    "edqx"
+  ],
+  "license": "AGPL-3.0-only",
+  "dependencies": {
+    "bconvert": "^1.0.0",
+    "esprima": "^4.0.1",
+    "file-type": "16.5.3",
+    "jszip": "^3.7.1",
+    "mp3-parser": "^0.3.0",
+    "pngjs": "^6.0.0",
+    "wavefile-parser": "^1.0.1"
+  },
+  "devDependencies": {
+    "@types/esprima": "^4.0.3",
+    "@types/jszip": "^3.4.1",
+    "@types/node": "^17.0.10",
+    "@types/pngjs": "^6.0.1",
+    "ts-node": "latest",
+    "typescript": "latest"
+  },
+  "files": [
+    "./dist"
+  ]
+}

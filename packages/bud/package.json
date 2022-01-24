@@ -1,0 +1,28 @@
+{
+  "name": "petals-bud",
+  "version": "1.0.4",
+  "description": "A sophisticated optimizer for the Stem package to improve performance, and reduce file sizes dramatically.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p .",
+    "watch": "tsc -w -p .",
+    "prepack": "yarn build"
+  },
+  "author": "edqx",
+  "contributors": [
+    "roobscoob"
+  ],
+  "license": "AGPL-3.0-only",
+  "dependencies": {
+    "petals-stem": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.10",
+    "ts-node": "latest",
+    "typescript": "latest"
+  },
+  "files": [
+    "./dist"
+  ]
+}

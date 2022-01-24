@@ -1,0 +1,47 @@
+import { Answer as _Answer } from "./answer";
+import { AskAndWait as _AskAndWait } from "./askAndWait";
+import { DaysSince2000 as _DaysSince2000 } from "./daysSince2000";
+import { KeyOptions as _KeyOptions } from "./keyOptions";
+import { KeyPressed as _KeyPressed } from "./keyPressed";
+import { Loudness as _Loudness } from "./loudness";
+import { MouseDown as _MouseDown } from "./mouseDown";
+import { MouseX as _MouseX } from "./mousex";
+import { MouseY as _MouseY } from "./mousey";
+import { Of as _Of } from "./of";
+import { OfObjectMenu as _OfObjectMenu } from "./ofObjectMenu";
+import { ResetTimer as _ResetTimer } from "./resetTimer";
+import { Timer as _Timer } from "./timer";
+import { Username as _Username } from "./username";
+import { TouchingObject as _TouchingObject } from "./touchingObject";
+import { DistanceTo as _DistanceTo } from "./distanceTo";
+import { ColorIsTouchingColor as _ColorIsTouchingColor } from "./colorIsTouchingColor";
+import { SetDragMode as _SetDragMode } from "./setDragMode";
+import { DistanceToMenu as _DistanceToMenu } from "./distanceToMenu";
+import { TouchingColor as _TouchingColor } from "./touchingColor";
+import { Current as _Current } from "./current";
+import { TouchingObjectMenu as _TouchingObjectMenu } from "./touchingObjectMenu";
+
+export namespace Sensing {
+  export const Answer = _Answer;
+  export const AskAndWait = _AskAndWait;
+  export const DaysSince2000 = _DaysSince2000;
+  export const KeyOptions = _KeyOptions;
+  export const KeyPressed = _KeyPressed;
+  export const Loudness = _Loudness;
+  export const MouseDown = _MouseDown;
+  export const MouseX = _MouseX;
+  export const MouseY = _MouseY;
+  export const Of = _Of;
+  export const OfObjectMenu = _OfObjectMenu;
+  export const ResetTimer = _ResetTimer;
+  export const Timer = _Timer;
+  export const Username = _Username;
+  export const TouchingObject = _TouchingObject;
+  export const DistanceTo = _DistanceTo;
+  export const ColorIsTouchingColor = _ColorIsTouchingColor;
+  export const SetDragMode = _SetDragMode;
+  export const DistanceToMenu = _DistanceToMenu;
+  export const TouchingColor = _TouchingColor;
+  export const Current = _Current;
+  export const TouchingObjectMenu = _TouchingObjectMenu;
+}

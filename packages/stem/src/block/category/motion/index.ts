@@ -1,0 +1,45 @@
+import { PointInDirection as _PointInDirection } from "./pointInDirection";
+import { PointTowardsMenu as _PointTowardsMenu } from "./pointTowardsMenu";
+import { SetRotationStyle as _SetRotationStyle } from "./setRotationStyle";
+import { IfOnEdgeBounce as _IfOnEdgeBounce } from "./ifOnEdgeBounce";
+import { GlideSecsToXy as _GlideSecsToXy } from "./glideSecsToXy";
+import { PointTowards as _PointTowards } from "./pointTowards";
+import { GlideToMenu as _GlideToMenu } from "./glideToMenu";
+import { ChangeXBy as _ChangeXBy } from "./changeXBy";
+import { ChangeYBy as _ChangeYBy } from "./changeYBy";
+import { Direction as _Direction } from "./direction";
+import { MoveSteps as _MoveSteps } from "./moveSteps";
+import { TurnRight as _TurnRight } from "./turnRight";
+import { XPosition as _XPosition } from "./xPosition";
+import { YPosition as _YPosition } from "./yPosition";
+import { GotoMenu as _GotoMenu } from "./gotoMenu";
+import { TurnLeft as _TurnLeft } from "./turnLeft";
+import { GlideTo as _GlideTo } from "./glideTo";
+import { GotoXy as _GotoXy } from "./gotoXy";
+import { Goto as _Goto } from "./goto";
+import { SetX as _SetX } from "./setX";
+import { SetY as _SetY } from "./setY";
+
+export namespace Motion {
+  export const ChangeXBy = _ChangeXBy;
+  export const ChangeYBy = _ChangeYBy;
+  export const Direction = _Direction;
+  export const GlideSecsToXy = _GlideSecsToXy;
+  export const GlideTo = _GlideTo;
+  export const GlideToMenu = _GlideToMenu;
+  export const Goto = _Goto;
+  export const GotoMenu = _GotoMenu;
+  export const GotoXy = _GotoXy;
+  export const IfOnEdgeBounce = _IfOnEdgeBounce;
+  export const MoveSteps = _MoveSteps;
+  export const PointInDirection = _PointInDirection;
+  export const PointTowards = _PointTowards;
+  export const PointTowardsMenu = _PointTowardsMenu;
+  export const SetRotationStyle = _SetRotationStyle;
+  export const SetX = _SetX;
+  export const SetY = _SetY;
+  export const TurnLeft = _TurnLeft;
+  export const TurnRight = _TurnRight;
+  export const XPosition = _XPosition;
+  export const YPosition = _YPosition;
+}

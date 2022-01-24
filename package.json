@@ -1,0 +1,16 @@
+{
+  "name": "petals",
+  "private": true,
+  "packageManager": "yarn@3.1.1",
+  "license": "AGPL-3.0-only",
+  "scripts": {
+    "build-all": "yarn workspaces foreach -ptv --exclude test run build",
+    "bump:patch": "yarn workspaces foreach -v --exclude test version patch",
+    "bump:minor": "yarn workspaces foreach -v --exclude test version minor",
+    "bump:major": "yarn workspaces foreach -v --exclude test version major",
+    "publish-all": "yarn workspaces foreach -pv --exclude test --no-private npm publish --access public"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}
