@@ -282,6 +282,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"petals-pollen@workspace:packages/pollen":
+  version: 0.0.0-use.local
+  resolution: "petals-pollen@workspace:packages/pollen"
+  dependencies:
+    "@types/node": ^17.0.10
+    petals-stem: "workspace:*"
+    ts-node: latest
+    typescript: latest
+  languageName: unknown
+  linkType: soft
+
 "petals-stem@workspace:*, petals-stem@workspace:packages/stem":
   version: 0.0.0-use.local
   resolution: "petals-stem@workspace:packages/stem"

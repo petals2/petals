@@ -17,7 +17,7 @@ export class SetVariableTo extends BlockKind.Stack {
     return this;
   }
 
-  getList(): Variable {
+  getVariable(): Variable {
     const field = this.getField("VARIABLE");
 
     if (!(field instanceof VariableField)) {

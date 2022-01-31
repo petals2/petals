@@ -1,1 +1,1 @@
-export * from "./Optimizer";
+export * from "./vm";

@@ -1,7 +1,7 @@
 {
   "name": "petals-bud",
   "version": "1.0.4",
-  "description": "A sophisticated optimizer for the Stem package to improve performance, and reduce file sizes dramatically.",
+  "description": "A virtual machine for traversing a Scratch project.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
