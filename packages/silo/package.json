@@ -1,0 +1,25 @@
+{
+  "name": "petals-silo",
+  "version": "1.0.4",
+  "description": "A custom configuration language inspired by JSON.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p .",
+    "watch": "tsc -w -p .",
+    "prepack": "yarn build"
+  },
+  "author": "roobscoob",
+  "license": "AGPL-3.0-only",
+  "devDependencies": {
+    "@types/node": "^17.0.10",
+    "ts-node": "latest",
+    "typescript": "latest"
+  },
+  "dependencies": {
+    "petals-utils": "workspace:*"
+  },
+  "files": [
+    "./dist"
+  ]
+}

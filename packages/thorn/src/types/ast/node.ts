@@ -1,0 +1,57 @@
+import { ArrayLiteralNode } from "./nodes/arrayLiteral";
+import { BooleanLiteralNode } from "./nodes/booleanLiteral";
+import { ComparisonOperationNode } from "./nodes/comparisonOperation";
+import { DecrementOperatorNode } from "./nodes/decrementOperator";
+import { ForNode } from "./nodes/forNode";
+import { FreeNode } from "./nodes/freeNode";
+import { HeapDefinitionNode } from "./nodes/heapDefinitionNode";
+import { ifBlockNode } from "./nodes/ifBlock";
+import { IncrementOperatorNode } from "./nodes/incrementOperator";
+import { IndexReferenceNode } from "./nodes/indexReference";
+import { MathOperationNode } from "./nodes/mathOperation";
+import { MethodCallNode } from "./nodes/methodCall";
+import { MethodDefinitionNode } from "./nodes/methodDefinition";
+import { NegateOperator } from "./nodes/NegateOperator";
+import { NumberLiteralNode } from "./nodes/numberLiteral";
+import { ParenthesisedExpressionNode } from "./nodes/parenthesisedExpression";
+import { PropertyReferenceNode } from "./nodes/propertyReference";
+import { ReturnNode } from "./nodes/return";
+import { HeapCopyOperation } from "./nodes/stackCopyOperation";
+import { StringLiteralNode } from "./nodes/stringLiteral";
+import { StructDefinitionNode } from "./nodes/structDefinitionNode";
+import { StructLiteralNode } from "./nodes/structLiteral";
+import { VariableDefinitionNode } from "./nodes/variableDefinition";
+import { VariableRedefinitionNode } from "./nodes/variableRedefinitionNode";
+import { VariableReferenceNode } from "./nodes/variableReference";
+import { WhileNode } from "./nodes/while";
+
+export type GetTreeNode<NodeType extends string> = TreeNode extends { type: NodeType } ? TreeNode : never;
+
+export type ValueTreeNode = IndexReferenceNode | HeapCopyOperation | StructLiteralNode | NumberLiteralNode | BooleanLiteralNode | StringLiteralNode | ArrayLiteralNode | VariableRedefinitionNode | NegateOperator | VariableReferenceNode | MathOperationNode | MethodCallNode | PropertyReferenceNode | ParenthesisedExpressionNode | ComparisonOperationNode | MethodDefinitionNode | IncrementOperatorNode | DecrementOperatorNode;
+
+export type TreeNode = VariableDefinitionNode
+  | ParenthesisedExpressionNode
+  | VariableRedefinitionNode
+  | ComparisonOperationNode
+  | PropertyReferenceNode
+  | VariableReferenceNode
+  | IncrementOperatorNode
+  | DecrementOperatorNode
+  | StructDefinitionNode
+  | MethodDefinitionNode
+  | IndexReferenceNode
+  | BooleanLiteralNode
+  | HeapDefinitionNode
+  | HeapCopyOperation
+  | StructLiteralNode
+  | NumberLiteralNode
+  | StringLiteralNode
+  | MathOperationNode
+  | ArrayLiteralNode
+  | NegateOperator
+  | MethodCallNode
+  | ifBlockNode
+  | ReturnNode
+  | WhileNode
+  | FreeNode
+  | ForNode

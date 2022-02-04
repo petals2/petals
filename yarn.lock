@@ -282,12 +282,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"petals-pollen@workspace:packages/pollen":
+"petals-silo@workspace:*, petals-silo@workspace:packages/silo":
   version: 0.0.0-use.local
-  resolution: "petals-pollen@workspace:packages/pollen"
+  resolution: "petals-silo@workspace:packages/silo"
   dependencies:
     "@types/node": ^17.0.10
-    petals-stem: "workspace:*"
+    petals-utils: "workspace:*"
     ts-node: latest
     typescript: latest
   languageName: unknown
@@ -318,7 +318,19 @@ __metadata:
   resolution: "petals-thorn@workspace:packages/thorn"
   dependencies:
     "@types/node": ^17.0.10
+    petals-silo: "workspace:*"
     petals-stem: "workspace:*"
+    petals-utils: "workspace:*"
+    ts-node: latest
+    typescript: latest
+  languageName: unknown
+  linkType: soft
+
+"petals-utils@workspace:*, petals-utils@workspace:packages/utils":
+  version: 0.0.0-use.local
+  resolution: "petals-utils@workspace:packages/utils"
+  dependencies:
+    "@types/node": ^17.0.10
     ts-node: latest
     typescript: latest
   languageName: unknown

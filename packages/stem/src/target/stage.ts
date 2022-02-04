@@ -55,11 +55,11 @@ export class Stage extends Target {
 
   deserialize(json: SerializedStage) {
     this.getVariables().deserialize(json.variables);
-    this.getLists().deserialize(json.lists);
-    this.getBroadcasts().deserialize(json.broadcasts);
-    this.getBlocks().deserialize(json.blocks);
-    this.getComments().deserialize(json.comments);
-    this.getCostumes().deserialize(json.costumes);
+    // this.getLists().deserialize(json.lists);
+    // this.getBroadcasts().deserialize(json.broadcasts);
+    // this.getBlocks().deserialize(json.blocks);
+    // this.getComments().deserialize(json.comments);
+    // this.getCostumes().deserialize(json.costumes);
     this.getCostumes().setSelectedIndex(json.currentCostume);
     this.getSounds().deserialize(json.sounds);
     this.setLayer(json.layerOrder);

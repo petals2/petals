@@ -39,7 +39,7 @@ export class Project {
     this.metadata.vm = json.meta.vm;
     this.metadata.semver = json.meta.semver;
 
-    this.getTargets().deserialize(json);
+    this.getTargets().deserialize(json.targets);
   }
 
   serialize(): SerializedProject {

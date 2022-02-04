@@ -1,5 +1,4 @@
 import { Block } from "../..";
-import { Equivalence, getInputsEquivalence } from "../../helpers";
 import { Input } from "../../input";
 import { BlockKind } from "../../kinds";
 
@@ -8,22 +7,6 @@ export class Not extends BlockKind.Boolean {
     super("operator_not");
 
     if (operand) this.setOperand(operand);
-  }
-
-  getEquivalence(other: Block): Equivalence {
-    if (!(other instanceof Not))
-      return Equivalence.NotEquivalent;
-
-    const tOp = this.getOperand();
-    const oOp = other.getOperand();
-
-    if (tOp === undefined && oOp === undefined)
-      return Equivalence.Equivalent;
-
-    if (tOp === undefined || oOp === undefined)
-      return Equivalence.NotEquivalent;
-
-    return getInputsEquivalence(tOp, oOp);
   }
 
   setOperand(operand: Block): this {

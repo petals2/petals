@@ -22,7 +22,8 @@ export class Sound extends Asset {
   protected sampleCount: number;
 
   static fromJson(json: SerializedSound) {
-
+    const sound = new Sound(json.name, json.dataFormat as "mp3"|"wav", Buffer.alloc(0)); // todo: uh-oh
+    return sound;
   }
 
   static async fromBuffer(name: string, buffer: Buffer): Promise<Sound> {
