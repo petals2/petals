@@ -20,6 +20,8 @@ import { Operators } from "petals-stem/dist/src/block/category/operators";
 import { VariableInput } from "petals-stem/dist/src/block/input/variable";
 import { Control } from "petals-stem/dist/src/block/category/control";
 import { StringInput } from "petals-stem/dist/src/block/input/string";
+import { getType } from "./getType";
+import { FunctionArgumentReference } from "./reference/variable/functionArgument";
 
 export type HeapReferenceData = { heap: ListReference, heapIndexes: ListReference, options: HeapOptions, mallocReturn: VariableReference, malloc: InstanceType<typeof Procedures.Definition>, free: InstanceType<typeof Procedures.Definition> };
 
@@ -205,11 +207,35 @@ export class Context {
     throw new Error(`Variable ${name} not found in context`);
   }
 
-  getList(name: string): List {
+  getList(name: string): List | VariableReference {
     for (let i = this.listStack.length - 1; i >= 0; i--) {
       const listMap = this.listStack[i];
       if (listMap.has(name)) {
         return listMap.get(name)!;
+      }
+    }
+
+    for (let i = 0; i < this.variableStack.length; i++) {
+      const variableMap = this.variableStack[i];
+      if (variableMap.has(name)) {
+        const v = variableMap.get(name)!;
+        const t = getType(v, this);
+
+        if (t.isHeapReferenceType()) {
+          if (v instanceof List) throw new Error("Cannot dereference list");
+
+          return new VariableInstanceReference(v);
+        }
+      }
+    }
+
+    const flatArgs = this.methodArgsStack.flat();
+
+    for (let i = 0; i < flatArgs.length; i++) {
+      const arg = flatArgs[i];
+
+      if (arg.name === name) {
+        return new FunctionArgumentReference(arg.name);
       }
     }
 

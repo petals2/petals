@@ -339,6 +339,8 @@ __metadata:
 "petals@workspace:.":
   version: 0.0.0-use.local
   resolution: "petals@workspace:."
+  dependencies:
+    ts-node: ^10.4.0
   languageName: unknown
   linkType: soft
 
@@ -459,7 +461,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-node@npm:latest":
+"ts-node@npm:^10.4.0, ts-node@npm:latest":
   version: 10.4.0
   resolution: "ts-node@npm:10.4.0"
   dependencies:

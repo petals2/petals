@@ -13,6 +13,9 @@ import { KnownLengthStackReference } from "./knownLengthStackReference";
 import { List } from "petals-stem/dist/src/list";
 import { VariableReference } from "../variable/abstract";
 import { MethodCallListReference } from "./methodCall";
+import { Variable } from "petals-stem";
+import { HeapDereference } from "./heapDereference";
+import { VariableInstanceReference } from "../variable/instanceReference";
 
 export function getListReference(value: ValueTreeNode, context: Context): ListReference {
   if (value.type === "parenthesisedExpressionNode") return getListReference(value.getContents(), context);
@@ -31,8 +34,15 @@ export function getListReference(value: ValueTreeNode, context: Context): ListRe
 
   if (value.type === "variableReference") {
     let list = context.getList(value.getName());
-
     const type = getType(value, context);
+
+    if (list instanceof VariableReference) {
+      if (type.isHeapReferenceType()) {
+        return new HeapDereference(list, [], type);
+      }
+
+      throw new Error("Expected a list");
+    }
 
     if ((type.isListType() && type.isDefinitelySized()) || type.isStructureType()) {
       if (context.isInRecursiveMethod()) {

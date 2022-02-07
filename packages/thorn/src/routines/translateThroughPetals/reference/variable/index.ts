@@ -41,11 +41,17 @@ export function getVariableReference(value: ValueTreeNode, context: Context): Va
     let parent = value.getParent();
     let parentType = getType(parent, context);
 
+    let path = [value.getProperty()];
+
+    if (parentType.isHeapReferenceType() && parentType.dereference().isStructureType()) {
+      return new VariableHeapDereference(getVariableReference(parent, context), path, parentType);
+    }
+
+    if (parentType.isHeapReferenceType()) parentType = parentType.dereference();
+
     if (parentType.isListType()) {
       return ListApi.getVariableReference(getListReference(parent, context), value.getProperty(), context)
     }
-
-    let path = [value.getProperty()];
 
     while (parentType.isReferenceType()) parentType = parentType.dereference();
 
@@ -62,10 +68,6 @@ export function getVariableReference(value: ValueTreeNode, context: Context): Va
     }
 
     typeApplyContext(parentType, context);
-
-    if (parentType.isHeapReferenceType()) {
-      return new VariableHeapDereference(getVariableReference(parent, context), path, parentType);
-    }
 
     if (parentType.isStructureType()) {
       return new VariableStructMemberReference(getListReference(parent, context), parentType, path);

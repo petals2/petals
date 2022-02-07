@@ -1,4 +1,11 @@
-var x = &[ 1, 2, 3, 4 ]
+function sumArray(a: &list<number>): number {
+  var sum = 0;
 
-var y = x[0];
-x[0] = x[1];
+  for (var i = 0; i < a.length; i++) {
+    sum = sum + a[i];
+  }
+
+  return sum;
+}
+
+var x = sumArray(&[1, 2, 3]);

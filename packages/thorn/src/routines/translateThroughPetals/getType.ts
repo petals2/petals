@@ -105,8 +105,15 @@ export function getType(node: ValueTreeNode | Input | Variable | List | { name: 
   }
 
   if (node instanceof VariableReferenceNode) {
-    if (ctx.hasList(node.getName()))
-      return getType(ctx.getList(node.getName()), ctx);
+    if (ctx.hasList(node.getName())) {
+      const l = ctx.getList(node.getName());
+
+      if (l instanceof List) {
+        return getType(l, ctx);
+      }
+
+      throw new Error("Cannot get type of variable reference acting as list");
+    }
 
     return getType(ctx.getVariable(node.getName()), ctx);
   }
