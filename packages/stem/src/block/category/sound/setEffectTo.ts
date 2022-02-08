@@ -8,7 +8,7 @@ export enum Effect {
   Pan = "PAN",
 }
 
-export class SetEffectTo extends BlockKind.Stack {
+export class SetEffectTo extends BlockKind.Stack<"sound_seteffectto"> {
   constructor(effect: Effect = Effect.Pitch, value: Input | number = 100) {
     super("sound_seteffectto");
 

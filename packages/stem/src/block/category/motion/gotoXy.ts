@@ -2,7 +2,7 @@ import { Input } from "../../input";
 import { NumberInput } from "../../input/number";
 import { BlockKind } from "../../kinds";
 
-export class GotoXy extends BlockKind.Stack {
+export class GotoXy extends BlockKind.Stack<"motion_gotoxy"> {
   constructor(x: number | Input = 0, y: number | Input = 0) {
     super("motion_gotoxy");
 

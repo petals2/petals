@@ -2,7 +2,7 @@ import { Input } from "../../input";
 import { NumberInput } from "../../input/number";
 import { BlockKind } from "../../kinds";
 
-export class Random extends BlockKind.Reporter {
+export class Random extends BlockKind.Reporter<"operator_random"> {
   constructor(from: number | Input = 0, to: number | Input = 0) {
     super("operator_random");
 

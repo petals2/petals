@@ -3,7 +3,7 @@ import { StringInput } from "../../input/string";
 import { Input } from "../../input";
 import { BlockKind } from "../../kinds";
 
-export class ThinkForSecs extends BlockKind.Stack {
+export class ThinkForSecs extends BlockKind.Stack<"looks_thinkforsecs"> {
   constructor(message: Input | string = "Hmm...", secs: Input | number = 2) {
     super("looks_thinkforsecs");
 

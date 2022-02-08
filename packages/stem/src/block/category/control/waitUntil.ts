@@ -2,7 +2,7 @@ import { Input } from "../../input";
 import { Block } from "../..";
 import { BlockKind } from "../../kinds";
 
-export class WaitUntil extends BlockKind.Stack {
+export class WaitUntil extends BlockKind.Stack<"control_wait_until"> {
   constructor(condition?: Block) {
     super("control_wait_until");
 

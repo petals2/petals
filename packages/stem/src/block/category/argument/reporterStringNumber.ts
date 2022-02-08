@@ -1,7 +1,7 @@
 import { ValueField } from "../../field/value";
 import { BlockKind } from "../../kinds";
 
-export class ReporterStringNumber extends BlockKind.Reporter {
+export class ReporterStringNumber extends BlockKind.Reporter<"argument_reporter_string_number"> {
   constructor(name: string) {
     super("argument_reporter_string_number");
 

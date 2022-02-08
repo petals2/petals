@@ -2,7 +2,7 @@ import { Block } from "../..";
 import { Input } from "../../input";
 import { BlockKind } from "../../kinds";
 
-export class And extends BlockKind.Boolean {
+export class And extends BlockKind.Boolean<"operator_and"> {
   constructor(operand1?: Block, operand2?: Block) {
     super("operator_and");
 

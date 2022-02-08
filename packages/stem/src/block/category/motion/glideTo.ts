@@ -2,7 +2,7 @@ import { NumberInput } from "../../input/number";
 import { Input } from "../../input";
 import { BlockKind } from "../../kinds";
 
-export class GlideTo extends BlockKind.Stack {
+export class GlideTo extends BlockKind.Stack<"motion_glideto"> {
   constructor(secs: number | Input = 1, to: Input) {
     super("motion_glideto");
 

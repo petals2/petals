@@ -5,7 +5,7 @@ import { NumberInput } from "../../input/number";
 import { StringInput } from "../../input/string";
 import { BlockKind } from "../../kinds";
 
-export class ReplaceItemOfList extends BlockKind.Stack {
+export class ReplaceItemOfList extends BlockKind.Stack<"data_replaceitemoflist"> {
   constructor(list: List, index: number | Input, item: string | Input) {
     super("data_replaceitemoflist");
 

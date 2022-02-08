@@ -5,7 +5,7 @@ import { Variable } from "../../../variable";
 import { VariableField } from "../../field/variable";
 import { BlockKind } from "../../kinds";
 
-export class ForEach extends BlockKind.C {
+export class ForEach extends BlockKind.C<"control_for_each"> {
   constructor(variable: Variable, value: Input | number = 10, substack?: Block) {
     super("control_for_each");
 

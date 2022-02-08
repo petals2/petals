@@ -13,7 +13,7 @@ export enum Effect {
   Ghost = "GHOST",
 }
 
-export class ChangeEffectBy extends BlockKind.Stack {
+export class ChangeEffectBy extends BlockKind.Stack<"looks_changeeffectby"> {
   constructor(effect: Effect = Effect.Color, change: Input | number = 25) {
     super("looks_changeeffectby");
 

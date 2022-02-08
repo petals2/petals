@@ -4,7 +4,7 @@ import { Input } from "../../input";
 import { StringInput } from "../../input/string";
 import { BlockKind } from "../../kinds";
 
-export class AddToList extends BlockKind.Stack {
+export class AddToList extends BlockKind.Stack<"data_addtolist"> {
   constructor(list: List, item: string | Input) {
     super("data_addtolist");
 

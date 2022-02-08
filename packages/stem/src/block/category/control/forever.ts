@@ -2,7 +2,7 @@ import { Input } from "../../input";
 import { Block } from "../..";
 import { BlockKind } from "../../kinds";
 
-export class Forever extends BlockKind.C {
+export class Forever extends BlockKind.C<"control_forever"> {
   constructor(substack?: Block) {
     super("control_forever");
 

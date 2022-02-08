@@ -2,7 +2,7 @@ import { AngleInput } from "../../input/angle";
 import { Input } from "../../input";
 import { BlockKind } from "../../kinds";
 
-export class PointInDirection extends BlockKind.Stack {
+export class PointInDirection extends BlockKind.Stack<"motion_pointindirection"> {
   constructor(direction: number | Input = 90) {
     super("motion_pointindirection");
 

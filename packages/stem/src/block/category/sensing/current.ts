@@ -11,7 +11,7 @@ export enum CurrentOption {
   Second = "second",
 }
 
-export class Current extends BlockKind.Reporter {
+export class Current extends BlockKind.Reporter<"sensing_current"> {
   constructor(current: CurrentOption = CurrentOption.Year) {
     super("sensing_current");
 

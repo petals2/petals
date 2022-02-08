@@ -2,7 +2,7 @@ import { Sprite } from "../../../target/sprite";
 import { ValueField } from "../../field/value";
 import { BlockKind } from "../../kinds";
 
-export class GotoMenu extends BlockKind.Reporter {
+export class GotoMenu extends BlockKind.Reporter<"motion_goto_menu"> {
   constructor(to: Sprite | string = "_random_") {
     super("motion_goto_menu");
 

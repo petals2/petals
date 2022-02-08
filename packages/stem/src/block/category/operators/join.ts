@@ -2,7 +2,7 @@ import { Input } from "../../input";
 import { StringInput } from "../../input/string";
 import { BlockKind } from "../../kinds";
 
-export class Join extends BlockKind.Reporter {
+export class Join extends BlockKind.Reporter<"operator_join"> {
   constructor(string1: string | Input = "apple ", string2: string | Input = "banana") {
     super("operator_join");
 

@@ -2,7 +2,7 @@ import { Input } from "../../input";
 import { NumberInput } from "../../input/number";
 import { BlockKind } from "../../kinds";
 
-export class Multiply extends BlockKind.Reporter {
+export class Multiply extends BlockKind.Reporter<"operator_multiply"> {
   constructor(num1: number | Input = 0, num2: number | Input = 0) {
     super("operator_multiply");
 

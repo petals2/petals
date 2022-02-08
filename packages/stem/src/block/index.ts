@@ -1,6 +1,27 @@
 import { Input, SerializedInput } from "./input";
-import { ID } from "../id";
 import { Field, SerializedField } from "./field";
+import type { Reporter } from "./kinds/reporter";
+import type { Boolean } from "./kinds/boolean";
+import type { Operators, Argument, Control, Events, Looks, Motion, Procedures, Sensing, Sound, Variables } from "./category";
+import type { Stack } from "./kinds/stack";
+import type { Cap } from "./kinds/cap";
+import type { Hat } from "./kinds/hat";
+import type { C } from "./kinds/c";
+import type { E } from "./kinds/e";
+import { ID } from "../id";
+
+export type ArgumentOpcodes = ReturnType<InstanceType<(typeof Argument)[keyof typeof Argument]>["getOpcode"]>
+export type ControlOpcodes = ReturnType<InstanceType<(typeof Control)[keyof typeof Control]>["getOpcode"]>
+export type EventsOpcodes = ReturnType<InstanceType<(typeof Events)[keyof typeof Events]>["getOpcode"]>
+export type LooksOpcodes = ReturnType<InstanceType<(typeof Looks)[keyof typeof Looks]>["getOpcode"]>
+export type MotionOpcodes = ReturnType<InstanceType<(typeof Motion)[keyof typeof Motion]>["getOpcode"]>
+export type OperatorsOpcodes = ReturnType<InstanceType<(typeof Operators)[keyof typeof Operators]>["getOpcode"]>
+export type ProceduresOpcodes = ReturnType<InstanceType<(typeof Procedures)[keyof typeof Procedures]>["getOpcode"]>
+export type SensingOpcodes = ReturnType<InstanceType<(typeof Sensing)[keyof typeof Sensing]>["getOpcode"]>
+export type SoundOpcodes = ReturnType<InstanceType<(typeof Sound)[keyof typeof Sound]>["getOpcode"]>
+export type VariablesOpcodes = ReturnType<InstanceType<(typeof Variables)[keyof typeof Variables]>["getOpcode"]>
+
+export type Opcodes = ArgumentOpcodes | ControlOpcodes | EventsOpcodes | LooksOpcodes | MotionOpcodes | OperatorsOpcodes | ProceduresOpcodes | SensingOpcodes | SoundOpcodes | VariablesOpcodes;
 
 export type SerializedBlock = {
   opcode: string,
@@ -12,7 +33,7 @@ export type SerializedBlock = {
   topLevel: boolean,
 }
 
-export abstract class Block {
+export abstract class Block<Opcode extends string = string> {
   private id: string = ID.generate();
   private _next: Block | undefined;
   private parent: Block | undefined;
@@ -21,7 +42,7 @@ export abstract class Block {
   private shadow: boolean = false;
 
   constructor(
-    protected readonly opcode: string,
+    protected readonly opcode: Opcode,
   ) {}
 
   next(): Block { 
@@ -91,7 +112,7 @@ export abstract class Block {
   protected getShadow(): boolean { return this.shadow }
   protected setShadow(shadow: boolean): this { this.shadow = shadow; return this }
 
-  getOpcode(): string { return this.opcode }
+  getOpcode(): Opcode { return this.opcode }
 
   getId(): string { return this.id }
 
@@ -122,4 +143,12 @@ export abstract class Block {
   isYieldPoint() {
     return false;
   }
+
+  isReporter(): this is Reporter { return false }
+  isBoolean(): this is Boolean { return false }
+  isStack(): this is Stack { return false }
+  isCap(): this is Cap { return false }
+  isHat(): this is Hat { return false }
+  isC(): this is C { return false }
+  isE(): this is E { return false }
 }

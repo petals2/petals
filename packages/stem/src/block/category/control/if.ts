@@ -2,7 +2,7 @@ import { Input } from "../../input";
 import { Block } from "../..";
 import { BlockKind } from "../../kinds";
 
-export class If extends BlockKind.C {
+export class If extends BlockKind.C<"control_if"> {
   constructor(condition?: Block, substack?: Block) {
     super("control_if");
 

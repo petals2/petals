@@ -4,7 +4,7 @@ import { Input } from "../../input";
 import { StringInput } from "../../input/string";
 import { BlockKind } from "../../kinds";
 
-export class ListContainsItem extends BlockKind.Boolean {
+export class ListContainsItem extends BlockKind.Boolean<"data_listcontainsitem"> {
   constructor(list: List, item: string | Input) {
     super("data_listcontainsitem");
 

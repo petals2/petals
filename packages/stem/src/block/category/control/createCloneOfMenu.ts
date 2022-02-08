@@ -2,7 +2,7 @@ import { Sprite } from "../../../target/sprite";
 import { ValueField } from "../../field/value";
 import { BlockKind } from "../../kinds";
 
-export class CreateCloneOfMenu extends BlockKind.Stack {
+export class CreateCloneOfMenu extends BlockKind.Stack<"control_create_clone_of_menu"> {
   constructor(cloneOption: Sprite | "myself") {
     super("control_create_clone_of_menu");
 

@@ -13,7 +13,7 @@ export type SerializedCall = SerializedBlock & {
   }
 }
 
-export class Call extends BlockKind.Stack {
+export class Call extends BlockKind.Stack<"procedures_call"> {
   constructor(private readonly prototypeBlock: Prototype, ...args: Input[]) {
     super("procedures_call");
 

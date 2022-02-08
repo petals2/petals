@@ -2,7 +2,7 @@ import { Input } from "../../input";
 import { ColorInput } from "../../input/color";
 import { BlockKind } from "../../kinds";
 
-export class ColorIsTouchingColor extends BlockKind.Boolean {
+export class ColorIsTouchingColor extends BlockKind.Boolean<"sensing_coloristouchingcolor"> {
   constructor(color1: ColorInput | Input, color2: ColorInput | Input) {
     super("sensing_coloristouchingcolor");
 

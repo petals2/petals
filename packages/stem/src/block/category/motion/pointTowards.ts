@@ -1,7 +1,7 @@
 import { Input } from "../../input";
 import { BlockKind } from "../../kinds";
 
-export class PointTowards extends BlockKind.Stack {
+export class PointTowards extends BlockKind.Stack<"motion_pointtowards"> {
   constructor(towards: Input) {
     super("motion_pointtowards");
 

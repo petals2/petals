@@ -4,7 +4,7 @@ import { Input } from "../../input";
 import { NumberInput } from "../../input/number";
 import { BlockKind } from "../../kinds";
 
-export class DeleteOfList extends BlockKind.Stack {
+export class DeleteOfList extends BlockKind.Stack<"data_deleteoflist"> {
   constructor(list: List, index: number | Input) {
     super("data_deleteoflist");
 

@@ -1,7 +1,7 @@
 import { Input } from "../../input";
 import { BlockKind } from "../../kinds";
 
-export class PlayUntilDone extends BlockKind.Stack {
+export class PlayUntilDone extends BlockKind.Stack<"sound_playuntildone"> {
   constructor(sound: Input) {
     super("sound_playuntildone");
 

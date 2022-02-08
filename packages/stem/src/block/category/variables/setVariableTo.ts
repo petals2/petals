@@ -4,7 +4,7 @@ import { Input } from "../../input";
 import { NumberInput } from "../../input/number";
 import { BlockKind } from "../../kinds";
 
-export class SetVariableTo extends BlockKind.Stack {
+export class SetVariableTo extends BlockKind.Stack<"data_setvariableto"> {
   constructor(variable: Variable, value: number | Input) {
     super("data_setvariableto");
 

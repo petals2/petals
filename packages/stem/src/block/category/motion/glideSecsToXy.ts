@@ -2,7 +2,7 @@ import { Input } from "../../input";
 import { NumberInput } from "../../input/number";
 import { BlockKind } from "../../kinds";
 
-export class GlideSecsToXy extends BlockKind.Stack {
+export class GlideSecsToXy extends BlockKind.Stack<"motion_glidesecstoxy"> {
   constructor(secs: number | Input = 1, x: number | Input = 0, y: number | Input = 0) {
     super("motion_glidesecstoxy");
 

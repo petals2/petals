@@ -2,7 +2,7 @@ import { Block } from "../..";
 import { Input } from "../../input";
 import { BlockKind } from "../../kinds";
 
-export class Not extends BlockKind.Boolean {
+export class Not extends BlockKind.Boolean<"operator_not"> {
   constructor(operand?: Block) {
     super("operator_not");
 

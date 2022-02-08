@@ -7,7 +7,7 @@ export enum StopOption {
   OtherScripts = "other scripts in sprite",
 }
 
-export class Stop extends BlockKind.Stack {
+export class Stop extends BlockKind.Stack<"control_stop"> {
   constructor(stopOption: StopOption) {
     super("control_stop");
 

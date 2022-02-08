@@ -2,7 +2,7 @@ import { List } from "../../../list";
 import { ListField } from "../../field/list";
 import { BlockKind } from "../../kinds";
 
-export class LengthOfList extends BlockKind.Reporter {
+export class LengthOfList extends BlockKind.Reporter<"data_lengthoflist"> {
   constructor(list: List) {
     super("data_lengthoflist");
 

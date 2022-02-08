@@ -1,0 +1,8 @@
+{
+  "name": "render",
+  "packageManager": "yarn@3.1.1",
+  "dependencies": {
+    "chalk": "^5.0.0",
+    "petals-stem": "workspace:*"
+  }
+}

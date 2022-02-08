@@ -1,7 +1,7 @@
 import { ValueField } from "../../field/value";
 import { BlockKind } from "../../kinds";
 
-export class KeyOptions extends BlockKind.Reporter {
+export class KeyOptions extends BlockKind.Reporter<"sensing_keyoptions"> {
   constructor(keyOption: string) {
     super("sensing_keyoptions");
 

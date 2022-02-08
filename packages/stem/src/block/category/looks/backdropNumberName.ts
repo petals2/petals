@@ -1,7 +1,7 @@
 import { ValueField } from "../../field/value";
 import { BlockKind } from "../../kinds";
 
-export class BackdropNumberName extends BlockKind.Reporter {
+export class BackdropNumberName extends BlockKind.Reporter<"looks_backdropnumbername"> {
   constructor(numberName: "number" | "name" = "number") {
     super("looks_backdropnumbername");
 

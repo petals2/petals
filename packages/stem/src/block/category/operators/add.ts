@@ -2,7 +2,7 @@ import { Input } from "../../input";
 import { NumberInput } from "../../input/number";
 import { BlockKind } from "../../kinds";
 
-export class Add extends BlockKind.Reporter {
+export class Add extends BlockKind.Reporter<"operator_add"> {
   constructor(num1: number | Input = 0, num2: number | Input = 0) {
     super("operator_add");
 

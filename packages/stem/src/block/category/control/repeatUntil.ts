@@ -2,7 +2,7 @@ import { Input } from "../../input";
 import { Block } from "../..";
 import { BlockKind } from "../../kinds";
 
-export class RepeatUntil extends BlockKind.C {
+export class RepeatUntil extends BlockKind.C<"control_repeat_until"> {
   constructor(condition?: Block, substack?: Block) {
     super("control_repeat_until");
 

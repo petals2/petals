@@ -3,7 +3,7 @@ import { Input } from "../../input";
 import { NumberInput } from "../../input/number";
 import { BlockKind } from "../../kinds";
 
-export class Equals extends BlockKind.Boolean {
+export class Equals extends BlockKind.Boolean<"operator_equals"> {
   constructor(operand1: number | Input = 0, operand2: number | Input = 0) {
     super("operator_equals");
 

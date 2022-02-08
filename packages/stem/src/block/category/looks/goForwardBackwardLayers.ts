@@ -3,7 +3,7 @@ import { Input } from "../../input";
 import { NumberInput } from "../../input/number";
 import { BlockKind } from "../../kinds";
 
-export class GoForwardBackwardLayers extends BlockKind.Stack {
+export class GoForwardBackwardLayers extends BlockKind.Stack<"looks_goforwardbackwardlayers"> {
   constructor(forwardBackward: "forward" | "backward" = "forward", num: Input | number = 1) {
     super("looks_goforwardbackwardlayers");
 

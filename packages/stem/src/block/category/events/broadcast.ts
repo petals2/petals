@@ -3,7 +3,7 @@ import { Broadcast as BroadcastType } from "../../../broadcast";
 import { BroadcastInput } from "../../input/broadcast";
 import { BlockKind } from "../../kinds";
 
-export class Broadcast extends BlockKind.Stack {
+export class Broadcast extends BlockKind.Stack<"event_broadcast"> {
   constructor(broadcastInput: Input | BroadcastType) {
     super("event_broadcast");
 

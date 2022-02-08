@@ -8,7 +8,7 @@ export enum WhenGreaterThanMenu {
   Timer = "TIMER"
 }
 
-export class WhenGreaterThan extends BlockKind.Hat {
+export class WhenGreaterThan extends BlockKind.Hat<"event_whengreaterthan"> {
   constructor(whenGreaterThanMenu: WhenGreaterThanMenu, value: Input | number = 10) {
     super("event_whengreaterthan");
 

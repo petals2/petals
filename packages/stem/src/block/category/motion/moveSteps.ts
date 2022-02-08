@@ -2,7 +2,7 @@ import { Input } from "../../input";
 import { NumberInput } from "../../input/number";
 import { BlockKind } from "../../kinds";
 
-export class MoveSteps extends BlockKind.Stack {
+export class MoveSteps extends BlockKind.Stack<"motion_movesteps"> {
   constructor(steps: number | Input = 10) {
     super("motion_movesteps");
 

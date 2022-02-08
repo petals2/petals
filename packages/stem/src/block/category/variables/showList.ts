@@ -2,7 +2,7 @@ import { ListField } from "../../field/list";
 import { List } from "../../../list";
 import { BlockKind } from "../../kinds";
 
-export class ShowList extends BlockKind.Stack {
+export class ShowList extends BlockKind.Stack<"data_showlist"> {
   constructor(list: List) {
     super("data_showlist");
 

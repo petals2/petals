@@ -2,7 +2,7 @@ import { AngleInput } from "../../input/angle";
 import { Input } from "../../input";
 import { BlockKind } from "../../kinds";
 
-export class TurnLeft extends BlockKind.Stack {
+export class TurnLeft extends BlockKind.Stack<"motion_turnleft"> {
   constructor(degrees: number | Input = 15) {
     super("motion_turnleft");
 

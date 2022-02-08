@@ -138,6 +138,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"chalk@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "chalk@npm:5.0.0"
+  checksum: 6eba7c518b9aa5fe882ae6d14a1ffa58c418d72a3faa7f72af56641f1bbef51b645fca1d6e05d42357b7d3c846cd504c0b7b64d12309cdd07867e3b4411e0d01
+  languageName: node
+  linkType: hard
+
 "core-util-is@npm:~1.0.0":
   version: 1.0.3
   resolution: "core-util-is@npm:1.0.3"
@@ -392,6 +399,15 @@ __metadata:
   checksum: 8c56cc62c68513425ddfa721954875b382768f83fa20e6b31e365ee00cbe7a3d6296f66f7f1107b16cd3416d33aa9f1680475376400d62a081a88f81f0ea7f9c
   languageName: node
   linkType: hard
+
+"render@workspace:packages/render":
+  version: 0.0.0-use.local
+  resolution: "render@workspace:packages/render"
+  dependencies:
+    chalk: ^5.0.0
+    petals-stem: "workspace:*"
+  languageName: unknown
+  linkType: soft
 
 "riff-file@npm:^1.0.3":
   version: 1.0.3

@@ -2,7 +2,7 @@ import { ValueField } from "../../field/value";
 import { Costume } from "../../../costume";
 import { BlockKind } from "../../kinds";
 
-export class WhenBackdropSwitchesTo extends BlockKind.Hat {
+export class WhenBackdropSwitchesTo extends BlockKind.Hat<"event_whenbackdropswitchesto"> {
   constructor(backdrop: string) {
     super("event_whenbackdropswitchesto");
 

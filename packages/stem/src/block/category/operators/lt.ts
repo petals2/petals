@@ -2,7 +2,7 @@ import { Input } from "../../input";
 import { NumberInput } from "../../input/number";
 import { BlockKind } from "../../kinds";
 
-export class Lt extends BlockKind.Boolean {
+export class Lt extends BlockKind.Boolean<"operator_lt"> {
   constructor(operand1: number | Input = 0, operand2: number | Input = 0) {
     super("operator_lt");
 

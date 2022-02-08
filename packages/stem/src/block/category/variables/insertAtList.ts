@@ -5,7 +5,7 @@ import { NumberInput } from "../../input/number";
 import { StringInput } from "../../input/string";
 import { BlockKind } from "../../kinds";
 
-export class InsertAtList extends BlockKind.Stack {
+export class InsertAtList extends BlockKind.Stack<"data_insertatlist"> {
   constructor(list: List, index: number | Input, item: string | Input) {
     super("data_insertatlist");
 

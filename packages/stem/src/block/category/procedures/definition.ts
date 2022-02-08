@@ -3,7 +3,7 @@ import { Input } from "../../input";
 import { BlockKind } from "../../kinds";
 import { Prototype } from "./prototype";
 
-export class Definition extends BlockKind.Hat {
+export class Definition extends BlockKind.Hat<"procedures_definition"> {
   constructor(customBlock: Prototype) {
     super("procedures_definition");
 

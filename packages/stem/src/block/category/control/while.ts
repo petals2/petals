@@ -2,7 +2,7 @@ import { Input } from "../../input";
 import { Block } from "../..";
 import { BlockKind } from "../../kinds";
 
-export class While extends BlockKind.C {
+export class While extends BlockKind.C<"control_while"> {
   constructor(condition?: Block, substack?: Block) {
     super("control_while");
 

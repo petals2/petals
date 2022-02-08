@@ -1,7 +1,7 @@
 import { Input } from "../../input";
 import { BlockKind } from "../../kinds";
 
-export class DistanceTo extends BlockKind.Reporter {
+export class DistanceTo extends BlockKind.Reporter<"sensing_distanceto"> {
   constructor(object: Input) {
     super("sensing_distanceto");
 

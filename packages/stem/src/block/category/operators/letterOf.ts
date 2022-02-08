@@ -3,7 +3,7 @@ import { NumberInput } from "../../input/number";
 import { StringInput } from "../../input/string";
 import { BlockKind } from "../../kinds";
 
-export class LetterOf extends BlockKind.Reporter {
+export class LetterOf extends BlockKind.Reporter<"operator_letter_of"> {
   constructor(letter: number | Input = 1, string: string | Input = "apple") {
     super("operator_letter_of");
 

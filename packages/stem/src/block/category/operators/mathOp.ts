@@ -20,7 +20,7 @@ export enum MathOperation {
   TenPow = "10 ^",
 }
 
-export class MathOp extends BlockKind.Reporter {
+export class MathOp extends BlockKind.Reporter<"operator_mathop"> {
   constructor(operation: MathOperation = MathOperation.Abs, num: number | Input = 0) {
     super("operator_mathop");
 

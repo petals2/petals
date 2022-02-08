@@ -3,7 +3,7 @@ import { Input } from "../../input";
 import { Block } from "../..";
 import { BlockKind } from "../../kinds";
 
-export class Repeat extends BlockKind.C {
+export class Repeat extends BlockKind.C<"control_repeat"> {
   constructor(times: Input | number = 10, substack?: Block) {
     super("control_repeat");
 

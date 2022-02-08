@@ -2,7 +2,7 @@ import { Broadcast } from "../../../broadcast";
 import { BroadcastField } from "../../field/broadcast";
 import { BlockKind } from "../../kinds";
 
-export class WhenBroadcastReceived extends BlockKind.Hat {
+export class WhenBroadcastReceived extends BlockKind.Hat<"event_whenbroadcastreceived"> {
   constructor(broadcastOption: Broadcast) {
     super("event_whenbroadcastreceived");
 

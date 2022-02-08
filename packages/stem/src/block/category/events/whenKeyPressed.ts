@@ -1,7 +1,7 @@
 import { ValueField } from "../../field/value";
 import { BlockKind } from "../../kinds";
 
-export class WhenKeyPressed extends BlockKind.Hat {
+export class WhenKeyPressed extends BlockKind.Hat<"event_whenkeypressed"> {
   constructor(keyOption: string) {
     super("event_whenkeypressed");
 

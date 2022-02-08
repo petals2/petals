@@ -2,7 +2,7 @@ import { Input } from "../../input";
 import { StringInput } from "../../input/string";
 import { BlockKind } from "../../kinds";
 
-export class KeyPressed extends BlockKind.Boolean {
+export class KeyPressed extends BlockKind.Boolean<"sensing_keypressed"> {
   constructor(keyOption: Input) {
     super("sensing_keypressed");
 

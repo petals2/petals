@@ -4,7 +4,7 @@ import { Input } from "../../input";
 import { NumberInput } from "../../input/number";
 import { BlockKind } from "../../kinds";
 
-export class ItemOfList extends BlockKind.Reporter {
+export class ItemOfList extends BlockKind.Reporter<"data_itemoflist"> {
   constructor(list: List, item: number | Input) {
     super("data_itemoflist");
 

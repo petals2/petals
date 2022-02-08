@@ -1,7 +1,7 @@
 import { ValueField } from "../../field/value";
 import { BlockKind } from "../../kinds";
 
-export class SetDragMode extends BlockKind.Stack {
+export class SetDragMode extends BlockKind.Stack<"sensing_setdragmode"> {
   constructor(dragMode: "draggable" | "not draggable") {
     super("sensing_setdragmode");
 

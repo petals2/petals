@@ -3,7 +3,7 @@ import { AnyInput, Input } from "../../input";
 import { BlockKind } from "../../kinds";
 import { BlockStore } from "../../store";
 
-export class Say extends BlockKind.Stack {
+export class Say extends BlockKind.Stack<"looks_say"> {
   constructor(message: Input | string = "Hello!") {
     super("looks_say");
 

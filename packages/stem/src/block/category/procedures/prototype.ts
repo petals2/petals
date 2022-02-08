@@ -16,7 +16,7 @@ export type SerialzedPrototype = SerializedBlock & {
   }
 }
 
-export class Prototype extends BlockKind.Stack {
+export class Prototype extends BlockKind.Stack<"procedures_prototype"> {
   protected argIds!: string[];
   protected defaultValues!: (string | boolean)[];
   protected warp: boolean = false;

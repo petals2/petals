@@ -2,7 +2,7 @@ import { Input } from "../../input";
 import { Block } from "../..";
 import { BlockKind } from "../../kinds";
 
-export class IfElse extends BlockKind.E {
+export class IfElse extends BlockKind.E<"control_if_else"> {
   constructor(condition?: Block, substackTrue?: Block, substackFalse?: Block) {
     super("control_if_else");
 

@@ -2,7 +2,7 @@ import { Input } from "../../input";
 import { StringInput } from "../../input/string";
 import { BlockKind } from "../../kinds";
 
-export class Length extends BlockKind.Reporter {
+export class Length extends BlockKind.Reporter<"operator_length"> {
   constructor(string: string | Input = "apple") {
     super("operator_length");
 

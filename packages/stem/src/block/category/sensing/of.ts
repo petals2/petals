@@ -8,7 +8,7 @@ export enum SensingProperty {
   Volume = "volume",
 }
 
-export class Of extends BlockKind.Reporter {
+export class Of extends BlockKind.Reporter<"sensing_of"> {
   constructor(property: SensingProperty = SensingProperty.BackdropNumber, object: Input) {
     super("sensing_of");
 

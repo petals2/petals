@@ -2,7 +2,7 @@ import { ListField } from "../../field/list";
 import { List } from "../../../list";
 import { BlockKind } from "../../kinds";
 
-export class DeleteAllOfList extends BlockKind.Stack {
+export class DeleteAllOfList extends BlockKind.Stack<"data_deletealloflist"> {
   constructor(list: List) {
     super("data_deletealloflist");
 
