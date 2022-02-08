@@ -19,6 +19,7 @@ import { VariableInstanceReference } from "../variable/instanceReference";
 import { getVariableReference } from "../variable";
 import { ListIndexListReference, ListIndexStructureReference } from "./indexReference";
 import { ListType, StructureType } from "../../../../types/ast/type";
+import { Operators } from "petals-stem/dist/src/block/category";
 
 export function getListReference(value: ValueTreeNode, target: Target, thread: Block, context: Context): ListReference {
   if (value.type === "parenthesisedExpressionNode") return getListReference(value.getContents(), target, thread, context);
@@ -76,12 +77,18 @@ export function getListReference(value: ValueTreeNode, target: Target, thread: B
 
     while (t.isReferenceType()) t = t.dereference();
 
+    const index = target.getBlocks().createBlock(
+      Operators.Add,
+      Input.shadowed(target.getBlocks().createBlock(Operators.Multiply, Input.shadowed(value2.getValue(target, thread, context)), StructTool.getSize(t))),
+      1,
+    );
+
     if (t.isListType()) {
-      return new ListIndexListReference(list, value2, t as ListType);
+      return new ListIndexListReference(list, Input.shadowed(index), t);
     }
 
     if (t.isStructureType()) {
-      return new ListIndexStructureReference(list, value2, t as StructureType);
+      return new ListIndexStructureReference(list, Input.shadowed(index), t);
     }
 
     throw new Error("Not a list.");

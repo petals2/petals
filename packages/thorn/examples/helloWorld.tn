@@ -9,6 +9,4 @@ var vecs: &list<Vector2, 3> = &[
   Vector2 { x: &[13, 14, 15], y: &[16, 17, 18] },
 ]
 
-var step1 = vecs[1];
-// var step2 = step1.y;
-// var step3 = step2[1];
+var step1 = vecs[1].y[1];

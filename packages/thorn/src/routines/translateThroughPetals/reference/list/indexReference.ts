@@ -10,7 +10,7 @@ import { KnownLengthListReference, ListReference } from "./abstract";
 export class ListIndexListReference extends ListReference {
   constructor(
     protected readonly base: ListReference,
-    protected readonly index: VariableReference,
+    protected readonly index: Input,
     protected readonly myType: ListType,
   ) { super() }
   
@@ -37,8 +37,8 @@ export class ListIndexListReference extends ListReference {
   overwriteAtIndex(index: Input, value: Input, target: Target, thread: Block, context: Context): Block {
     return this.base.overwriteAtIndex(
       Input.shadowed(target.getBlocks().createBlock(Operators.Add, 
-        Input.shadowed(this.index.getValue(target, thread, context)),
-        Input.shadowed(target.getBlocks().createBlock(Operators.Multiply, index, Input.shadowed(new NumberInput(StructTool.getSize(this.myType))))),
+        this.index,
+        index
       )),
       value,
       target, thread, context,
@@ -46,10 +46,12 @@ export class ListIndexListReference extends ListReference {
   }
 
   getItemAtIndex(index: Input, target: Target, thread: Block, context: Context): ListReference | AnyInput {
+    console.trace(index);
+
     return this.base.getItemAtIndex(
       Input.shadowed(target.getBlocks().createBlock(Operators.Add, 
-        Input.shadowed(this.index.getValue(target, thread, context)),
-        Input.shadowed(target.getBlocks().createBlock(Operators.Multiply, index, Input.shadowed(new NumberInput(StructTool.getSize(this.myType))))),
+        this.index,
+        index
       )),
       target, thread, context,
     )
@@ -75,7 +77,7 @@ export class ListIndexListReference extends ListReference {
 export class ListIndexStructureReference extends KnownLengthListReference {
   constructor(
     protected readonly base: ListReference,
-    protected readonly index: VariableReference,
+    protected readonly index: Input,
     protected readonly myType: StructureType,
   ) { super() }
 
@@ -106,8 +108,8 @@ export class ListIndexStructureReference extends KnownLengthListReference {
   overwriteAtIndex(index: Input, value: Input, target: Target, thread: Block, context: Context): Block {
     return this.base.overwriteAtIndex(
       Input.shadowed(target.getBlocks().createBlock(Operators.Add, 
-        Input.shadowed(this.index.getValue(target, thread, context)),
-        Input.shadowed(target.getBlocks().createBlock(Operators.Multiply, index, Input.shadowed(new NumberInput(StructTool.getSize(this.myType))))),
+        this.index,
+        index
       )),
       value,
       target, thread, context,
@@ -117,8 +119,8 @@ export class ListIndexStructureReference extends KnownLengthListReference {
   getItemAtIndex(index: Input, target: Target, thread: Block, context: Context): ListReference | AnyInput {
     return this.base.getItemAtIndex(
       Input.shadowed(target.getBlocks().createBlock(Operators.Add, 
-        Input.shadowed(this.index.getValue(target, thread, context)),
-        Input.shadowed(target.getBlocks().createBlock(Operators.Multiply, index, Input.shadowed(new NumberInput(StructTool.getSize(this.myType))))),
+        this.index,
+        index
       )),
       target, thread, context,
     )
