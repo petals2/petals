@@ -15,7 +15,7 @@ import { StructTool } from "../../structTool";
 export function copyOntoHeap(value: ValueTreeNode, heapName: string, target: Target, thread: Block, context: Context) {
   const heap = context.getHeap(heapName);
 
-  const ref = getUnknownReference(value, context);
+  const ref = getUnknownReference(value, target, thread, context);
 
   if (ref instanceof VariableReference || ref instanceof BooleanReference) {
     const val = ref.getValue(target, thread, context);

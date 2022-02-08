@@ -20,20 +20,20 @@ export default function (node: VariableRedefinitionNode, target: Target, thread:
   const base = node.getBase();
   const newValue = node.getNewValue();
 
-  const variableReference = getUnknownReference(base, context);
+  const variableReference = getUnknownReference(base, target, thread, context);
 
   if (variableReference instanceof BooleanReference) {
     throw new Error("Cannot redefine a boolean");
   }
 
   if (variableReference instanceof ListReference) {
-    const valueRef = getListReference(newValue, context);
+    const valueRef = getListReference(newValue, target, thread, context);
 
     valueRef.copyInto(variableReference, target, thread, context);
     return;
   }
 
-  const reference = getUnknownReference(newValue, context);
+  const reference = getUnknownReference(newValue, target, thread, context);
 
   if (reference instanceof ListReference) throw new Error("attempted to assign a list value to a variable");
 

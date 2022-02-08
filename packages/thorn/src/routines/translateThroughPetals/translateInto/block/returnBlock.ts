@@ -18,7 +18,7 @@ export default function (node: ReturnNode, target: Target, thread: Block, contex
 
   if (varToUpdate === undefined) throw new Error("Cannot return from outside a function");
 
-  const val = getUnknownReference(node.getValue(), context);
+  const val = getUnknownReference(node.getValue(), target, thread, context);
 
   if (varToUpdate instanceof VariableReference && !(val instanceof ListReference)) {
     varToUpdate.setValue(Input.shadowed(val.getValue(target, thread, context)), target, thread, context);

@@ -8,7 +8,7 @@ import { Control } from "petals-stem/dist/src/block/category/control";
 
 export default function (block: WhileNode, target: Target, thread: Block, context: Context): void {
   const transformedContent = translateNodeListIntoBlock(block.getBlock(), target, context);
-  const transformedConditional = getBooleanReference(block.getCase(), context);
+  const transformedConditional = getBooleanReference(block.getCase(), target, thread, context);
 
   transformedConditional.performSideEffects(target, transformedContent.getTail(), context);
   transformedConditional.performSideEffects(target, thread, context);

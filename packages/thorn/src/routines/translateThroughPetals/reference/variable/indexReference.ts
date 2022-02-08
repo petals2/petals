@@ -19,8 +19,8 @@ export class VariableIndexReference extends VariableReference {
   }
 
   performSideEffects(target: Target, thread: Block, context: Context): void {
-    this.base = getListReference(this.variable.getBase(), context);
-    this.value = getVariableReference(this.variable.getReference(), context);
+    this.base = getListReference(this.variable.getBase(), target, thread, context);
+    this.value = getVariableReference(this.variable.getReference(), target, thread, context);
 
     this.value.performSideEffects(target, thread, context);
   }

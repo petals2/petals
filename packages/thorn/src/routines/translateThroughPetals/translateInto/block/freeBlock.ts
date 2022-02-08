@@ -8,7 +8,7 @@ import { Procedures } from "petals-stem/dist/src/block/category/procedures";
 import { Input } from "petals-stem/dist/src/block/input";
 
 export default function (node: FreeNode, target: Target, thread: Block, context: Context): void {
-  const varToFree = getVariableReference(node.getValue(), context);
+  const varToFree = getVariableReference(node.getValue(), target, thread, context);
   const type = getType(node.getValue(), context);
 
   if (!type.isHeapReferenceType())

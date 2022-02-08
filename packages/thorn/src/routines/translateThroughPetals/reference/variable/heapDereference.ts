@@ -18,7 +18,6 @@ export class VariableHeapDereference extends VariableReference {
     while (deref.isReferenceType() || deref.isHeapReferenceType()) deref = deref.dereference();
 
     if (!deref.isStructureType()) {
-      console.log(parentType);
       throw new Error("VariableHeapDereference must be used on a structure type");
     }
   }

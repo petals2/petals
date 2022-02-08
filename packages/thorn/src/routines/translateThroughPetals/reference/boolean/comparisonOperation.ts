@@ -27,12 +27,14 @@ export class BooleanComparisonOperationReference extends BooleanReference {
     leftHand: ValueTreeNode,
     rightHand: ValueTreeNode,
     protected readonly operation: "<=" | ">=" | "<" | ">" | "==" | "!=",
+    target: Target,
+    thread: Block,
     context: Context,
   ) {
     super();
 
-    this.leftHandRef = getUnknownReference(leftHand, context);
-    this.rightHandRef = getUnknownReference(rightHand, context);
+    this.leftHandRef = getUnknownReference(leftHand, target, thread, context);
+    this.rightHandRef = getUnknownReference(rightHand, target, thread, context);
   }
 
   computeListEquivalence(target: Target, thread: Block, context: Context): [requiresStorage: boolean, block: Block] {

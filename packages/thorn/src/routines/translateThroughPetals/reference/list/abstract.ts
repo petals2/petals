@@ -8,6 +8,8 @@ import { Phantom } from "petals-stem/dist/src/block/category/phantom";
 import { ID } from "petals-stem/dist/src/id";
 import { VariableInput } from "petals-stem/dist/src/block/input/variable";
 import { Control } from "petals-stem/dist/src/block/category/control";
+import { StructTool } from "../../structTool";
+import { getType } from "../../getType";
 
 export abstract class ListReference {
   isKnownLength(): this is KnownLengthListReference { return false };
@@ -23,7 +25,7 @@ export abstract class ListReference {
   abstract getLength(target: Target, thread: Block, context: Context): AnyInput;
   abstract containsItem(item: Input, target: Target, thread: Block, context: Context): AnyInput;
 
-  copyInto(list: ListReference, target: Target, thread: Block, context: Context, redefining: boolean = true): void {
+   copyInto(list: ListReference, target: Target, thread: Block, context: Context, redefining: boolean = true, startIndex?: number): void {
     if (redefining) {
       const intermediate = target.getVariables().createVariable("___intermediate_incrementor_" + ID.generate(), 0);
       const phantom = target.getBlocks().createBlock(Phantom);
@@ -55,27 +57,66 @@ export abstract class KnownLengthListReference extends ListReference {
     return new NumberInput(this.getKnownLength(context))
   }
 
-  copyInto(list: ListReference, target: Target, thread: Block, context: Context, redefining: boolean = true): void {
-    if (redefining) {
-      list.deleteAll(target, thread, context);
+  copyInto(list: ListReference, target: Target, thread: Block, context: Context, redefining: boolean = true, startIndex?: number): void {
+    if (startIndex === undefined) {
+      if (redefining) {
+        list.deleteAll(target, thread, context);
+  
+        for (let i = 0; i < this.getKnownLength(context); i++) {
+          const item = this.getItemAtIndex(Input.shadowed(new NumberInput(i)), target, thread, context);
+          
+          if (!(item instanceof ListReference)) {
+            list.push(Input.shadowed(item), target, thread, context);
+            continue;
+          }
+  
+          if (item instanceof KnownLengthListReference) {
+            item.copyInto(list, target, thread, context, true);
+          } else {
+            throw new Error("Cannot copy unsized lists into a list");
+          }
+        }
+  
+        return;
+      }
 
       for (let i = 0; i < this.getKnownLength(context); i++) {
-        const v = this.getItemAtIndex(Input.shadowed(new NumberInput(i)), target, thread, context);
+        const item = this.getItemAtIndex(Input.shadowed(new NumberInput(i)), target, thread, context);
+  
+        if (!(item instanceof ListReference)) {
+          list.overwriteAtIndex(Input.shadowed(new NumberInput(i + 1)), Input.shadowed(item), target, thread, context);
+          i += StructTool.getSize(this.getContentType(context));
+          continue;
+        }
 
-        if (v instanceof ListReference) throw new Error("Figure out why this happens / how to fix it");
-
-        list.push(Input.shadowed(v), target, thread, context);
+        if (item instanceof KnownLengthListReference) {
+          item.copyInto(list, target, thread, context, false, i);
+          i += StructTool.getSize(item.getContentType(context)) * item.getKnownLength(context);
+        } else {
+          throw new Error("Cannot copy unsized lists into a list");
+        }
       }
 
       return;
     }
 
+    if (redefining) throw new Error("Cannot pass a start index into a redefined list... Maybe TODO");
+
     for (let i = 0; i < this.getKnownLength(context); i++) {
-      const v = this.getItemAtIndex(Input.shadowed(new NumberInput(i)), target, thread, context);
+      const item = this.getItemAtIndex(Input.shadowed(new NumberInput(i)), target, thread, context);
 
-      if (v instanceof ListReference) throw new Error("Figure out why this happens / how to fix it");
+      if (!(item instanceof ListReference)) {
+        list.overwriteAtIndex(Input.shadowed(new NumberInput(i + 1 + startIndex)), Input.shadowed(item), target, thread, context);
+        i += StructTool.getSize(this.getContentType(context));
+        continue;
+      }
 
-      list.overwriteAtIndex(Input.shadowed(new NumberInput(i + 1)), Input.shadowed(v), target, thread, context);
+      if (item instanceof KnownLengthListReference) {
+        item.copyInto(list, target, thread, context, false, i);
+        i += StructTool.getSize(item.getContentType(context)) * item.getKnownLength(context);
+      } else {
+        throw new Error("Cannot copy unsized lists into a list");
+      }
     }
   }
 }
@@ -84,25 +125,62 @@ export abstract class KnownListContentsReference extends KnownLengthListReferenc
   isKnownContents(): this is KnownListContentsReference { return true }
   abstract getContents(target: Target, thread: Block, context: Context): (ListReference | AnyInput)[];
 
-  copyInto(list: ListReference, target: Target, thread: Block, context: Context, redefining: boolean = true): void {
-    if (redefining) {
-      list.deleteAll(target, thread, context);
-
+  copyInto(list: ListReference, target: Target, thread: Block, context: Context, redefining: boolean = true, startIndex?: number): void {
+    if (startIndex == undefined) {
+      if (redefining) {
+        list.deleteAll(target, thread, context);
+  
+        for (const item of this.getContents(target, thread, context)) {
+          if (!(item instanceof ListReference)) {
+            list.push(Input.shadowed(item), target, thread, context);
+            continue;
+          }
+  
+          if (item instanceof KnownLengthListReference) {
+            item.copyInto(list, target, thread, context, true);
+          } else {
+            throw new Error("Cannot copy unsized lists into a list");
+          }
+        }
+  
+        return;
+      }
+  
+      let i = 0;
       for (const item of this.getContents(target, thread, context)) {
-        if (item instanceof ListReference) throw new Error("Figure out why this happens / how to fix it");
+        if (!(item instanceof ListReference)) {
+          list.overwriteAtIndex(Input.shadowed(new NumberInput(i + 1)), Input.shadowed(item), target, thread, context);
+          i += StructTool.getSize(this.getContentType(context));
+          continue;
+        }
 
-        list.push(Input.shadowed(item), target, thread, context);
+        if (item instanceof KnownLengthListReference) {
+          item.copyInto(list, target, thread, context, false, i);
+          i += StructTool.getSize(item.getContentType(context)) * item.getKnownLength(context);
+        } else {
+          throw new Error("Cannot copy unsized lists into a list");
+        }
       }
 
       return;
     }
 
-    let i = 0;
-    for (const item of this.getContents(target, thread, context)) {
-      if (item instanceof ListReference) throw new Error("Figure out why this happens / how to fix it");
+    if (redefining) throw new Error("Cannot pass a start index into a redefined list... Maybe TODO");
 
-      list.overwriteAtIndex(Input.shadowed(new NumberInput(i + 1)), Input.shadowed(item), target, thread, context);
-      i++;
+    let i = startIndex;
+    for (const item of this.getContents(target, thread, context)) {
+      if (!(item instanceof ListReference)) {
+        list.overwriteAtIndex(Input.shadowed(new NumberInput(i + 1)), Input.shadowed(item), target, thread, context);
+        i += StructTool.getSize(this.getContentType(context));
+        continue;
+      }
+
+      if (item instanceof KnownLengthListReference) {
+        item.copyInto(list, target, thread, context, false, i);
+        i += StructTool.getSize(item.getContentType(context)) * item.getKnownLength(context);
+      } else {
+        throw new Error("Cannot copy unsized lists into a list");
+      }
     }
   }
 }

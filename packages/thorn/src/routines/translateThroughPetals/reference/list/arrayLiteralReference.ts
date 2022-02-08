@@ -9,6 +9,7 @@ import { PositiveNumberInput } from "petals-stem/dist/src/block/input/positiveNu
 import { StringInput } from "petals-stem/dist/src/block/input/string";
 import { ID } from "petals-stem/dist/src/id";
 import { Target } from "petals-stem/dist/src/target";
+import { getListReference } from ".";
 import { getUnknownReference } from "..";
 import { ValueTreeNode } from "../../../../types/ast/node";
 import { ArrayLiteralNode } from "../../../../types/ast/nodes/arrayLiteral";
@@ -32,8 +33,12 @@ export class ListLiteralReference extends KnownListContentsReference {
     return (getType(this.literal, context) as ListType).getContentType();
   }
 
-  getContents(target: Target, thread: Block, context: Context): AnyInput[] {
-    return this.literal.getValues().map(e => getVariableReference(e, context).getValue(target, thread, context));
+  getContents(target: Target, thread: Block, context: Context): AnyInput[] | ListReference[] {
+    if (this.getContentType(context).isStructureType())  {
+      return this.literal.getValues().map(e => getListReference(e, target, thread, context));
+    }
+
+    return this.literal.getValues().map(e => getVariableReference(e, target, thread, context).getValue(target, thread, context));
   }
 
   getKnownLength(): number {
@@ -49,7 +54,7 @@ export class ListLiteralReference extends KnownListContentsReference {
       yield new Variables.DeleteAllOfList(l);
       for (let i = 0; i < values.length; i++) {
         const element = values[i];
-        const ref = getUnknownReference(element, context);
+        const ref = getUnknownReference(element, target, thread, context);
 
         if (ref instanceof ListReference) throw new Error("List literals cannot contain lists");
 
@@ -78,7 +83,7 @@ export class ListLiteralReference extends KnownListContentsReference {
     const top = index.getTopLayer();
 
     if (top instanceof NumberInput || top instanceof PositiveIntegerInput || top instanceof PositiveNumberInput || top instanceof IntegerInput || top instanceof AngleInput) {
-      return getVariableReference(this.literal.getValues()[top.getValue()], context).getValue(target, thread, context)
+      return getVariableReference(this.literal.getValues()[top.getValue()], target, thread, context).getValue(target, thread, context)
     }
 
     return this.write(target, thread, context).getItemAtIndex(index, target, thread, context);

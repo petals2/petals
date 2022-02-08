@@ -48,7 +48,7 @@ export function readValue(reader: LexReader): ValueTreeNode {
     basic = readBasicValue(reader);
   }
 
-  while (reader.nextIs({ type: TokenType.Separator, value: "("}, { type: TokenType.Separator, value: "." }, { type: TokenType.Operator })) {
+  while (reader.nextIs({ type: TokenType.Separator, value: "("}, { type: TokenType.Operator })) {
     if (reader.nextIs({ type: TokenType.Separator, value: "(" })) {
       const argumentReader = reader.readBetween("(");
       const args: ValueTreeNode[] = [];
@@ -62,10 +62,6 @@ export function readValue(reader: LexReader): ValueTreeNode {
       }
   
       basic = new MethodCallNode(basic, args);
-    }
-  
-    if (reader.nextIs({ type: TokenType.Separator, value: "." })) {
-      basic = PropertyReferenceNode.build(reader, basic);
     }
 
     if (reader.nextIs({ type: TokenType.Operator, value: "++" }, { type: TokenType.Operator, value: "--" })) {
@@ -84,8 +80,12 @@ export function readValue(reader: LexReader): ValueTreeNode {
     }
   }
 
-  if (reader.nextIs({ type: TokenType.Separator, value: "[" })) {
-    basic = IndexReferenceNode.build(reader, basic);
+  while (reader.nextIs({ type: TokenType.Separator, value: "." }, { type: TokenType.Separator, value: "[" })) {
+    if (reader.nextIs({ type: TokenType.Separator, value: "." })) {
+      basic = PropertyReferenceNode.build(reader, basic);
+    } else {
+      basic = IndexReferenceNode.build(reader, basic);
+    }
   }
 
   if (reader.nextIs({ type: TokenType.Separator, value: "=" })) {

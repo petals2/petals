@@ -12,7 +12,7 @@ export function callPush(list: ListReference, call: MethodCallNode, target: Targ
 
   if (arg === undefined) throw new Error("Too few arguments to list.push. Requires 1 (the item to push)");
 
-  list.push(Input.shadowed(getVariableReference(arg, context).getValue(target, thread, context)), target, thread, context);
+  list.push(Input.shadowed(getVariableReference(arg, target, thread, context).getValue(target, thread, context)), target, thread, context);
 
   return {
     performSideEffects(target, thread, context) {},

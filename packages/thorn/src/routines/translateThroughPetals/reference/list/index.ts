@@ -13,12 +13,15 @@ import { KnownLengthStackReference } from "./knownLengthStackReference";
 import { List } from "petals-stem/dist/src/list";
 import { VariableReference } from "../variable/abstract";
 import { MethodCallListReference } from "./methodCall";
-import { Variable } from "petals-stem";
+import { Block, Input, Target, Variable } from "petals-stem";
 import { HeapDereference } from "./heapDereference";
 import { VariableInstanceReference } from "../variable/instanceReference";
+import { getVariableReference } from "../variable";
+import { ListIndexListReference, ListIndexStructureReference } from "./indexReference";
+import { ListType, StructureType } from "../../../../types/ast/type";
 
-export function getListReference(value: ValueTreeNode, context: Context): ListReference {
-  if (value.type === "parenthesisedExpressionNode") return getListReference(value.getContents(), context);
+export function getListReference(value: ValueTreeNode, target: Target, thread: Block, context: Context): ListReference {
+  if (value.type === "parenthesisedExpressionNode") return getListReference(value.getContents(), target, thread, context);
 
   if (value.type === "methodCall") {
     const baseVal = value.getBaseValue();
@@ -63,6 +66,27 @@ export function getListReference(value: ValueTreeNode, context: Context): ListRe
     return new StructLiteralReference(value);
   }
 
+  if (value.type === "indexReference") {
+    const base = value.getBase();
+    const reference = value.getReference();
+    const value2 = getVariableReference(reference, target, thread, context);
+    const list = getListReference(base, target, thread, context);
+    
+    let t = getType(value, context);
+
+    while (t.isReferenceType()) t = t.dereference();
+
+    if (t.isListType()) {
+      return new ListIndexListReference(list, value2, t as ListType);
+    }
+
+    if (t.isStructureType()) {
+      return new ListIndexStructureReference(list, value2, t as StructureType);
+    }
+
+    throw new Error("Not a list.");
+  }
+
   if (value.type === "propertyReference") {
     // check to make sure that we're referencing a struct
 
@@ -87,12 +111,24 @@ export function getListReference(value: ValueTreeNode, context: Context): ListRe
     while (myType.isReferenceType()) myType = myType.dereference();
 
     if (parentType.isStructureType()) {
-      if (myType.isStructureType()) {
-        if (context.isInRecursiveMethod()) {
-          return new StructFunctionStackReference(getListReference(value, context), parentType, myType, path);
+      if (myType.isHeapReferenceType()) {
+        if (myType.dereference().isListType()) {
+          return new HeapDereference(getVariableReference(value, target, thread, context), path, myType);
         }
 
-        return new StructStructMemberReference(getListReference(parent, context), parentType, myType, path);
+        if (myType.dereference().isStructureType()) {
+          throw new Error("TODO");
+        }
+
+        throw new Error("Attempted to get a list heap reference to a non-list element");
+      }
+
+      if (myType.isStructureType()) {
+        if (context.isInRecursiveMethod()) {
+          return new StructFunctionStackReference(getListReference(value, target, thread, context), parentType, myType, path);
+        }
+
+        return new StructStructMemberReference(getListReference(parent, target, thread, context), parentType, myType, path);
       }
 
       throw new Error("Cannot reference a struct member with a non-struct type");

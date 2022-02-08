@@ -18,6 +18,8 @@ export class MathOperationReference extends VariableReference {
     leftHand: ValueTreeNode,
     rightHand: ValueTreeNode,
     operation: "--" | "++" | "+" | "-" | "*" | "/" | "!",
+    target: Target,
+    thread: Block,
     context: Context,
   ) {
     super();
@@ -28,8 +30,8 @@ export class MathOperationReference extends VariableReference {
 
     this.operation = operation;
 
-    this.leftHandRef = getVariableReference(leftHand, context);
-    this.rightHandRef = getVariableReference(rightHand, context);
+    this.leftHandRef = getVariableReference(leftHand, target, thread, context);
+    this.rightHandRef = getVariableReference(rightHand, target, thread, context);
   }
 
   performSideEffects(target: Target, thread: Block, context: Context): void {

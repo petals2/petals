@@ -22,7 +22,7 @@ export function call(node: MethodCallNode, target: Target, thread: Block, contex
       const parentType = getType(base.getParent(), context);
 
       if (parentType.isListType()) {
-        const parent = getListReference(base.getParent(), context);
+        const parent = getListReference(base.getParent(), target, thread, context);
 
         return ListApi.callListApi(parent, base.getProperty(), node, target, thread, context)
       }
@@ -39,7 +39,7 @@ export function call(node: MethodCallNode, target: Target, thread: Block, contex
 
   if (!def) throw new Error("Method " + methodName + " not found");
 
-  const args = node.getArguments().map(arg => getUnknownReference(arg, context));
+  const args = node.getArguments().map(arg => getUnknownReference(arg, target, thread, context));
 
   if (args.some(arg => args instanceof ListReference)) throw new Error("Cannot pass lists into methods");
 

@@ -156,7 +156,9 @@ export class ListType extends Type {
   }
 
   exactEquals(other: Type): boolean {
-    return other.isListType() && other.getContentType().exactEquals(this.getContentType()) && this.getSize() === other.getSize();
+    return other.isListType() && other.getContentType().exactEquals(this.getContentType()) && (
+      (this.isDefinitelySized() && other.isDefinitelySized() && this.getSize() == other.getSize()) || (!this.isDefinitelySized() && !other.isDefinitelySized())
+    );
   }
 
   extends(other: Type): boolean {
@@ -297,9 +299,9 @@ export class UnionType extends Type {
   }
 
   static reduce(union: UnionType): Type {
-    const types = union.getTypes();
-
     union.reduce();
+
+    const types = union.getTypes();
 
     if (types.length === 1) return types[0];
 

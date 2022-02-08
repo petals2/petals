@@ -17,9 +17,10 @@ import { VariableHeapCopyReference } from "./heapCopy";
 import { VariableHeapDereference } from "./heapDereference";
 import { ListApi } from "../../api/list";
 import { VariableIndexReference } from "./indexReference";
+import { Target, Block } from "petals-stem";
 
-export function getVariableReference(value: ValueTreeNode, context: Context): VariableReference {
-  if (value.type === "parenthesisedExpressionNode") return getVariableReference(value.getContents(), context);
+export function getVariableReference(value: ValueTreeNode, target: Target, thread: Block, context: Context): VariableReference {
+  if (value.type === "parenthesisedExpressionNode") return getVariableReference(value.getContents(), target, thread, context);
 
   if (value.type === "variableReference") {
     const variable = context.getVariable(value.getName());
@@ -44,13 +45,13 @@ export function getVariableReference(value: ValueTreeNode, context: Context): Va
     let path = [value.getProperty()];
 
     if (parentType.isHeapReferenceType() && parentType.dereference().isStructureType()) {
-      return new VariableHeapDereference(getVariableReference(parent, context), path, parentType);
+      return new VariableHeapDereference(getVariableReference(parent, target, thread, context), path, parentType);
     }
 
     if (parentType.isHeapReferenceType()) parentType = parentType.dereference();
 
     if (parentType.isListType()) {
-      return ListApi.getVariableReference(getListReference(parent, context), value.getProperty(), context)
+      return ListApi.getVariableReference(getListReference(parent, target, thread, context), value.getProperty(), context)
     }
 
     while (parentType.isReferenceType()) parentType = parentType.dereference();
@@ -70,7 +71,7 @@ export function getVariableReference(value: ValueTreeNode, context: Context): Va
     typeApplyContext(parentType, context);
 
     if (parentType.isStructureType()) {
-      return new VariableStructMemberReference(getListReference(parent, context), parentType, path);
+      return new VariableStructMemberReference(getListReference(parent, target, thread, context), parentType, path);
     }
 
     throw new Error("Cannot reference a property of a non-struct type");
@@ -78,7 +79,7 @@ export function getVariableReference(value: ValueTreeNode, context: Context): Va
 
   if (value.type === "stringLiteral") return new StringLiteralReference(value.getValue());
   if (value.type === "numberLiteral") return new NumberLiteralReference(value.getValue());
-  if (value.type === "mathOperation") return new MathOperationReference(value.getLeftHand(), value.getRightHand(), value.getOperation(), context);
+  if (value.type === "mathOperation") return new MathOperationReference(value.getLeftHand(), value.getRightHand(), value.getOperation(), target, thread, context);
   if (value.type === "methodCall") return new MethodCallResultReference(value);
   if (value.type === "heapCopy") return new VariableHeapCopyReference(value);
   if (value.type === "indexReference") return new VariableIndexReference(value);

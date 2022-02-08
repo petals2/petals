@@ -39,7 +39,7 @@ export class StructLiteralReference extends KnownListContentsReference {
 
     if (value === undefined) throw new Error("No value for path: <" + path.join(".") + ">");
 
-    const valueReference = getUnknownReference(value, context);
+    const valueReference = getUnknownReference(value, target, thread, context);
 
     if (rest.length === 0) {
       if (valueReference instanceof VariableReference || valueReference instanceof BooleanReference) {
