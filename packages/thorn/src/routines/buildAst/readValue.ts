@@ -10,12 +10,14 @@ import { MathOperationNode } from "../../types/ast/nodes/mathOperation";
 import { MethodCallNode } from "../../types/ast/nodes/methodCall";
 import { MethodDefinitionNode } from "../../types/ast/nodes/methodDefinition";
 import { NegateOperator } from "../../types/ast/nodes/NegateOperator";
+import { NewNode } from "../../types/ast/nodes/newNode";
 import { NumberLiteralNode } from "../../types/ast/nodes/numberLiteral";
 import { ParenthesisedExpressionNode } from "../../types/ast/nodes/parenthesisedExpression";
 import { PropertyReferenceNode } from "../../types/ast/nodes/propertyReference";
 import { HeapCopyOperation } from "../../types/ast/nodes/stackCopyOperation";
 import { StringLiteralNode } from "../../types/ast/nodes/stringLiteral";
 import { StructLiteralNode } from "../../types/ast/nodes/structLiteral";
+import { ThisNode } from "../../types/ast/nodes/thisNode";
 import { VariableRedefinitionNode } from "../../types/ast/nodes/variableRedefinitionNode";
 import { VariableReferenceNode } from "../../types/ast/nodes/variableReference";
 import { LexReader } from "../../types/reader/lexReader";
@@ -48,7 +50,7 @@ export function readValue(reader: LexReader): ValueTreeNode {
     basic = readBasicValue(reader);
   }
 
-  while (reader.nextIs({ type: TokenType.Separator, value: "("}, { type: TokenType.Operator })) {
+  while (reader.nextIs({ type: TokenType.Separator, value: "[" }, { type: TokenType.Separator, value: "." }, { type: TokenType.Separator, value: "(" }, { type: TokenType.Operator })) {
     if (reader.nextIs({ type: TokenType.Separator, value: "(" })) {
       const argumentReader = reader.readBetween("(");
       const args: ValueTreeNode[] = [];
@@ -64,6 +66,14 @@ export function readValue(reader: LexReader): ValueTreeNode {
       basic = new MethodCallNode(basic, args);
     }
 
+    if (reader.nextIs({ type: TokenType.Separator, value: "." }, { type: TokenType.Separator, value: "[" })) {
+      if (reader.nextIs({ type: TokenType.Separator, value: "." })) {
+        basic = PropertyReferenceNode.build(reader, basic);
+      } else {
+        basic = IndexReferenceNode.build(reader, basic);
+      }
+    }
+
     if (reader.nextIs({ type: TokenType.Operator, value: "++" }, { type: TokenType.Operator, value: "--" })) {
       switch (reader.peek().value) {
         case "++":
@@ -77,14 +87,6 @@ export function readValue(reader: LexReader): ValueTreeNode {
   
     if (reader.nextIs({ type: TokenType.Operator }) && !reader.nextIs({ type: TokenType.Operator, value: "++" }, { type: TokenType.Operator, value: "--" })) {
       return MathOperationNode.build(reader, basic)
-    }
-  }
-
-  while (reader.nextIs({ type: TokenType.Separator, value: "." }, { type: TokenType.Separator, value: "[" })) {
-    if (reader.nextIs({ type: TokenType.Separator, value: "." })) {
-      basic = PropertyReferenceNode.build(reader, basic);
-    } else {
-      basic = IndexReferenceNode.build(reader, basic);
     }
   }
 
@@ -131,6 +133,14 @@ export function readBasicValue(reader: LexReader): Exclude<ValueTreeNode, MathOp
 
   if (reader.nextIs({ type: TokenType.Separator, value: "[" })) {
     return ArrayLiteralNode.build(reader);
+  }
+
+  if (reader.nextIs({ type: TokenType.Keyword, value: "new" })) {
+    return NewNode.build(reader);
+  }
+
+  if (reader.nextIs({ type: TokenType.Keyword, value: "this" })) {
+    return ThisNode.build(reader);
   }
 
   throw new Error(`Failed to readBasicValue. Unexpected ${TokenType[reader.peek().type]}<${reader.peek().value}>`);

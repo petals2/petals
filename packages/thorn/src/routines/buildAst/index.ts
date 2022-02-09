@@ -1,4 +1,5 @@
 import { TreeNode } from "../../types/ast/node";
+import { ClassDefinitionNode } from "../../types/ast/nodes/classDefinitionNode";
 import { ForNode } from "../../types/ast/nodes/forNode";
 import { FreeNode } from "../../types/ast/nodes/freeNode";
 import { HeapDefinitionNode } from "../../types/ast/nodes/heapDefinitionNode";
@@ -35,6 +36,7 @@ export function readNode(reader: LexReader): TreeNode {
       case "struct": return StructDefinitionNode.build(reader);
       case "heap": return HeapDefinitionNode.build(reader);
       case "free": return FreeNode.build(reader);
+      case "class": return ClassDefinitionNode.build(reader);
     }
   }
 

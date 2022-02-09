@@ -1,12 +1,19 @@
-struct Vector2 {
-  x: &list<number, 3>,
-  y: &list<number, 3>,
+class Vector2 {
+  protected readonly x: number;
+  protected readonly y: number;
+
+  constructor(x: number, y: number) {
+    this.x = x;
+    this.y = y;
+  }
+
+  add(v: &Vector2): void {
+    this.x = this.x + v.x;
+    this.y = this.y + v.y;
+  }
 }
 
-var vecs: &list<Vector2, 3> = &[
-  Vector2 { x: &[1, 2, 3], y: &[4, 5, 6] },
-  Vector2 { x: &[7, 8, 9], y: &[10, 11, 12] },
-  Vector2 { x: &[13, 14, 15], y: &[16, 17, 18] },
-]
+var a = new Vector2(1, 2);
+// var b = new Vector2(3, 4);
 
-var step1 = vecs[1].y[1];
+// a.add(&b);

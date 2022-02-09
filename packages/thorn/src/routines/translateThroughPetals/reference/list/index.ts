@@ -18,8 +18,9 @@ import { HeapDereference } from "./heapDereference";
 import { VariableInstanceReference } from "../variable/instanceReference";
 import { getVariableReference } from "../variable";
 import { ListIndexListReference, ListIndexStructureReference } from "./indexReference";
-import { ListType, StructureType } from "../../../../types/ast/type";
+import { HeapReferenceType, ListType, StructureType } from "../../../../types/ast/type";
 import { Operators } from "petals-stem/dist/src/block/category";
+import { ThisDereference } from "./thisDereference";
 
 export function getListReference(value: ValueTreeNode, target: Target, thread: Block, context: Context): ListReference {
   if (value.type === "parenthesisedExpressionNode") return getListReference(value.getContents(), target, thread, context);
@@ -142,6 +143,14 @@ export function getListReference(value: ValueTreeNode, target: Target, thread: B
     }
 
     throw new Error("Cannot reference a property of a non-struct type");
+  }
+
+  if (value.type === "thisNode") {
+    const klass = context.getCurrentClass();
+
+    if (klass === undefined) throw new Error("Use of this outside of a class");
+
+    return new ThisDereference(new HeapReferenceType(context.getStruct("___" + klass + "_struct"), "global"))
   }
 
   throw new Error("Cannot get list reference for: " + value.type);

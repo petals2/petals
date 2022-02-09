@@ -1,5 +1,6 @@
 import { ArrayLiteralNode } from "./nodes/arrayLiteral";
 import { BooleanLiteralNode } from "./nodes/booleanLiteral";
+import { ClassDefinitionNode } from "./nodes/classDefinitionNode";
 import { ComparisonOperationNode } from "./nodes/comparisonOperation";
 import { DecrementOperatorNode } from "./nodes/decrementOperator";
 import { ForNode } from "./nodes/forNode";
@@ -12,6 +13,7 @@ import { MathOperationNode } from "./nodes/mathOperation";
 import { MethodCallNode } from "./nodes/methodCall";
 import { MethodDefinitionNode } from "./nodes/methodDefinition";
 import { NegateOperator } from "./nodes/NegateOperator";
+import { NewNode } from "./nodes/newNode";
 import { NumberLiteralNode } from "./nodes/numberLiteral";
 import { ParenthesisedExpressionNode } from "./nodes/parenthesisedExpression";
 import { PropertyReferenceNode } from "./nodes/propertyReference";
@@ -20,6 +22,7 @@ import { HeapCopyOperation } from "./nodes/stackCopyOperation";
 import { StringLiteralNode } from "./nodes/stringLiteral";
 import { StructDefinitionNode } from "./nodes/structDefinitionNode";
 import { StructLiteralNode } from "./nodes/structLiteral";
+import { ThisNode } from "./nodes/thisNode";
 import { VariableDefinitionNode } from "./nodes/variableDefinition";
 import { VariableRedefinitionNode } from "./nodes/variableRedefinitionNode";
 import { VariableReferenceNode } from "./nodes/variableReference";
@@ -27,7 +30,7 @@ import { WhileNode } from "./nodes/while";
 
 export type GetTreeNode<NodeType extends string> = TreeNode extends { type: NodeType } ? TreeNode : never;
 
-export type ValueTreeNode = IndexReferenceNode | HeapCopyOperation | StructLiteralNode | NumberLiteralNode | BooleanLiteralNode | StringLiteralNode | ArrayLiteralNode | VariableRedefinitionNode | NegateOperator | VariableReferenceNode | MathOperationNode | MethodCallNode | PropertyReferenceNode | ParenthesisedExpressionNode | ComparisonOperationNode | MethodDefinitionNode | IncrementOperatorNode | DecrementOperatorNode;
+export type ValueTreeNode = ThisNode | NewNode | IndexReferenceNode | HeapCopyOperation | StructLiteralNode | NumberLiteralNode | BooleanLiteralNode | StringLiteralNode | ArrayLiteralNode | VariableRedefinitionNode | NegateOperator | VariableReferenceNode | MathOperationNode | MethodCallNode | PropertyReferenceNode | ParenthesisedExpressionNode | ComparisonOperationNode | MethodDefinitionNode | IncrementOperatorNode | DecrementOperatorNode;
 
 export type TreeNode = VariableDefinitionNode
   | ParenthesisedExpressionNode
@@ -39,6 +42,7 @@ export type TreeNode = VariableDefinitionNode
   | DecrementOperatorNode
   | StructDefinitionNode
   | MethodDefinitionNode
+  | ClassDefinitionNode
   | IndexReferenceNode
   | BooleanLiteralNode
   | HeapDefinitionNode
@@ -53,5 +57,7 @@ export type TreeNode = VariableDefinitionNode
   | ifBlockNode
   | ReturnNode
   | WhileNode
+  | ThisNode
   | FreeNode
   | ForNode
+  | NewNode

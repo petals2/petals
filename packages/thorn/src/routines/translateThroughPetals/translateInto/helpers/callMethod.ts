@@ -33,7 +33,17 @@ export function call(node: MethodCallNode, target: Target, thread: Block, contex
 
   const methodName = base.getName();
 
-  //TODO: reserved method names
+  if (methodName === "malloc") {
+    const arg = getUnknownReference(node.getArguments()[0], target, thread, context);
+
+    if (arg instanceof ListReference) throw new Error("Cannot pass lists into malloc");
+
+    let call = target.getBlocks().createBlock(Procedures.Call, context.getHeap("global").malloc.getPrototype(), Input.shadowed(arg.getValue(target, thread, context)));
+
+    thread.getTail().append(call.getHead());
+
+    return context.getHeap("global").mallocReturn;
+  }
 
   const def = target.getBlocks().getCustomBlockByName(methodName);
 

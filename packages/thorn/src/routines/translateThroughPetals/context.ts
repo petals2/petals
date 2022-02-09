@@ -3,7 +3,7 @@ import { Target } from "petals-stem/dist/src/target";
 import { Block } from "petals-stem/dist/src/block";
 import { List } from "petals-stem/dist/src/list";
 import { ID } from "petals-stem/dist/src/id";
-import { ListType, StructureType, Type } from "../../types/ast/type";
+import { ListType, NumberType, StructureType, Type } from "../../types/ast/type";
 import { StructDefinitionNode } from "../../types/ast/nodes/structDefinitionNode";
 import { HeapOptions } from "../../types/ast/nodes/heapDefinitionNode";
 import { VariableReference } from "./reference/variable/abstract";
@@ -29,6 +29,8 @@ export class Context {
   protected variableStack: Map<string, Variable | List>[] = [];
   protected listStack: Map<string, List>[] = [];
   protected methodArgsStack: { name: string, type: Type }[][] = [];
+  protected currentClass: string | undefined;
+  protected classes: string[] = [];
 
   protected typeStore: Map<List | Variable | string, Type> = new Map();
   protected heapStore: Map<string, HeapReferenceData> = new Map();
@@ -57,6 +59,23 @@ export class Context {
   getType(item: Variable | List | string): Type | undefined
   getType(item: List | Variable | string): Type | undefined {
     return this.typeStore.get(item);
+  }
+
+  enterClass(klass: string): void {
+    this.currentClass = klass;
+    this.classes.push(klass);
+  }
+
+  exitClass() {
+    this.currentClass = undefined;
+  }
+
+  getCurrentClass(): string | undefined {
+    return this.currentClass
+  }
+
+  hasClass(klass: string): boolean {
+    return this.classes.includes(klass);
   }
 
   enter() {
@@ -296,6 +315,8 @@ export class Context {
 
     const malloc = this.target.getBlocks().createCustomBlockHat(ID.generate() + "-___heap_" + name + "_malloc", [{ name: "size", type: "string", defaultValue: "" }]);
     const mallocReturn = this.target.getVariables().createVariable(ID.generate() + "-___heap_" + name + "_malloc_return", 0);
+
+    this.typeStore.set(mallocReturn, new NumberType());
 
     malloc.append(this.target.getBlocks().generateStack(function* () {
       yield new Control.IfElse(

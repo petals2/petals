@@ -15,6 +15,7 @@ import translateStructDefinition from "./structDefinition";
 import translateMethodCallNode from "./methodCall";
 import translateMathOperator from "./mathOperator";
 import translateReturnBlock from "./returnBlock";
+import translateClassBlock from "./classBlock";
 import translateWhileBlock from "./whileBlock";
 import translateFreeBlock from "./freeBlock";
 import translateForBlock from "./forBlock";
@@ -44,6 +45,7 @@ export function translateNodeIntoBlock(node: TreeNode, target: Target, ctx: Cont
     case "methodDefinition": translateMethodDefinitionNode(node, target, thread, ctx); return thread;
     case "incrementOperator": translateIncrementOperator(node, target, thread, ctx); return thread;
     case "decrementOperator": translateDecrementOperator(node, target, thread, ctx); return thread;
+    case "classDefinitionNode": translateClassBlock(node, target, thread, ctx); return thread;
     case "mathOperation": translateMathOperator(node, target, thread, ctx); return thread;
     case "methodCall": translateMethodCallNode(node, target, thread, ctx); return thread;
     case "return": translateReturnBlock(node, target, thread, ctx); return thread;

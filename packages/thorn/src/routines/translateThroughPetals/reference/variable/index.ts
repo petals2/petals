@@ -44,8 +44,18 @@ export function getVariableReference(value: ValueTreeNode, target: Target, threa
 
     let path = [value.getProperty()];
 
-    if (parentType.isHeapReferenceType() && parentType.dereference().isStructureType()) {
-      return new VariableHeapDereference(getVariableReference(parent, target, thread, context), path, parentType);
+    if (parentType.isHeapReferenceType()) {
+      let baseParentType = parentType.dereference();
+
+      while (baseParentType.isHeapReferenceType() || baseParentType.isReferenceType()) {
+        if (baseParentType.isReferenceType()) baseParentType.loadIntoContext(context);
+
+        baseParentType = baseParentType.dereference()
+      }
+
+      if (baseParentType.isStructureType()) {
+        return new VariableHeapDereference(getVariableReference(parent, target, thread, context), path, parentType);
+      }
     }
 
     if (parentType.isHeapReferenceType()) parentType = parentType.dereference();
@@ -74,7 +84,7 @@ export function getVariableReference(value: ValueTreeNode, target: Target, threa
       return new VariableStructMemberReference(getListReference(parent, target, thread, context), parentType, path);
     }
 
-    throw new Error("Cannot reference a property of a non-struct type");
+    throw new Error("Cannot reference a property (" + value.getProperty() + ") of a non-struct type (" + parentType.constructor.name + ")");
   }
 
   if (value.type === "stringLiteral") return new StringLiteralReference(value.getValue());

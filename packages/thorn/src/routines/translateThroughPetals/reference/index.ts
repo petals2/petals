@@ -23,7 +23,7 @@ export function getUnknownReference(value: ValueTreeNode, target: Target, thread
   if (value.type === "arrayLiteral" || value.type === "structLiteral")
     return getListReference(value, target, thread, context);
 
-  if (value.type === "numberLiteral" || value.type === "stringLiteral" || value.type === "mathOperation" || value.type === "methodCall" || value.type === "heapCopy")
+  if (value.type === "numberLiteral" || value.type === "stringLiteral" || value.type === "mathOperation" || value.type === "methodCall" || value.type === "heapCopy" || value.type === "new")
     return getVariableReference(value, target, thread, context);
 
   if (value.type === "booleanLiteral" || value.type === "comparisonOperation")

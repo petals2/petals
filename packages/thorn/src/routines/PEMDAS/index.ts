@@ -26,6 +26,8 @@ export function flattenTree(tree: ValueTreeNode): (ValueTreeNode | (typeof valid
     case "arrayLiteral": return [tree];
     case "methodCall": return [tree];
     case "heapCopy": return [tree];
+    case "thisNode": return [tree];
+    case "new": return [tree];
   }
 }
 

@@ -20,7 +20,8 @@ export class MethodDefinitionNode {
   getContents() { return this.contents }
 
   static build(reader: LexReader): MethodDefinitionNode {
-    reader.expect({ type: TokenType.Keyword, value: "function" });
+    if (reader.nextIs({ type: TokenType.Keyword, value: "function" }))
+      reader.expect({ type: TokenType.Keyword, value: "function" });
 
     const name = reader.expect({ type: TokenType.Identifier }).value;
     const argReader = reader.readBetween("(");

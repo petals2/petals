@@ -21,12 +21,14 @@ import { MathOperationNode } from "../../types/ast/nodes/mathOperation";
 import { MethodCallNode } from "../../types/ast/nodes/methodCall";
 import { MethodDefinitionNode } from "../../types/ast/nodes/methodDefinition";
 import { NegateOperator } from "../../types/ast/nodes/NegateOperator";
+import { NewNode } from "../../types/ast/nodes/newNode";
 import { NumberLiteralNode } from "../../types/ast/nodes/numberLiteral";
 import { ParenthesisedExpressionNode } from "../../types/ast/nodes/parenthesisedExpression";
 import { PropertyReferenceNode } from "../../types/ast/nodes/propertyReference";
 import { HeapCopyOperation } from "../../types/ast/nodes/stackCopyOperation";
 import { StringLiteralNode } from "../../types/ast/nodes/stringLiteral";
 import { StructLiteralNode } from "../../types/ast/nodes/structLiteral";
+import { ThisNode } from "../../types/ast/nodes/thisNode";
 import { VariableRedefinitionNode } from "../../types/ast/nodes/variableRedefinitionNode";
 import { VariableReferenceNode } from "../../types/ast/nodes/variableReference";
 import { BooleanType, HeapReferenceType, ListType, LiteralType, NumberType, StringType, Type, UnionType } from "../../types/ast/type";
@@ -191,6 +193,18 @@ export function getType(node: ValueTreeNode | Input | Variable | List | { name: 
     throw new Error("Cannot get type of index reference for: " + base.constructor.name);
   }
 
+  if (node instanceof ThisNode) {
+    const klass = ctx.getCurrentClass();
+
+    if (klass == undefined) throw new Error("Use of `this` outside of class");
+
+    return ctx.getStruct("___" + klass + "_struct");
+  }
+
+  if (node instanceof NewNode) {
+    return new HeapReferenceType(ctx.getStruct("___" + node.getClass() + "_struct"), "global");
+  }
+
   throw new Error("Unsupported node type: " + (node as any).type);
 }
 
@@ -254,6 +268,10 @@ export function getInputFromLiteralLikeInput(input: { getValue(): number | boole
 export function dereferenceType(name: string, ctx: Context): Type {
   if (ctx.hasStruct(name)) {
     return ctx.getStruct(name);
+  }
+
+  if (ctx.hasClass(name)) {
+    return ctx.getStruct("___" + name + "_struct");
   }
 
   throw new Error("Failed to deref type: " + name);

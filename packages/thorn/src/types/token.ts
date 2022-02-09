@@ -2,13 +2,20 @@ export const validComparators = <const> ["<=", ">=", "<", ">", "==", "!="];
 export const validSeparators = <const> ["{", "}", "[", "]", "(", ")", ".", ",", "=", ";", ":", "|", "<", ">", "&"];
 export const validOperators = <const> ["--", "++", "+", "-", "*", "/", "!"];
 export const validKeywords = <const> [
+  "constructor",
+  "protected",
+  "readonly",
   "function",
+  "private",
   "struct",
   "return",
-  "throw",
+  "public",
   "catch",
+  "class",
   "while",
+  "throw",
   "heap",
+  "this",
   "else",
   "free",
   "for",
