@@ -1,9 +1,7 @@
-import fs from "fs";
-import path from "path";
-
 import { Vector2 } from "../types/vector2";
 import { Asset } from "../asset";
 import { PNG } from "pngjs";
+import { Project, Sb3 } from "../project";
 
 export type SerializedCostume = {
   assetId: string;
@@ -17,9 +15,14 @@ export type SerializedCostume = {
 export class Costume extends Asset {
   protected rotationCenter: Vector2;
 
-  static fromFile(filePath: string, name?: string) {
-    const fileData = fs.readFileSync(filePath);
-    return new Costume(path.basename(filePath), path.extname(filePath).substring(1) as "png"|"svg", fileData, undefined);
+  static async fromSb3(project: Project, sb3: Sb3, json: SerializedCostume) {
+    const asset = await sb3.getAsset(json.md5ext);
+
+    if (!asset) {
+      throw new Error("Failed to load costume from JSON: missing asset: " + json.md5ext);
+    }
+
+    return new Costume(json.name, json.dataFormat as "png"|"svg", asset, new Vector2(json.rotationCenterX, json.rotationCenterY));
   }
 
   constructor(

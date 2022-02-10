@@ -4,12 +4,19 @@ import { Procedures } from "./category/procedures";
 import * as esprima from "esprima";
 import { ID } from "../id";
 import { Input } from "./input";
+import { Project, Sb3 } from "..";
 
 export type SerializedBlockStore = Record<string, SerializedBlock>;
 
 export class BlockStore {
   private _store: Map<string, Block> = new Map();
   private _customBlockRefs: Map<string, InstanceType<typeof Procedures.Prototype>> = new Map();
+
+  static fromSb3(project: Project, sb3: Sb3, json: SerializedBlockStore) {
+    const blockStore = new BlockStore;
+    blockStore.deserialize(project, sb3, json);
+    return blockStore;
+  }
 
   findBlockById(id: string): Block | undefined {
     return this._store.get(id);
@@ -112,11 +119,11 @@ export class BlockStore {
     }
   }
 
-  createCustomBlockHat(procCode: string, args: ({ type: "string", name: string, defaultValue: string } | { type: "boolean", name: string, defaultValue: boolean })[]): InstanceType<typeof Procedures.Definition> {
-    const defaultVals = args.map(a => a.defaultValue);
+  createCustomBlockHat(procCode: string, params: ({ type: "string", name: string, defaultValue: string } | { type: "boolean", name: string, defaultValue: boolean })[]): InstanceType<typeof Procedures.Definition> {
+    const defaultVals = params.map(a => a.defaultValue);
     let uneditedProcCode = procCode;
 
-    const blocks = args.map(a => {
+    const blocks = params.map(a => {
       if (a.type == "string") {
         procCode += " %s"
 
@@ -153,7 +160,7 @@ export class BlockStore {
 
     const name = decl.id?.name ?? `AnonymousFunction-${ID.generate()}`;
 
-    const args = decl.params.map(p => {
+    const params = decl.params.map(p => {
       if (p.type === "Identifier") {
         return <const> { type: "string", name: p.name, defaultValue: "" };
       }
@@ -176,7 +183,7 @@ export class BlockStore {
       throw new Error("Unexpected parameter type");
     });
 
-    let cursor: Block = this.createCustomBlockHat(name, args);
+    let cursor: Block = this.createCustomBlockHat(name, params);
 
     const arg = (cursor as InstanceType<typeof Procedures.Definition>).getPrototype().getArguments().map(arg => {
       return () => {
@@ -200,6 +207,13 @@ export class BlockStore {
     }
 
     return (cursor.getHead() as InstanceType<typeof Procedures.Definition>);
+  }
+
+  deserialize(project: Project, sb3: Sb3, json: SerializedBlockStore) {
+    const blockEntries = Object.entries(json);
+    for (const [ blockId, blockJson ] of blockEntries) {
+      
+    }
   }
 
   serialize(): SerializedBlockStore {

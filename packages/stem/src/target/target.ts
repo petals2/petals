@@ -10,15 +10,15 @@ import type { Stage } from "./stage";
 import { Asset } from "../asset";
 
 export abstract class Target {
-  private readonly broadcasts: BroadcastStore = new BroadcastStore();
-  private readonly variables: VariableStore = new VariableStore();
-  private readonly lists: ListStore = new ListStore();
-  private readonly blocks: BlockStore = new BlockStore();
-  private readonly comments: CommentStore = new CommentStore();
-  private readonly costumes: TargetCostumeStore = new TargetCostumeStore();
-  private readonly sounds: SoundStore = new SoundStore();
-  private layer: number = 0;
-  private volumeMultiplier: number = 1;
+  protected broadcasts: BroadcastStore = new BroadcastStore();
+  protected variables: VariableStore = new VariableStore();
+  protected lists: ListStore = new ListStore();
+  protected blocks: BlockStore = new BlockStore();
+  protected comments: CommentStore = new CommentStore();
+  protected costumes: TargetCostumeStore = new TargetCostumeStore();
+  protected sounds: SoundStore = new SoundStore();
+  protected layer: number = 0;
+  protected volumeMultiplier: number = 1;
 
   isSprite(): this is Sprite { return false }
   isStage(): this is Stage { return false }

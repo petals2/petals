@@ -1,38 +1,25 @@
+var output: list<number> = [ 0 ]
+
+class Rose {
+  protected x: number;
+
+  constructor(balls: number) {
+    this.x = balls;
+  }
+}
+
 class Vector2 {
-    protected x: number;
-    protected y: number;
+    protected x: &Rose;
 
-    constructor(initX: number, initY: number) { this.x = initX; this.y = initY }
+    constructor(initX: &Rose) { this.x = initX }
 
-    multScalar(v: number): void {
-        this.x = this.x * v;
-        this.y = this.y * v;
-    }
-
-    multVec(v: &Vector2): void {
-        this.x = this.x * v.x;
-        this.y = this.y * v.y;
+    getX(): &Rose {
+      return this.x;
     }
 }
 
-function sumVectors(v: &list<Vector2>): &Vector2 {
-    let s = new Vector2(0, 0);
+var rose = &new Rose(5);
+var s = new Vector2(rose);
+var y = s.getX();
 
-    for (var i = 0; i < v.length; i++) {
-        v[i].multScalar(2);
-        s.x = s.x + v[i].x;
-        s.y = s.y + v[i].y;
-    }
-
-    return &s;
-}
-
-var s = sumVectors(&[
-    new Vector2(1, 2),
-    new Vector2(3, 4),
-    new Vector2(5, 6),
-    new Vector2(7, 8),
-])
-
-var sx = s.x;
-var sy = s.y;
+output.push(y.x);

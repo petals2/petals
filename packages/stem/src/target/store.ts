@@ -1,3 +1,4 @@
+import { Project, Sb3 } from "..";
 import { SerializedSprite, Sprite } from "./sprite";
 import { SerializedStage, Stage } from "./stage";
 
@@ -7,9 +8,9 @@ export type SerializedTargetStore = SerializedTarget[];
 export class TargetStore {
   private _store: (Stage | Sprite)[] = [new Stage()];
 
-  static fromJson(json: SerializedTargetStore) {
+  static async fromSb3(project: Project, sb3: Sb3, json: SerializedTargetStore) {
     const targetStore = new TargetStore;
-    targetStore.deserialize(json);
+    await targetStore.deserialize(project, sb3, json);
     return targetStore;
   }
 
@@ -77,14 +78,14 @@ export class TargetStore {
     return this._store;
   }
 
-  deserialize(json: SerializedTargetStore) {
-    this._store = json.map(target => {
+  protected async deserialize(project: Project, sb3: Sb3, json: SerializedTargetStore) {
+    this._store = await Promise.all(json.map(target => {
       if (target.isStage) {
-        return Stage.fromJson(target as SerializedStage);
+        return Stage.fromSb3(project, sb3, target as SerializedStage);
       } else {
-        return Sprite.fromJson(target as SerializedSprite);
+        return Sprite.fromSb3(project, sb3, target as SerializedSprite);
       }
-    })
+    }));
   }
 
   serialize(): SerializedTargetStore {

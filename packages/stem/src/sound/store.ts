@@ -1,3 +1,4 @@
+import { Project, Sb3 } from "..";
 import { SerializedSound, Sound } from "./sound";
 
 export type SerializedSoundStore = SerializedSound[];
@@ -5,14 +6,14 @@ export type SerializedSoundStore = SerializedSound[];
 export class SoundStore {
   private sounds: Sound[] = [];
 
-  static fromJson(json: SerializedSoundStore) {
+  static async fromSb3(project: Project, sb3: Sb3, json: SerializedSoundStore) {
     const soundStore = new SoundStore();
-    soundStore.deserialize(json);
+    await soundStore.deserialize(project, sb3, json);
     return soundStore;
   }
 
-  deserialize(json: SerializedSoundStore) {
-    this.sounds = json.map(sound => Sound.fromJson(sound));
+  protected async deserialize(project: Project, sb3: Sb3, json: SerializedSoundStore) {
+    this.sounds = await Promise.all(json.map(sound => Sound.fromSb3(project, sb3, sound)));
   }
 
   serialize(): SerializedSoundStore {

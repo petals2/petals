@@ -1,4 +1,4 @@
-import type { SerializedVariableStore } from "../variable/store";
+import { SerializedVariableStore, VariableStore } from "../variable/store";
 import type { SerializedListStore } from "../list/store";
 import { Vector2 } from "../types/vector2";
 import type { Stage } from "./stage";
@@ -6,8 +6,9 @@ import { Target } from "./target";
 import { SerializedBroadcastStore } from "../broadcast/store";
 import { SerializedBlockStore } from "../block/store";
 import { SerializedCommentStore } from "../comment/store";
-import { SerializedCostumeStore } from "../costume/store/store";
-import { SerializedSoundStore } from "../sound/store";
+import { CostumeStore, SerializedCostumeStore } from "../costume/store/store";
+import { SerializedSoundStore, SoundStore } from "../sound/store";
+import { Project, Sb3, TargetCostumeStore } from "..";
 
 export type SerializedSprite = {
   // target generic
@@ -42,9 +43,9 @@ export class Sprite extends Target {
   protected draggable: boolean = false;
   protected rotationStyle: "all around" | "left-right" | "don't rotate" = "all around";
 
-  static fromJson(json: SerializedSprite) {
+  static async fromSb3(project: Project, sb3: Sb3, json: SerializedSprite) {
     const sprite = new Sprite(json.name);
-    sprite.deserialize(json);
+    await sprite.deserialize(project, sb3, json);
     return sprite;
   }
 
@@ -76,16 +77,16 @@ export class Sprite extends Target {
   getRotationStyle(): "all around" | "left-right" | "don't rotate" { return this.rotationStyle }
   setRotationStyle(rotationStyle: "all around" | "left-right" | "don't rotate"): this { this.rotationStyle = rotationStyle; return this }
 
-  deserialize(json: SerializedSprite) {
+  protected async deserialize(project: Project, sb3: Sb3, json: SerializedSprite) {
     this.setName(json.name);
-    this.getVariables().deserialize(json.variables);
-    // this.getLists().deserialize(json.lists);
-    // this.getBroadcasts().deserialize(json.broadcasts);
-    // this.getBlocks().deserialize(json.blocks);
-    // this.getComments().deserialize(json.comments);
-    // this.getCostumes().deserialize(json.costumes);
+    this.variables = VariableStore.fromSb3(project, sb3, json.variables);
+    // this.getLists().deserialize(project, sb3, json.lists);
+    // this.getBroadcasts().deserialize(project, sb3, json.broadcasts);
+    // this.getBlocks().deserialize(project, sb3, json.blocks);
+    // this.getComments().deserialize(project, sb3, json.comments);
+    this.costumes = await TargetCostumeStore.fromSb3(project, sb3, json.costumes);
     this.getCostumes().setSelectedIndex(json.currentCostume);
-    this.getSounds().deserialize(json.sounds);
+    this.sounds = await SoundStore.fromSb3(project, sb3, json.sounds);
     this.setLayer(json.layerOrder);
     this.setVolumeMultiplier(json.volume);
     this.setPosition(new Vector2(json.x, json.y));

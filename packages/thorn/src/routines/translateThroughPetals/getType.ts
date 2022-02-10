@@ -123,6 +123,25 @@ export function getType(node: ValueTreeNode | Input | Variable | List | { name: 
   if (node instanceof MethodCallNode) {
     const ref = node.getBaseValue();
 
+    if (ref.type === "propertyReference") {
+      const base = ref.getParent();
+      let baseType = getType(base, ctx);
+
+      while (baseType.isHeapReferenceType() || baseType.isReferenceType()) {
+        baseType = baseType.dereference();
+      }
+
+      if (baseType.isStructureType() && baseType.getName().length > 0) {
+        const klass = ctx.getClass(baseType.getName());
+
+        if (klass === undefined) {
+           throw new Error("Expected class; didn't get one");
+        }
+
+        return klass.getMethods()[ref.getProperty()].method.getReturnType();
+      }
+    }
+
     if (ref.type !== "variableReference") throw new Error("methodCallNode must have a variableReference as base value");
 
     const type = ctx.getType(ref.getName());

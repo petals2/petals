@@ -1,6 +1,7 @@
 import { WaveFileParser } from "wavefile-parser";
 import { fromBuffer } from "file-type";
 import { Asset } from "../asset";
+import { Project, Sb3 } from "..";
 
 export type SerializedSound = {
   // asset generic
@@ -21,7 +22,7 @@ export class Sound extends Asset {
   protected sampleRate: number;
   protected sampleCount: number;
 
-  static fromJson(json: SerializedSound) {
+  static async fromSb3(project: Project, sb3: Sb3, json: SerializedSound) {
     const sound = new Sound(json.name, json.dataFormat as "mp3"|"wav", Buffer.alloc(0)); // todo: uh-oh
     return sound;
   }
@@ -113,7 +114,7 @@ export class Sound extends Asset {
     return this.getDuration() / 1000;
   }
 
-  deserialize(json: SerializedSound) {
+  protected async deserialize(json: SerializedSound) {
     
   }
 

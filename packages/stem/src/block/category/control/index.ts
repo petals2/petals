@@ -1,5 +1,6 @@
 import { CreateCloneOfMenu as _CreateCloneOfMenu } from "./createCloneOfMenu";
 import { CreateCloneOf as _CreateCloneOf } from "./createCloneOf";
+import { DeleteThisClone as _DeleteThisClone } from "./deleteThisClone";
 import { RepeatUntil as _RepeatUntil } from "./repeatUntil";
 import { WaitUntil as _WaitUntil } from "./waitUntil";
 import { Forever as _Forever } from "./forever";
@@ -14,6 +15,7 @@ import { If as _If } from "./if";
 export namespace Control {
   export const CreateCloneOf = _CreateCloneOf;
   export const CreateCloneOfMenu = _CreateCloneOfMenu;
+  export const DeleteThisClone = _DeleteThisClone;
   export const Forever = _Forever;
   export const If = _If;
   export const IfElse = _IfElse;

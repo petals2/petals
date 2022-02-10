@@ -1,12 +1,13 @@
 import { Target } from "./target";
-import { SerializedBlockStore } from "../block/store";
-import { SerializedBroadcastStore } from "../broadcast/store";
-import { SerializedCommentStore } from "../comment/store";
-import { SerializedCostumeStore } from "../costume/store/store";
-import { SerializedListStore } from "../list/store";
-import { SerializedSoundStore } from "../sound/store";
-import { SerializedVariableStore } from "../variable/store";
+import { BlockStore, SerializedBlockStore } from "../block/store";
+import { BroadcastStore, SerializedBroadcastStore } from "../broadcast/store";
+import { CommentStore, SerializedCommentStore } from "../comment/store";
+import { CostumeStore, SerializedCostumeStore } from "../costume/store/store";
+import { ListStore, SerializedListStore } from "../list/store";
+import { SerializedSoundStore, SoundStore } from "../sound/store";
+import { SerializedVariableStore, VariableStore } from "../variable/store";
 import type { Sprite } from "./sprite";
+import { Project, Sb3, TargetCostumeStore } from "..";
 
 export type SerializedStage = {
   // target generic
@@ -35,9 +36,9 @@ export class Stage extends Target {
   private videoTransparency: number = 0.5;
   private videoState: "on" | "off" | "on-flipped" = "off";
 
-  static fromJson(json: SerializedStage) {
+  static async fromSb3(project: Project, sb3: Sb3, json: SerializedStage) {
     const stage = new Stage();
-    stage.deserialize(json);
+    await stage.deserialize(project, sb3, json);
     return stage;
   }
 
@@ -53,15 +54,15 @@ export class Stage extends Target {
   getVideoState(): "on" | "off" | "on-flipped" { return this.videoState }
   setVideoState(videoState: "on" | "off" | "on-flipped"): this { this.videoState = videoState; return this }
 
-  deserialize(json: SerializedStage) {
-    this.getVariables().deserialize(json.variables);
-    // this.getLists().deserialize(json.lists);
-    // this.getBroadcasts().deserialize(json.broadcasts);
-    // this.getBlocks().deserialize(json.blocks);
-    // this.getComments().deserialize(json.comments);
-    // this.getCostumes().deserialize(json.costumes);
+  protected async deserialize(project: Project, sb3: Sb3, json: SerializedStage) {
+    this.variables = VariableStore.fromSb3(project, sb3, json.variables);
+    // this.lists = ListStore.fromSb3(project, sb3, json.lists);
+    // this.broadcasts = BroadcastStore.fromSb3(project, sb3, json.broadcasts);
+    this.blocks = BlockStore.fromSb3(project, sb3, json.blocks);
+    this.comments = CommentStore.fromSb3(project, sb3, json.comments);
+    this.costumes = await TargetCostumeStore.fromSb3(project, sb3, json.costumes);
     this.getCostumes().setSelectedIndex(json.currentCostume);
-    this.getSounds().deserialize(json.sounds);
+    this.sounds = await SoundStore.fromSb3(project, sb3, json.sounds);
     this.setLayer(json.layerOrder);
     this.setVolumeMultiplier(json.volume);
     this.setTempo(json.tempo);

@@ -1,3 +1,4 @@
+import { Project, Sb3 } from "..";
 import { Variable } from "./variable";
 
 export type SerializedVariableStore = Record<string, [name: string, values: string | number | boolean]>
@@ -5,9 +6,9 @@ export type SerializedVariableStore = Record<string, [name: string, values: stri
 export class VariableStore {
   private _store: Map<string, Variable> = new Map();
 
-  static fromJson(json: SerializedVariableStore) {
+  static fromSb3(project: Project, sb3: Sb3, json: SerializedVariableStore) {
     const variableStore = new VariableStore();
-    variableStore.deserialize(json);
+    variableStore.deserialize(project, sb3, json);
     return variableStore;
   }
 
@@ -67,7 +68,7 @@ export class VariableStore {
     this._store.delete(id);
   }
 
-  deserialize(json: SerializedVariableStore) {
+   protected deserialize(project: Project, sb3: Sb3, json: SerializedVariableStore) {
     const jsonEntries = Object.entries(json);
     for (const [ variableId, [ variableName, variableValue ] ] of jsonEntries) {
       this._store.set(variableId, new Variable(variableName, variableValue));

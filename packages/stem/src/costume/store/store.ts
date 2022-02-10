@@ -1,9 +1,20 @@
+import { Project, Sb3 } from "../../project";
 import { Costume, SerializedCostume } from "../costume";
 
 export type SerializedCostumeStore = SerializedCostume[];
 
 export class CostumeStore {
   private costumes: Costume[] = [];
+  
+  static async fromSb3(project: Project, sb3: Sb3, json: SerializedCostumeStore) {
+    const costumeStore = new CostumeStore;
+    await costumeStore.deserialize(project, sb3, json);
+    return costumeStore;
+  }
+
+  protected async deserialize(project: Project, sb3: Sb3, json: SerializedCostumeStore) {
+    this.costumes = await Promise.all(json.map(json => Costume.fromSb3(project, sb3, json)));
+  }
 
   serialize(): SerializedCostumeStore {
     return this.costumes.map(costume => costume.serialize());

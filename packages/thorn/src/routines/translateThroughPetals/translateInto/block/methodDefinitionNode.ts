@@ -15,7 +15,7 @@ import { StructTool } from "../../structTool";
 import { VariableReference } from "../../reference/variable/abstract";
 
 export default function (node: MethodDefinitionNode, target: Target, thread: Block, context: Context): void {
-  let isRecursive = methodIsRecursive(node);
+  let isRecursive = methodIsRecursive(node, context);
 
   const args = node.getArguments()
     .map(argument => (<const>{
