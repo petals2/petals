@@ -1,4 +1,4 @@
-import { Target } from ".";
+import { Target } from "./target";
 import { SerializedBlockStore } from "../block/store";
 import { SerializedBroadcastStore } from "../broadcast/store";
 import { SerializedCommentStore } from "../comment/store";

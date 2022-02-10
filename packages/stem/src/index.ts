@@ -34,6 +34,6 @@ export * from "./id";
 export * from "./list";
 export * from "./project";
 export * from "./sound";
-export * from "./target";
+export * from "./target/target";
 export * from "./types";
 export * from "./variable";
