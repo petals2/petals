@@ -1,4 +1,4 @@
-import { List } from "../../list";
+import { List } from "../../list/list";
 
 export class ListField {
   constructor(private readonly list: List) {}

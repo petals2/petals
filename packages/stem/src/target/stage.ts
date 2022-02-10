@@ -1,8 +1,8 @@
-import { Target } from ".";
+import { Target } from "./target";
 import { SerializedBlockStore } from "../block/store";
 import { SerializedBroadcastStore } from "../broadcast/store";
 import { SerializedCommentStore } from "../comment/store";
-import { SerializedCostumeStore } from "../costume/store";
+import { SerializedCostumeStore } from "../costume/store/store";
 import { SerializedListStore } from "../list/store";
 import { SerializedSoundStore } from "../sound/store";
 import { SerializedVariableStore } from "../variable/store";

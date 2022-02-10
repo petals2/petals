@@ -1,5 +1,5 @@
 import { Input } from "../../input";
-import { Block } from "../..";
+import { Block } from "../../block";
 import { BlockKind } from "../../kinds";
 
 export class WaitUntil extends BlockKind.Stack<"control_wait_until"> {

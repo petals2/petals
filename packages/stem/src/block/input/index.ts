@@ -1,4 +1,4 @@
-import { Block } from "..";
+import { Block } from "../block";
 import { AngleInput } from "./angle";
 import { BroadcastInput } from "./broadcast";
 import { ColorInput } from "./color";

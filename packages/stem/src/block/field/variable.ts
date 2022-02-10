@@ -1,4 +1,3 @@
-import { List } from "../../list";
 import { Variable } from "../../variable";
 
 export class VariableField {

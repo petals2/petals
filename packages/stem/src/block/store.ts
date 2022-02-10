@@ -1,4 +1,4 @@
-import { Block, SerializedBlock } from ".";
+import { Block, SerializedBlock } from "./block";
 import { Argument } from "./category/argument";
 import { Procedures } from "./category/procedures";
 import * as esprima from "esprima";

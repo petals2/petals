@@ -2,11 +2,11 @@ import type { SerializedVariableStore } from "../variable/store";
 import type { SerializedListStore } from "../list/store";
 import { Vector2 } from "../types/vector2";
 import type { Stage } from "./stage";
-import { Target } from ".";
+import { Target } from "./target";
 import { SerializedBroadcastStore } from "../broadcast/store";
 import { SerializedBlockStore } from "../block/store";
 import { SerializedCommentStore } from "../comment/store";
-import { SerializedCostumeStore } from "../costume/store";
+import { SerializedCostumeStore } from "../costume/store/store";
 import { SerializedSoundStore } from "../sound/store";
 
 export type SerializedSprite = {

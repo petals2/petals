@@ -1,5 +1,5 @@
 import { ListField } from "../../field/list";
-import { List } from "../../../list";
+import { List } from "../../../list/list";
 import { BlockKind } from "../../kinds";
 
 export class DeleteAllOfList extends BlockKind.Stack<"data_deletealloflist"> {
