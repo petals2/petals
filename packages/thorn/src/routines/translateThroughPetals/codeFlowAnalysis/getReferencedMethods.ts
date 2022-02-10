@@ -43,7 +43,7 @@ export function getReferencedMethods(context: Context, ...codeBlock: TreeNode[])
             throw new Error("Method call base must be variable reference or of class type");
           }
 
-          return "___" + t.getName() + "_" + node.getBaseValue()
+          return ["___" + t.getName() + "_" + node.getBaseValue()];
         }
 
         methods.push((node.getBaseValue() as VariableReferenceNode).getName());
