@@ -1,5 +1,5 @@
 import { ListField } from "../../field/list";
-import { List } from "../../../list";
+import { List } from "../../../list/list";
 import { BlockKind } from "../../kinds";
 
 export class ShowList extends BlockKind.Stack<"data_showlist"> {

@@ -1,4 +1,4 @@
-import { SerializedBlock } from "../..";
+import { SerializedBlock } from "../../block";
 import { Input } from "../../input";
 import { BlockKind } from "../../kinds";
 import { Prototype } from "./prototype";

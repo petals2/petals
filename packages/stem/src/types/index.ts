@@ -1,1 +1,2 @@
-export type Serializable<T> = T | { serialize(): T };
+export * from "./serializable";
+export * from "./vector2";

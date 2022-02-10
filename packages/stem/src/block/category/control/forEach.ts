@@ -1,6 +1,6 @@
 import { NumberInput } from "../../input/number";
 import { Input } from "../../input";
-import { Block } from "../..";
+import { Block } from "../../block";
 import { Variable } from "../../../variable";
 import { VariableField } from "../../field/variable";
 import { BlockKind } from "../../kinds";

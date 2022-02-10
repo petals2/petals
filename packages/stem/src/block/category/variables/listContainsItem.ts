@@ -1,4 +1,4 @@
-import { List } from "../../../list";
+import { List } from "../../../list/list";
 import { ListField } from "../../field/list";
 import { Input } from "../../input";
 import { StringInput } from "../../input/string";

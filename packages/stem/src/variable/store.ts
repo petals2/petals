@@ -1,4 +1,4 @@
-import { Variable } from ".";
+import { Variable } from "./variable";
 
 export type SerializedVariableStore = Record<string, [name: string, values: string | number | boolean]>
 

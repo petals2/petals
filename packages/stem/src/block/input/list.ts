@@ -1,4 +1,4 @@
-import { List } from "../../list";
+import { List } from "../../list/list";
 
 export type SerializedListInput = [13, string, string];
 

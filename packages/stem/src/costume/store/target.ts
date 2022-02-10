@@ -1,4 +1,4 @@
-import { CostumeStore } from ".";
+import { CostumeStore } from "./store";
 
 export class TargetCostumeStore extends CostumeStore {
   private selectedIndex: number = 0;

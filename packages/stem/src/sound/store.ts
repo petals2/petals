@@ -1,4 +1,4 @@
-import { SerializedSound, Sound } from ".";
+import { SerializedSound, Sound } from "./sound";
 
 export type SerializedSoundStore = SerializedSound[];
 

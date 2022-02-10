@@ -1,4 +1,4 @@
-import { List } from "."
+import { List } from "./list"
 
 export type SerializedListStore = Record<string, [name: string, values: string[]]>
 

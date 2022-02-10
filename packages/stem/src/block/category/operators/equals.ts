@@ -1,4 +1,4 @@
-import { Block } from "../..";
+import { Block } from "../../block";
 import { Input } from "../../input";
 import { NumberInput } from "../../input/number";
 import { BlockKind } from "../../kinds";

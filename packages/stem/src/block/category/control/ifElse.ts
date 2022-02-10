@@ -1,5 +1,5 @@
 import { Input } from "../../input";
-import { Block } from "../..";
+import { Block } from "../../block";
 import { BlockKind } from "../../kinds";
 
 export class IfElse extends BlockKind.E<"control_if_else"> {

@@ -1,4 +1,4 @@
-import { Block, SerializedBlock } from "../..";
+import { Block, SerializedBlock } from "../../block";
 import { Argument } from "../argument";
 import { ID } from "../../../id";
 import { Input } from "../../input";

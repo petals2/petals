@@ -1,4 +1,4 @@
-import { Comment, SerializedComment } from "."
+import { Comment, SerializedComment } from "./comment"
 import { Vector2 } from "../types/vector2";
 
 export type SerializedCommentStore = Record<string, SerializedComment>;

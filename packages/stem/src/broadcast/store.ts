@@ -1,4 +1,4 @@
-import { Broadcast } from ".";
+import { Broadcast } from "./broadcast";
 
 export type SerializedBroadcastStore = Record<string, string>;
 
