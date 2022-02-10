@@ -18,6 +18,8 @@ import { VariableHeapDereference } from "./heapDereference";
 import { ListApi } from "../../api/list";
 import { VariableIndexReference } from "./indexReference";
 import { Target, Block } from "petals-stem";
+import { NewResultReference } from "./new";
+import { HeapReferenceType } from "../../../../types/ast/type";
 
 export function getVariableReference(value: ValueTreeNode, target: Target, thread: Block, context: Context): VariableReference {
   if (value.type === "parenthesisedExpressionNode") return getVariableReference(value.getContents(), target, thread, context);
@@ -93,6 +95,7 @@ export function getVariableReference(value: ValueTreeNode, target: Target, threa
   if (value.type === "methodCall") return new MethodCallResultReference(value);
   if (value.type === "heapCopy") return new VariableHeapCopyReference(value);
   if (value.type === "indexReference") return new VariableIndexReference(value);
+  if (value.type === "new") return new NewResultReference(new HeapReferenceType(context.getStruct("___" + value.getClass() + "_struct"), "global"), value)
 
   throw new Error("Cannot get variable reference for " + value.type);
 }

@@ -20,6 +20,7 @@ import translateWhileBlock from "./whileBlock";
 import translateFreeBlock from "./freeBlock";
 import translateForBlock from "./forBlock";
 import translateIfBlock from "./ifBlock";
+import { getVariableReference } from "../../reference/variable";
 
 export function translateNodeListIntoBlock(node: TreeNode[], target: Target, ctx: Context): Block {
   ctx.enter();
@@ -53,6 +54,9 @@ export function translateNodeIntoBlock(node: TreeNode, target: Target, ctx: Cont
     case "forNode": translateForBlock(node, target, thread, ctx); return thread;
     case "ifBlock": translateIfBlock(node, target, thread, ctx); return thread;
     case "free": translateFreeBlock(node, target, thread, ctx); return thread;
+    case "new": 
+      getVariableReference(node, target, thread, ctx).performSideEffects(target, thread, ctx);
+      return thread;
   }
 
   throw new Error("Cannot translate node into block: " + node.type);

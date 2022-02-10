@@ -22,6 +22,8 @@ import { Control } from "petals-stem/dist/src/block/category/control";
 import { StringInput } from "petals-stem/dist/src/block/input/string";
 import { getType } from "./getType";
 import { FunctionArgumentReference } from "./reference/variable/functionArgument";
+import { ClassDefinitionNode } from "../../types/ast/nodes/classDefinitionNode";
+import { C } from "petals-stem/dist/src/block/kinds/c";
 
 export type HeapReferenceData = { heap: ListReference, heapIndexes: ListReference, options: HeapOptions, mallocReturn: VariableReference, malloc: InstanceType<typeof Procedures.Definition>, free: InstanceType<typeof Procedures.Definition> };
 
@@ -29,8 +31,8 @@ export class Context {
   protected variableStack: Map<string, Variable | List>[] = [];
   protected listStack: Map<string, List>[] = [];
   protected methodArgsStack: { name: string, type: Type }[][] = [];
-  protected currentClass: string | undefined;
-  protected classes: string[] = [];
+  protected currentClass: ClassDefinitionNode | undefined;
+  protected classes: ClassDefinitionNode[] = [];
 
   protected typeStore: Map<List | Variable | string, Type> = new Map();
   protected heapStore: Map<string, HeapReferenceData> = new Map();
@@ -61,7 +63,7 @@ export class Context {
     return this.typeStore.get(item);
   }
 
-  enterClass(klass: string): void {
+  enterClass(klass: ClassDefinitionNode): void {
     this.currentClass = klass;
     this.classes.push(klass);
   }
@@ -71,11 +73,15 @@ export class Context {
   }
 
   getCurrentClass(): string | undefined {
-    return this.currentClass
+    return this.currentClass?.getName()
   }
 
   hasClass(klass: string): boolean {
-    return this.classes.includes(klass);
+    return this.classes.find(v => v.getName() == klass) !== undefined;
+  }
+
+  getClass(klass: string): ClassDefinitionNode | undefined {
+    return this.classes.find(v => v.getName() == klass);
   }
 
   enter() {

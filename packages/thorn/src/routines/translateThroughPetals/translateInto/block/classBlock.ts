@@ -8,9 +8,9 @@ import translateMethodDefinitionNode from "./methodDefinitionNode";
 import { MethodDefinitionNode } from "../../../../types/ast/nodes/methodDefinition";
 
 export default function (node: ClassDefinitionNode, target: Target, thread: Block, ctx: Context): void {
-  ctx.enterClass(node.getName());
+  ctx.enterClass(node);
 
-  const struct = new StructureType(new Map(Object.entries(node.getFields()).map(e => [e[0], e[1].type])));
+  const struct = new StructureType(node.getName(), new Map(Object.entries(node.getFields()).map(e => [e[0], e[1].type])));
 
   typeApplyContext(struct, ctx);
 

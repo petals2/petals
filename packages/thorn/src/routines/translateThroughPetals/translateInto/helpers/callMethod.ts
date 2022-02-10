@@ -4,6 +4,7 @@ import { Input } from "petals-stem/dist/src/block/input";
 import { VariableInput } from "petals-stem/dist/src/block/input/variable";
 import { Target } from "petals-stem/dist/src/target";
 import { MethodCallNode } from "../../../../types/ast/nodes/methodCall";
+import { VariableReferenceNode } from "../../../../types/ast/nodes/variableReference";
 import { ListApi } from "../../api/list";
 import { Context } from "../../context";
 import { getType } from "../../getType";
@@ -19,12 +20,36 @@ export function call(node: MethodCallNode, target: Target, thread: Block, contex
 
   if (base.type !== "variableReference") {
     if (base.type === "propertyReference") {
-      const parentType = getType(base.getParent(), context);
+      let parentType = getType(base.getParent(), context);
 
       if (parentType.isListType()) {
         const parent = getListReference(base.getParent(), target, thread, context);
 
         return ListApi.callListApi(parent, base.getProperty(), node, target, thread, context)
+      }
+
+      const parent = base.getParent();
+
+      while (parentType.isHeapReferenceType() || parentType.isReferenceType()) parentType = parentType.dereference();
+
+      if (parentType.isStructureType() && parent.type === "variableReference" && context.hasClass(parentType.getName())) {
+        const methods = context.getClass(parentType.getName())!.getMethods();
+
+        if (methods[base.getProperty()] === undefined) {
+          throw new Error("Class " + parentType.getName() + " does not have method " + base.getProperty());
+        }
+
+        const method = methods[base.getProperty()];
+
+        if ((method.publicity === "private" || method.publicity === "protected") && context.getCurrentClass() !== parentType.getName()) {
+          throw new Error("Cannot access " + method.publicity + " method " + base.getProperty() + " outside of class");
+        }
+
+        const args = node.getArguments();
+
+        args.unshift(base.getParent());
+
+        return call(new MethodCallNode(new VariableReferenceNode("___" + parentType.getName() + "_" + base.getProperty()), args), target, thread, context);
       }
     }
 
@@ -38,9 +63,9 @@ export function call(node: MethodCallNode, target: Target, thread: Block, contex
 
     if (arg instanceof ListReference) throw new Error("Cannot pass lists into malloc");
 
-    let call = target.getBlocks().createBlock(Procedures.Call, context.getHeap("global").malloc.getPrototype(), Input.shadowed(arg.getValue(target, thread, context)));
+    let call2 = target.getBlocks().createBlock(Procedures.Call, context.getHeap("global").malloc.getPrototype(), Input.shadowed(arg.getValue(target, thread, context)));
 
-    thread.getTail().append(call.getHead());
+    thread.getTail().append(call2.getHead());
 
     return context.getHeap("global").mallocReturn;
   }
@@ -55,7 +80,7 @@ export function call(node: MethodCallNode, target: Target, thread: Block, contex
 
   let argValues = (args as (BooleanReference | VariableReference)[]).map(arg => Input.shadowed(arg.getValue(target, thread, context)));
 
-  let call = target.getBlocks().createBlock(Procedures.Call, def.getPrototype(), ...argValues);
+  let call3 = target.getBlocks().createBlock(Procedures.Call, def.getPrototype(), ...argValues);
 
   args.forEach((v, i) => {
     if (v instanceof VariableHeapCopyReference) {
@@ -64,7 +89,7 @@ export function call(node: MethodCallNode, target: Target, thread: Block, contex
       if (heap === undefined)
         throw new Error("Failed to free v? This should never happen, since arg.getValue is always called before this.");
 
-      call = call.getTail().append(target.getBlocks().createBlock(Procedures.Call, heap.free.getPrototype(), argValues[i]));
+      call3 = call3.getTail().append(target.getBlocks().createBlock(Procedures.Call, heap.free.getPrototype(), argValues[i]));
     }
   })
 
@@ -73,10 +98,10 @@ export function call(node: MethodCallNode, target: Target, thread: Block, contex
   if (callIdxIndex !== -1) {
     const id = def.getPrototype().getArgumentIds()[callIdxIndex];
 
-    (call as any).setInput(id, Input.shadowed(new VariableInput(target.getVariables().getVariableByName("___" + methodName + "_idx"))))
+    (call3 as any).setInput(id, Input.shadowed(new VariableInput(target.getVariables().getVariableByName("___" + methodName + "_idx"))))
   }
 
-  thread.getTail().append(call.getHead());
+  thread.getTail().append(call3.getHead());
 
   return context.getReturnVariableForMethod(methodName);
 }

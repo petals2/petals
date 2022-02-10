@@ -311,8 +311,11 @@ export class UnionType extends Type {
 
 export class StructureType extends Type {
   constructor(
+    protected readonly name: string,
     protected values: Map<string, Type>,
   ) { super() }
+
+  getName() { return this.name }
 
   exactEquals(other: Type): boolean {
     if (!other.isStructureType()) return false;
@@ -371,7 +374,7 @@ export class StructureType extends Type {
       if (contents.nextIs({ type: TokenType.Separator, value: "," }, { type: TokenType.Separator, value: ";" })) contents.read();
     }
     
-    return new StructureType(v);
+    return new StructureType("", v);
   }
 }
 

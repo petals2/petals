@@ -26,6 +26,8 @@ export default function (node: MethodDefinitionNode, target: Target, thread: Blo
 
   const functionIdxCount = target.getVariables().createVariable("___" + node.getName() + "_idx", 0);
 
+  console.log(functionIdxCount);
+
   context.setType(functionIdxCount, new NumberType());
 
   if (isRecursive)
