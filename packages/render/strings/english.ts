@@ -11,6 +11,7 @@ export const English: Record<Uppercase<Opcodes>, string> = {
   "CONTROL_WHILE": "while %iCONDITION;%sSUBSTACK;",
   "CONTROL_FOR_EACH": "for each %fVARIABLE; in %iVALUE;",
   "CONTROL_CREATE_CLONE_OF": "create clone of %iCLONE_OPTION;",
+  "CONTROL_DELETE_THIS_CLONE": "delete this clone",
   "DATA_SETVARIABLETO": "set %fVARIABLE; to %iVALUE;",
   "DATA_CHANGEVARIABLEBY": "change %fVARIABLE; by %iVALUE;",
   "DATA_SHOWVARIABLE": "show variable %fVARIABLE;",

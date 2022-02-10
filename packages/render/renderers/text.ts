@@ -9,10 +9,11 @@ import chalk from "chalk";
 import { BroadcastInput } from "petals-stem/dist/src/block/input/broadcast";
 import { ColorInput } from "petals-stem/dist/src/block/input/color";
 import { StringsManager } from "../strings/manager";
-import { Field, StringInput } from "petals-stem";
+import { Field } from "petals-stem";
 import { VariableField } from "petals-stem/dist/src/block/field/variable";
 import { ListField } from "petals-stem/dist/src/block/field/list";
 import { BroadcastField } from "petals-stem/dist/src/block/field/broadcast";
+import { StringInput } from "petals-stem/src/block/input/string";
 
 export class TextRenderer extends Renderer<string> {
   private chalk: InstanceType<typeof chalk.Instance>;
