@@ -8,7 +8,8 @@ import { SerializedBlockStore } from "../block/store";
 import { SerializedCommentStore } from "../comment/store";
 import { CostumeStore, SerializedCostumeStore } from "../costume/store/store";
 import { SerializedSoundStore, SoundStore } from "../sound/store";
-import { Project, Sb3, TargetCostumeStore } from "..";
+import { Project, TargetCostumeStore } from "..";
+import { ProjectReference } from "../project/projectReference";
 
 export type SerializedSprite = {
   // target generic
@@ -43,9 +44,9 @@ export class Sprite extends Target {
   protected draggable: boolean = false;
   protected rotationStyle: "all around" | "left-right" | "don't rotate" = "all around";
 
-  static async fromSb3(project: Project, sb3: Sb3, json: SerializedSprite) {
+  static async fromReference(project: Project, reference: ProjectReference, json: SerializedSprite) {
     const sprite = new Sprite(json.name);
-    await sprite.deserialize(project, sb3, json);
+    await sprite.deserialize(project, reference, json);
     return sprite;
   }
 
@@ -77,16 +78,16 @@ export class Sprite extends Target {
   getRotationStyle(): "all around" | "left-right" | "don't rotate" { return this.rotationStyle }
   setRotationStyle(rotationStyle: "all around" | "left-right" | "don't rotate"): this { this.rotationStyle = rotationStyle; return this }
 
-  protected async deserialize(project: Project, sb3: Sb3, json: SerializedSprite) {
+  protected async deserialize(project: Project, reference: ProjectReference, json: SerializedSprite) {
     this.setName(json.name);
-    this.variables = VariableStore.fromSb3(project, sb3, json.variables);
-    // this.getLists().deserialize(project, sb3, json.lists);
-    // this.getBroadcasts().deserialize(project, sb3, json.broadcasts);
-    // this.getBlocks().deserialize(project, sb3, json.blocks);
-    // this.getComments().deserialize(project, sb3, json.comments);
-    this.costumes = await TargetCostumeStore.fromSb3(project, sb3, json.costumes);
+    this.variables = VariableStore.fromReference(project, reference, json.variables);
+    // this.getLists().deserialize(project, reference, json.lists);
+    // this.getBroadcasts().deserialize(project, reference, json.broadcasts);
+    // this.getBlocks().deserialize(project, reference, json.blocks);
+    // this.getComments().deserialize(project, reference, json.comments);
+    this.costumes = await TargetCostumeStore.fromReference(project, reference, json.costumes);
     this.getCostumes().setSelectedIndex(json.currentCostume);
-    this.sounds = await SoundStore.fromSb3(project, sb3, json.sounds);
+    this.sounds = await SoundStore.fromReference(project, reference, json.sounds);
     this.setLayer(json.layerOrder);
     this.setVolumeMultiplier(json.volume);
     this.setPosition(new Vector2(json.x, json.y));

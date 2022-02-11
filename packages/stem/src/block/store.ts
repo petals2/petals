@@ -4,7 +4,8 @@ import { Procedures } from "./category/procedures";
 import * as esprima from "esprima";
 import { ID } from "../id";
 import { Input } from "./input";
-import { Project, Sb3 } from "..";
+import { Project } from "..";
+import { ProjectReference } from "../project/projectReference";
 
 export type SerializedBlockStore = Record<string, SerializedBlock>;
 
@@ -12,9 +13,9 @@ export class BlockStore {
   private _store: Map<string, Block> = new Map();
   private _customBlockRefs: Map<string, InstanceType<typeof Procedures.Prototype>> = new Map();
 
-  static fromSb3(project: Project, sb3: Sb3, json: SerializedBlockStore) {
+  static fromReference(project: Project, reference: ProjectReference, json: SerializedBlockStore) {
     const blockStore = new BlockStore;
-    blockStore.deserialize(project, sb3, json);
+    blockStore.deserialize(project, reference, json);
     return blockStore;
   }
 
@@ -209,7 +210,7 @@ export class BlockStore {
     return (cursor.getHead() as InstanceType<typeof Procedures.Definition>);
   }
 
-  deserialize(project: Project, sb3: Sb3, json: SerializedBlockStore) {
+  deserialize(project: Project, reference: ProjectReference, json: SerializedBlockStore) {
     const blockEntries = Object.entries(json);
     for (const [ blockId, blockJson ] of blockEntries) {
       

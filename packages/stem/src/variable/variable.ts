@@ -8,6 +8,8 @@ export class Variable {
     protected value: string | number | boolean,
   ) {}
 
+  isCloudVariable(): this is CloudVariable { return false }
+
   getName(): string { return this.name }
   setName(name: string): this { this.name = name; return this }
 
@@ -15,6 +17,10 @@ export class Variable {
   setValue(value: string | number | boolean): this { this.value = value; return this }
 
   getId(): string { return this.id }
+}
+
+export class CloudVariable extends Variable {
+  isCloudVariable(): this is CloudVariable { return true }
 }
 
 

@@ -69,6 +69,8 @@ export class StructLiteralReference extends KnownListContentsReference {
     while (givenChildType.isReferenceType()) givenChildType = givenChildType.dereference();
     while (expectedChildType.isReferenceType()) expectedChildType = expectedChildType.dereference();
 
+    console.log({ givenChildType, expectedChildType });
+
     if (!givenChildType.extends(expectedChildType)) {
       throw new Error("Struct passed unexpected type for path: <" + path.join(".") + ">");
     }

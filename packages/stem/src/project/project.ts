@@ -1,6 +1,6 @@
 import JSZip from "jszip";
-import { Sb3 } from ".";
 import { SerializedTargetStore, TargetStore } from "../target/store";
+import { ProjectReference } from "./projectReference";
 import { ProjectMetadata } from "./types";
 
 export type SerializedProject = {
@@ -14,13 +14,16 @@ export class Project {
   private metadata: ProjectMetadata;
   private targetStore: TargetStore = new TargetStore();
 
-  static async fromSb3(sb3: Sb3, json: SerializedProject) {
+  static async fromReference(reference: ProjectReference) {
+    const json = await reference.getJson();
+
     const project = new Project(
       json.meta.agent,
       json.meta.vm,
       json.meta.semver
     );
-    await project.deserialize(sb3, json);
+
+    await project.deserialize(reference, json);
     return project;
   }
 
@@ -35,12 +38,12 @@ export class Project {
   getMetadata(): ProjectMetadata { return this.metadata }
   getTargets(): TargetStore { return this.targetStore }
 
-  protected async deserialize(sb3: Sb3, json: SerializedProject) {
+  protected async deserialize(reference: ProjectReference, json: SerializedProject) {
     this.metadata.agent = json.meta.agent;
     this.metadata.vm = json.meta.vm;
     this.metadata.semver = json.meta.semver;
 
-    this.targetStore = await TargetStore.fromSb3(this, sb3, json.targets);
+    this.targetStore = await TargetStore.fromReference(this, reference, json.targets);
   }
 
   serialize(): SerializedProject {

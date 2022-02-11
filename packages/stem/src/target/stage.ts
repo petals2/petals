@@ -7,7 +7,8 @@ import { ListStore, SerializedListStore } from "../list/store";
 import { SerializedSoundStore, SoundStore } from "../sound/store";
 import { SerializedVariableStore, VariableStore } from "../variable/store";
 import type { Sprite } from "./sprite";
-import { Project, Sb3, TargetCostumeStore } from "..";
+import { Project, TargetCostumeStore } from "..";
+import { ProjectReference } from "../project/projectReference";
 
 export type SerializedStage = {
   // target generic
@@ -36,9 +37,9 @@ export class Stage extends Target {
   private videoTransparency: number = 0.5;
   private videoState: "on" | "off" | "on-flipped" = "off";
 
-  static async fromSb3(project: Project, sb3: Sb3, json: SerializedStage) {
+  static async fromReference(project: Project, reference: ProjectReference, json: SerializedStage) {
     const stage = new Stage();
-    await stage.deserialize(project, sb3, json);
+    await stage.deserialize(project, reference, json);
     return stage;
   }
 
@@ -54,15 +55,15 @@ export class Stage extends Target {
   getVideoState(): "on" | "off" | "on-flipped" { return this.videoState }
   setVideoState(videoState: "on" | "off" | "on-flipped"): this { this.videoState = videoState; return this }
 
-  protected async deserialize(project: Project, sb3: Sb3, json: SerializedStage) {
-    this.variables = VariableStore.fromSb3(project, sb3, json.variables);
-    // this.lists = ListStore.fromSb3(project, sb3, json.lists);
-    // this.broadcasts = BroadcastStore.fromSb3(project, sb3, json.broadcasts);
-    this.blocks = BlockStore.fromSb3(project, sb3, json.blocks);
-    this.comments = CommentStore.fromSb3(project, sb3, json.comments);
-    this.costumes = await TargetCostumeStore.fromSb3(project, sb3, json.costumes);
+  protected async deserialize(project: Project, reference: ProjectReference, json: SerializedStage) {
+    this.variables = VariableStore.fromReference(project, reference, json.variables);
+    // this.lists = ListStore.fromReference(project, reference, json.lists);
+    // this.broadcasts = BroadcastStore.fromReference(project, reference, json.broadcasts);
+    this.blocks = BlockStore.fromReference(project, reference, json.blocks);
+    this.comments = CommentStore.fromReference(project, reference, json.comments);
+    this.costumes = await TargetCostumeStore.fromReference(project, reference, json.costumes);
     this.getCostumes().setSelectedIndex(json.currentCostume);
-    this.sounds = await SoundStore.fromSb3(project, sb3, json.sounds);
+    this.sounds = await SoundStore.fromReference(project, reference, json.sounds);
     this.setLayer(json.layerOrder);
     this.setVolumeMultiplier(json.volume);
     this.setTempo(json.tempo);

@@ -102,6 +102,7 @@ export function getListReference(value: ValueTreeNode, target: Target, thread: B
     let parentType = getType(parent, context);
 
     let path = [value.getProperty()];
+    let rawParentType = parentType;
 
     while (parentType.isReferenceType()) parentType = parentType.dereference();
 
@@ -142,7 +143,7 @@ export function getListReference(value: ValueTreeNode, target: Target, thread: B
       throw new Error("Cannot reference a struct member with a non-struct type");
     }
 
-    throw new Error("Cannot reference a property of a non-struct type");
+    throw new Error("Cannot reference a property of a non-struct type: "  + parentType.constructor.name);
   }
 
   if (value.type === "thisNode") {

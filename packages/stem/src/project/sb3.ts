@@ -1,25 +1,26 @@
 import JSZip from "jszip";
 import { SerializedProject } from "./project";
+import { ProjectReference } from "./projectReference";
 
-export class Sb3 {
-    static async fromSb3(buffer: Buffer) {
-        const zip = new JSZip(buffer);
+export class Sb3 implements ProjectReference {
+  static async fromReference(buffer: Buffer) {
+    const zip = new JSZip(buffer);
+  }
+
+  constructor(
+    private readonly json: SerializedProject,
+    private readonly zip: JSZip
+  ) { }
+
+  async getJson(): Promise<SerializedProject> {
+    return this.json;
+  }
+
+  async getAsset(fileName: string): Promise<Buffer | undefined> {
+    if (fileName === "project.json") {
+      throw new Error("Not a valid asset file!");
     }
 
-    constructor(
-        private readonly json: SerializedProject,
-        private readonly zip: JSZip
-    ) {}
-
-    getJson() {
-        return this.json;
-    }
-
-    getAsset(fileName: string) {
-        if (fileName === "project.json") {
-            throw new Error("Not a valid asset file!");
-        }
-
-        return this.zip.file(fileName)?.async("nodebuffer");
-    }
+    return await this.zip.file(fileName)?.async("nodebuffer");
+  }
 }

@@ -1,7 +1,8 @@
 import { WaveFileParser } from "wavefile-parser";
 import { fromBuffer } from "file-type";
 import { Asset } from "../asset";
-import { Project, Sb3 } from "..";
+import { Project } from "..";
+import { ProjectReference } from "../project/projectReference";
 
 export type SerializedSound = {
   // asset generic
@@ -22,8 +23,12 @@ export class Sound extends Asset {
   protected sampleRate: number;
   protected sampleCount: number;
 
-  static async fromSb3(project: Project, sb3: Sb3, json: SerializedSound) {
-    const sound = new Sound(json.name, json.dataFormat as "mp3"|"wav", Buffer.alloc(0)); // todo: uh-oh
+  static async fromReference(project: Project, reference: ProjectReference, json: SerializedSound) {
+    const el = await reference.getAsset(json.md5ext);
+
+    if (el === undefined) throw new Error("Missing asset: " + json.md5ext);
+
+    const sound = new Sound(json.name, json.dataFormat as "mp3"|"wav", el);
     return sound;
   }
 

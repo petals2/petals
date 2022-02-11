@@ -1,15 +1,16 @@
 import { Comment, SerializedComment } from "./comment"
 import { Vector2 } from "../types/vector2";
-import { Project, Sb3 } from "..";
+import { Project } from "..";
+import { ProjectReference } from "../project/projectReference";
 
 export type SerializedCommentStore = Record<string, SerializedComment>;
 
 export class CommentStore {
   private _store: Map<string, Comment> = new Map();
 
-  static fromSb3(project: Project, sb3: Sb3, json: SerializedCommentStore) {
+  static fromReference(project: Project, reference: ProjectReference, json: SerializedCommentStore) {
     const commentStore = new CommentStore;
-    commentStore.deserialize(project, sb3, json);
+    commentStore.deserialize(project, reference, json);
     return commentStore;
   }
 
@@ -43,10 +44,10 @@ export class CommentStore {
     this._store.delete(id);
   }
 
-  protected deserialize(project: Project, sb3: Sb3, json: SerializedCommentStore) {
+  protected deserialize(project: Project, reference: ProjectReference, json: SerializedCommentStore) {
     const entries = Object.entries(json);
     for (const [ commentId, commentJson ] of entries) {
-      this._store.set(commentId, Comment.fromSb3(project, sb3, commentJson));
+      this._store.set(commentId, Comment.fromReference(project, reference, commentJson));
     }
   }
 

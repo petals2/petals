@@ -1,6 +1,7 @@
-import { Project, Sb3 } from "..";
+import { Project } from "..";
 import { Block } from "../block/block";
 import { ID } from "../id";
+import { ProjectReference } from "../project/projectReference";
 import { Vector2 } from "../types/vector2";
 
 export type SerializedComment = {
@@ -20,9 +21,9 @@ export class Comment {
   protected block: Block | undefined;
   protected minimized: boolean = false;
 
-  static fromSb3(project: Project, sb3: Sb3, json: SerializedComment) {
+  static fromReference(project: Project, reference: ProjectReference, json: SerializedComment) {
     const comment = new Comment(new Vector2(json.x, json.y), json.text);
-    comment.deserialize(project, sb3, json);
+    comment.deserialize(project, reference, json);
     return comment;
   }
 
@@ -49,7 +50,7 @@ export class Comment {
 
   getId(): string { return this.id }
 
-   protected deserialize(project: Project, sb3: Sb3, json: SerializedComment) {
+  protected deserialize(project: Project, reference: ProjectReference, json: SerializedComment) {
     this.setHeight(json.height);
     this.setMinimized(json.minimized);
     this.setComment(json.text);

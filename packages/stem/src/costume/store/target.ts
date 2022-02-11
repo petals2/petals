@@ -1,13 +1,14 @@
 import { SerializedCostumeStore } from ".";
-import { Project, Sb3 } from "../..";
+import { Project } from "../..";
+import { ProjectReference } from "../../project/projectReference";
 import { CostumeStore } from "./store";
 
 export class TargetCostumeStore extends CostumeStore {
   private selectedIndex: number = 0;
 
-  static async fromSb3(project: Project, sb3: Sb3, json: SerializedCostumeStore) {
+  static async fromReference(project: Project, reference: ProjectReference, json: SerializedCostumeStore) {
     const costumeStore = new TargetCostumeStore;
-    await costumeStore.deserialize(project, sb3, json);
+    await costumeStore.deserialize(project, reference, json);
     return costumeStore;
   }
 

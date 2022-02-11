@@ -1,25 +1,10 @@
-var output: list<number> = [ 0 ]
-
-class Rose {
-  protected x: number;
-
-  constructor(balls: number) {
-    this.x = balls;
-  }
+struct Vector2 {
+  x: number,
+  y: number
 }
 
-class Vector2 {
-    protected x: &Rose;
-
-    constructor(initX: &Rose) { this.x = initX }
-
-    getX(): &Rose {
-      return this.x;
-    }
+function hypers(t: &Vector2): number {
+  return t.x + t.y;
 }
 
-var rose = &new Rose(5);
-var s = new Vector2(rose);
-var y = s.getX();
-
-output.push(y.x);
+var y = hypers(&Vector2 { x: 5, y: 3 })

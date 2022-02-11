@@ -318,6 +318,8 @@ export class StructureType extends Type {
   getName() { return this.name }
 
   exactEquals(other: Type): boolean {
+    while (other.isReferenceType()) other = other.dereference();
+
     if (!other.isStructureType()) return false;
 
     const otherValues = other.getValues();
@@ -334,6 +336,8 @@ export class StructureType extends Type {
   }
 
   extends(other: Type): boolean {
+    while (other.isReferenceType()) other = other.dereference();
+
     if (!other.isStructureType()) return false;
 
     const otherValues = other.getValues();
@@ -421,7 +425,7 @@ export class ReferenceType extends Type {
 export class HeapReferenceType extends Type {
   constructor(
     protected readonly referencedType: Type,
-    protected readonly heapName?: string,
+    protected readonly heapName: string = "global",
   ) { super() }
 
   exactEquals(other: Type): boolean {
@@ -431,7 +435,15 @@ export class HeapReferenceType extends Type {
   }
 
   extends(other: Type): boolean {
-    if (other.isHeapReferenceType()) return this.referencedType.extends(other.dereference()) && this.getHeapName() === other.getHeapName();
+    while (other.isReferenceType()) { other = other.dereference() }
+
+    if (other.isHeapReferenceType()) {
+      let d = other.dereference();
+
+      while (d.isReferenceType()) { d = d.dereference() }
+
+      return this.referencedType.extends(d) && this.getHeapName() === other.getHeapName();
+    }
 
     return this.referencedType.extends(other);
   }

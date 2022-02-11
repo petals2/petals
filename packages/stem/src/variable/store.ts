@@ -1,14 +1,16 @@
-import { Project, Sb3 } from "..";
+import { CloudVariable } from ".";
+import { Project } from "..";
+import { ProjectReference } from "../project/projectReference";
 import { Variable } from "./variable";
 
-export type SerializedVariableStore = Record<string, [name: string, values: string | number | boolean]>
+export type SerializedVariableStore = Record<string, [name: string, values: string | number | boolean] | [name: string, values: string | number | boolean, isCloud: true]>
 
 export class VariableStore {
   private _store: Map<string, Variable> = new Map();
 
-  static fromSb3(project: Project, sb3: Sb3, json: SerializedVariableStore) {
+  static fromReference(project: Project, reference: ProjectReference, json: SerializedVariableStore) {
     const variableStore = new VariableStore();
-    variableStore.deserialize(project, sb3, json);
+    variableStore.deserialize(project, reference, json);
     return variableStore;
   }
 
@@ -68,10 +70,18 @@ export class VariableStore {
     this._store.delete(id);
   }
 
-   protected deserialize(project: Project, sb3: Sb3, json: SerializedVariableStore) {
+  getCloudVariables(): CloudVariable[] {
+    return [...this._store.values()].filter(val => val.isCloudVariable()) as CloudVariable[];
+  }
+
+  protected deserialize(project: Project, reference: ProjectReference, json: SerializedVariableStore) {
     const jsonEntries = Object.entries(json);
-    for (const [ variableId, [ variableName, variableValue ] ] of jsonEntries) {
-      this._store.set(variableId, new Variable(variableName, variableValue));
+    for (const [ variableId, [ variableName, variableValue, variableCloud ] ] of jsonEntries) {
+      if (variableCloud) {
+        this._store.set(variableId, new CloudVariable(variableName, variableValue));
+      } else {
+        this._store.set(variableId, new Variable(variableName, variableValue));
+      }
     }
   }
 

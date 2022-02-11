@@ -1,4 +1,5 @@
-import { Project, Sb3 } from "..";
+import { Project } from "..";
+import { ProjectReference } from "../project/projectReference";
 import { SerializedSound, Sound } from "./sound";
 
 export type SerializedSoundStore = SerializedSound[];
@@ -6,14 +7,14 @@ export type SerializedSoundStore = SerializedSound[];
 export class SoundStore {
   private sounds: Sound[] = [];
 
-  static async fromSb3(project: Project, sb3: Sb3, json: SerializedSoundStore) {
+  static async fromReference(project: Project, reference: ProjectReference, json: SerializedSoundStore) {
     const soundStore = new SoundStore();
-    await soundStore.deserialize(project, sb3, json);
+    await soundStore.deserialize(project, reference, json);
     return soundStore;
   }
 
-  protected async deserialize(project: Project, sb3: Sb3, json: SerializedSoundStore) {
-    this.sounds = await Promise.all(json.map(sound => Sound.fromSb3(project, sb3, sound)));
+  protected async deserialize(project: Project, reference: ProjectReference, json: SerializedSoundStore) {
+    this.sounds = await Promise.all(json.map(sound => Sound.fromReference(project, reference, sound)));
   }
 
   serialize(): SerializedSoundStore {
