@@ -8,7 +8,7 @@ import { StructTool } from "../../structTool";
 import { VariableReference } from "../variable/abstract";
 import { KnownLengthListReference, ListReference } from "./abstract";
 
-export class MethodCallListReference extends KnownLengthListReference {
+export class KnownMethodCallListReference extends KnownLengthListReference {
   constructor(
     protected readonly value: MethodCallNode,
     protected readonly myType: Type,
