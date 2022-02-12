@@ -1,10 +1,13 @@
 import { TreeNode } from "../../../types/ast/node";
+import { PropertyReferenceNode } from "../../../types/ast/nodes/propertyReference";
 import { VariableReferenceNode } from "../../../types/ast/nodes/variableReference";
 import { Context } from "../context";
 import { getType } from "../getType";
 
 export function getReferencedMethods(context: Context, ...codeBlock: TreeNode[]): string[] {
   const methods: string[] = [];
+
+  context.enter();
 
   for (const node of codeBlock) {
     switch (node.type) {
@@ -37,13 +40,33 @@ export function getReferencedMethods(context: Context, ...codeBlock: TreeNode[])
         break;
       case "methodCall":
         if (node.getBaseValue().type !== "variableReference") {
+          if (node.getBaseValue().type === "propertyReference") {
+            const pr: PropertyReferenceNode = node.getBaseValue() as any;
+            let parentType = getType(pr.getParent(), context);
+
+            while (parentType.isHeapReferenceType() || parentType.isReferenceType()) parentType = parentType.dereference()
+
+            if (parentType.isStructureType() && parentType.getName() !== "") {
+              methods.push("___" + parentType.getName() + "_" + pr.getProperty());
+              break;
+            }
+
+            console.log("nevermind", parentType);
+          }
+
           const t = getType(node.getBaseValue(), context);
 
-          if (!t.isStructureType() && !t.isReferenceType() && !t.isSelfType()) {
+          if (t.isSelfType()) {
+            methods.push("______self_" + node.getBaseValue());
+            break;
+          }
+
+          if (!(t as any).isStructureType() && !(t as any).isReferenceType()) {
             throw new Error("Method call base must be variable reference or of class type");
           }
 
-          return ["___" + t.getName() + "_" + node.getBaseValue()];
+          methods.push("___" + (t as any).getName() + "_" + node.getBaseValue());
+          break;
         }
 
         methods.push((node.getBaseValue() as VariableReferenceNode).getName());
@@ -65,7 +88,13 @@ export function getReferencedMethods(context: Context, ...codeBlock: TreeNode[])
         break;
       case "variableDefinition":
         if (node.getInitialValue()) {
+          context.createVariable(node.getName(), 0, node.getType() ?? getType(node.getInitialValue()!, context));
           methods.push(...getReferencedMethods(context, node.getInitialValue()!));
+        } else {
+          if (!node.getType())
+            throw new Error("Failure to infer type");
+
+          context.createVariable(node.getName(), 0, node.getType()!);
         }
         break;
       case "variableRedefinition":
@@ -79,6 +108,8 @@ export function getReferencedMethods(context: Context, ...codeBlock: TreeNode[])
         break;
     }
   }
+
+  context.exit();
 
   return methods;
 }

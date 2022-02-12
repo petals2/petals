@@ -6,7 +6,7 @@ import { Target } from "petals-stem/dist/src/target";
 import { VariableReference } from "./abstract";
 import { Block } from "petals-stem/dist/src/block";
 import { Context, HeapReferenceData } from "../../context";
-import { HeapCopyOperation } from "../../../../types/ast/nodes/stackCopyOperation";
+import { HeapCopyOperation } from "../../../../types/ast/nodes/heapCopyOperation";
 import { getUnknownReference } from "..";
 import { copyOntoHeap } from "../../translateInto/helpers/copyOntoHeap";
 import { HeapReference } from "../list/heapReference";

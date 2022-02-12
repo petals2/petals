@@ -93,6 +93,10 @@ export class Context {
     this.listStack.push(new Map());
   }
 
+  getDepth() {
+    return this.variableStack.length;
+  }
+
   enterMethod(methodName: string, args: { name: string, type: Type }[], returnType: Type, recursive: boolean) {
     this.methodArgsStack.push(args);
     this.currentMethod = methodName;
@@ -425,6 +429,10 @@ export class FileContext extends Context {
 
   enter() {
     this.parent.enter();
+  }
+
+  getDepth(): number {
+    return this.parent.getDepth();
   }
 
   enterMethod(methodName: string, args: { name: string, type: Type }[], returnType: Type, recursive: boolean) {

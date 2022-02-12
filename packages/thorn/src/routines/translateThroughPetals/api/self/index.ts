@@ -25,6 +25,8 @@ import {
 import {
   SizeReference
 } from "./variables/looks";
+import { TransformError } from "../../../../errors/transformError";
+import { InvalidSelfMethodError } from "./errors/invalidSelfMethod";
 
 export namespace SelfApi {
   export function getType(key: string): Type {
@@ -84,6 +86,6 @@ export namespace SelfApi {
         return callSetY(call, target, thread, context);
     }
 
-    throw new Error("Cannot call method " + property + " on the sprite.");
+    throw new InvalidSelfMethodError(property, call, context);
   }
 }

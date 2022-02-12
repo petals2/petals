@@ -62,6 +62,8 @@ export class ScrProject {
     } catch (e) {
       if (e instanceof TransformError) {
         stageProject.addFileErrors(entryPoint.path, [ e ]);
+      } else {
+        throw e;
       }
     }
 

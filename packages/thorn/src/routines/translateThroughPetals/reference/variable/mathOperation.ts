@@ -6,6 +6,7 @@ import { Target } from "petals-stem/dist/src/target";
 import { getVariableReference } from ".";
 import { ValueTreeNode } from "../../../../types/ast/node";
 import { Context } from "../../context";
+import { getType } from "../../getType";
 import { VariableReference } from "./abstract";
 
 export class MathOperationReference extends VariableReference {
@@ -15,8 +16,8 @@ export class MathOperationReference extends VariableReference {
   protected readonly rightHandRef: VariableReference;
 
   constructor(
-    leftHand: ValueTreeNode,
-    rightHand: ValueTreeNode,
+    protected leftHand: ValueTreeNode,
+    protected rightHand: ValueTreeNode,
     operation: "--" | "++" | "+" | "-" | "*" | "/" | "!",
     target: Target,
     thread: Block,
@@ -44,7 +45,14 @@ export class MathOperationReference extends VariableReference {
     const rightHand = this.rightHandRef.getValue(target, thread, context);
 
     if (this.operation === "+") {
-      return target.getBlocks().createBlock(Operators.Add, Input.shadowed(leftHand), Input.shadowed(rightHand));
+      const leftType = getType(this.leftHand, context);
+      const rightType = getType(this.rightHand, context);
+
+      if (leftType.isNumberType() && rightType.isNumberType()) {
+        return target.getBlocks().createBlock(Operators.Add, Input.shadowed(leftHand), Input.shadowed(rightHand));
+      } else {
+        return target.getBlocks().createBlock(Operators.Join, Input.shadowed(leftHand), Input.shadowed(rightHand));
+      }
     }
 
     if (this.operation === "-") {

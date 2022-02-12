@@ -6,17 +6,14 @@ export class SelfReferenceNode {
 
   constructor (
     protected readonly tokenRange: TokenRange,
-    protected readonly variableName: string,
   ) {}
 
   getTokenRange() {
     return this.tokenRange;
   }
 
-  getName() { return this.variableName }
-
   static build(reader: LexReader): SelfReferenceNode {
-    const selfToken = reader.expect({ type: TokenType.Identifier, value: "self" });
-    return new SelfReferenceNode(new TokenRange(selfToken), selfToken.value);
+    const selfToken = reader.expect({ type: TokenType.Keyword, value: "self" });
+    return new SelfReferenceNode(new TokenRange(selfToken));
   }
 }

@@ -39,11 +39,13 @@ export function getListReference(value: ValueTreeNode, target: Target, thread: B
 
   if (value.type === "variableReference") {
     let list = context.getList(value.getName());
-    const type = getType(value, context);
+    let type = getType(value, context);
+
+    while (type.isReferenceType()) type = type.dereference();
 
     if (list instanceof VariableReference) {
-      if (type.isHeapReferenceType()) {
-        return new HeapDereference(list, [], type);
+      if (type.isHeapReferenceType() || (type.isStructureType() && type.getName() !== "")) {
+        return new HeapDereference(list, [], type.isHeapReferenceType() ? type : new HeapReferenceType(type, "global"));
       }
 
       throw new Error("Expected a list");

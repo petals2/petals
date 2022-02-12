@@ -63,7 +63,7 @@ export abstract class KnownLengthListReference extends ListReference {
         list.deleteAll(target, thread, context);
   
         for (let i = 0; i < this.getKnownLength(context); i++) {
-          const item = this.getItemAtIndex(Input.shadowed(new NumberInput(i)), target, thread, context);
+          const item = this.getItemAtIndex(Input.shadowed(new NumberInput(i + 1)), target, thread, context);
           
           if (!(item instanceof ListReference)) {
             list.push(Input.shadowed(item), target, thread, context);
@@ -80,9 +80,9 @@ export abstract class KnownLengthListReference extends ListReference {
         return;
       }
 
-      for (let i = 0; i < this.getKnownLength(context); i++) {
-        const item = this.getItemAtIndex(Input.shadowed(new NumberInput(i)), target, thread, context);
-  
+      for (let i = 0; i < this.getKnownLength(context); i) {
+        const item = this.getItemAtIndex(Input.shadowed(new NumberInput(i + 1)), target, thread, context);
+
         if (!(item instanceof ListReference)) {
           list.overwriteAtIndex(Input.shadowed(new NumberInput(i + 1)), Input.shadowed(item), target, thread, context);
           i += StructTool.getSize(this.getContentType(context));
@@ -102,8 +102,8 @@ export abstract class KnownLengthListReference extends ListReference {
 
     if (redefining) throw new Error("Cannot pass a start index into a redefined list... Maybe TODO");
 
-    for (let i = 0; i < this.getKnownLength(context); i++) {
-      const item = this.getItemAtIndex(Input.shadowed(new NumberInput(i)), target, thread, context);
+    for (let i = 0; i < this.getKnownLength(context); i) {
+      const item = this.getItemAtIndex(Input.shadowed(new NumberInput(i + 1)), target, thread, context);
 
       if (!(item instanceof ListReference)) {
         list.overwriteAtIndex(Input.shadowed(new NumberInput(i + 1 + startIndex)), Input.shadowed(item), target, thread, context);

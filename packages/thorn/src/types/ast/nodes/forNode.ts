@@ -1,7 +1,7 @@
 import { SelfPassedAsValueError } from "../../../errors/selfPassedAsValue";
 import { buildAst, readNode } from "../../../routines/buildAst";
 import { readValue } from "../../../routines/buildAst/readValue";
-import { buildPemdas } from "../../../routines/parenthesisexponentialsmultiplicationdivisionadditionsubtraction";
+import { buildPemdas } from "../../../routines/PEMDAS";
 import { LexReader } from "../../reader/lexReader";
 import { TokenRange, TokenType, validOperators } from "../../token";
 import { TreeNode, ValueTreeNode } from "../node";

@@ -46,7 +46,10 @@ export function getUnknownReference(value: ValueTreeNode, target: Target, thread
   if (value.type === "indexReference") {
     let type = getType(value, context);
 
-    while (type.isReferenceType()) type = type.dereference();
+    while (type.isReferenceType()) {
+      type.loadIntoContext(context);
+      type = type.dereference();
+    }
 
     if (type.isStructureType() || type.isListType()) {
       return getListReference(value, target, thread, context);

@@ -81,7 +81,7 @@ export function call(node: MethodCallNode, target: Target, thread: Block, contex
 
   const args = node.getArguments().map(arg => getUnknownReference(arg, target, thread, context));
 
-  if (args.some(arg => args instanceof ListReference)) throw new Error("Cannot pass lists into methods");
+  if (args.some(arg => arg instanceof ListReference)) throw new Error("Cannot pass lists into methods");
 
   let argValues = (args as (BooleanReference | VariableReference)[]).map(arg => Input.shadowed(arg.getValue(target, thread, context)));
 

@@ -10,6 +10,7 @@ import { ListReference } from "../list/abstract";
 import { StructTool } from "../../structTool";
 import { NumberInput } from "petals-stem/dist/src/block/input/number";
 import { Operators } from "petals-stem/dist/src/block/category/operators";
+import { ListIndexListReference, ListIndexStructureReference } from "../list/indexReference";
 
 export class VariableStructMemberReference extends VariableReference {
   constructor(
@@ -33,7 +34,13 @@ export class VariableStructMemberReference extends VariableReference {
 
     if (index === undefined) throw new Error("Invalid path");
 
-    return this.baseList.overwriteAtIndex(Input.shadowed(new NumberInput(index + 1)), value, target, thread, context);
+    let incr: number = 1;
+
+    if (this.baseList instanceof ListIndexListReference || this.baseList instanceof ListIndexStructureReference) {
+      incr = 0;
+    }
+
+    return this.baseList.overwriteAtIndex(Input.shadowed(new NumberInput(index + incr)), value, target, thread, context);
   }
 
   getValue(target: Target, thread: Block, context: Context): AnyInput {
@@ -41,7 +48,13 @@ export class VariableStructMemberReference extends VariableReference {
 
     if (index === undefined) throw new Error("Invalid path");
 
-    const v = this.baseList.getItemAtIndex(Input.shadowed(new NumberInput(index + 1)), target, thread, context);
+    let incr: number = 1;
+
+    if (this.baseList instanceof ListIndexListReference || this.baseList instanceof ListIndexStructureReference) {
+      incr = 0;
+    }
+
+    const v = this.baseList.getItemAtIndex(Input.shadowed(new NumberInput(index + incr)), target, thread, context);
 
     if (v instanceof ListReference) throw new Error("PANIC! VariableStructMemberReference actually points to a ListReference");
 

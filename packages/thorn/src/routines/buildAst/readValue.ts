@@ -15,7 +15,7 @@ import { NumberLiteralNode } from "../../types/ast/nodes/numberLiteral";
 import { ParenthesisedExpressionNode } from "../../types/ast/nodes/parenthesisedExpression";
 import { PropertyReferenceNode } from "../../types/ast/nodes/propertyReference";
 import { SelfReferenceNode } from "../../types/ast/nodes/selfReferenceNode";
-import { HeapCopyOperation } from "../../types/ast/nodes/stackCopyOperation";
+import { HeapCopyOperation } from "../../types/ast/nodes/heapCopyOperation";
 import { StringLiteralNode } from "../../types/ast/nodes/stringLiteral";
 import { StructLiteralNode } from "../../types/ast/nodes/structLiteral";
 import { ThisNode } from "../../types/ast/nodes/thisNode";
@@ -122,7 +122,7 @@ export function readBasicValue(reader: LexReader): Exclude<ValueTreeNode, MathOp
     }
   }
 
-  if (reader.nextIs({ type: TokenType.Identifier, value: "self" })) {
+  if (reader.nextIs({ type: TokenType.Keyword, value: "self" })) {
     return SelfReferenceNode.build(reader);
   }
 

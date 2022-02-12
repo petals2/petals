@@ -8,6 +8,22 @@ import { VariableRedefinitionNode } from "../../../../types/ast/nodes/variableRe
 import { VariableReferenceNode } from "../../../../types/ast/nodes/variableReference";
 import translateVariableRedefinitionNode from "./variableRedefinitionOperator";
 import { TokenRange } from "../../../../types/token";
+import { Type } from "../../../../types/ast/type";
+
+function shouldCreateList(t: Type, context: Context): boolean {
+  while (t.isReferenceType()) {
+    t.loadIntoContext(context);
+    t = t.dereference();
+  }
+
+  if (t.isListType() || t.isStructureType()) return true;
+
+  if (t.isUnionType()) {
+    return t.getTypes().some(t => shouldCreateList(t, context));
+  }
+
+  return false;
+}
 
 export default function (node: VariableDefinitionNode, target: Target, thread: Block, context: Context): void {
   let type = node.getType();
@@ -25,7 +41,7 @@ export default function (node: VariableDefinitionNode, target: Target, thread: B
     type = type.dereference();
   }
 
-  if (type.isListType() || type.isStructureType()) {
+  if (shouldCreateList(type, context)) {
     context.createList(node.getName(), [], type);
   } else {
     context.createVariable(node.getName(), 0, type);

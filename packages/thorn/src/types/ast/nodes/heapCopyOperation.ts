@@ -34,6 +34,6 @@ export class HeapCopyOperation {
       reader.pushLexError(new SelfPassedAsValueError(val));
     }
 
-    return new HeapCopyOperation(new TokenRange(nameToken || separatorToken, val.getTokenRange().getEnd()), val, nameToken ? nameToken.value : separatorToken.value);
+    return new HeapCopyOperation(new TokenRange(nameToken || separatorToken, val.getTokenRange().getEnd()), val, nameToken?.value);
   }
 }

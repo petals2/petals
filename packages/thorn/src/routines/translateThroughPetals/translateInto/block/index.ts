@@ -63,6 +63,8 @@ export function translateNodeIntoBlock(node: TreeNode, target: Target, ctx: Cont
   } catch (e) {
     if (e instanceof TransformError) {
       ctx.pushTransformError(e);
+    } else {
+      throw e;
     }
   }
   

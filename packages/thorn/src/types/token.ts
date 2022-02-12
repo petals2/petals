@@ -15,6 +15,7 @@ export const validKeywords = <const> [
   "while",
   "throw",
   "heap",
+  "self",
   "this",
   "else",
   "free",

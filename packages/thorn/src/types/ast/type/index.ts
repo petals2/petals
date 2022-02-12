@@ -1,3 +1,4 @@
+import { ID } from "petals-stem";
 import { Context } from "../../../routines/translateThroughPetals/context";
 import { getType } from "../../../routines/translateThroughPetals/getType";
 import { LexReader } from "../../reader/lexReader";
@@ -12,6 +13,7 @@ export abstract class Type {
   isNumberType(): this is NumberType { return false }
   isStringType(): this is StringType { return false }
   isUnionType(): this is UnionType { return false }
+  isClassType(): this is ClassType { return false }
   isSelfType(): this is SelfType { return false }
   isListType(): this is ListType { return false }
   isVoidType(): this is VoidType { return false }
@@ -34,7 +36,7 @@ export abstract class Type {
       base = NumberType.build(reader);
     } else if (reader.nextIs({ type: TokenType.Identifier, value: "string" })) {
       base = StringType.build(reader);
-    } else if (reader.nextIs({ type: TokenType.Identifier, value: "self" })) {
+    } else if (reader.nextIs({ type: TokenType.Keyword, value: "self" })) {
       base = SelfType.build(reader);
     } else if (reader.nextIs({ type: TokenType.Identifier, value: "boolean" })) {
       base = BooleanType.build(reader);
@@ -165,13 +167,9 @@ export class SelfType extends Type {
   }
 
   static build(reader: LexReader): SelfType {
-    reader.expect({ type: TokenType.Identifier, value: "self" });
+    reader.expect({ type: TokenType.Keyword, value: "self" });
 
     return new SelfType();
-  }
-
-  getName() {
-    return "self";
   }
 }
 
@@ -335,12 +333,15 @@ export class UnionType extends Type {
 }
 
 export class StructureType extends Type {
-  constructor(
-    protected readonly name: string,
-    protected values: Map<string, Type>,
-  ) { super() }
+  protected readonly id: string;
 
-  getName() { return this.name }
+  constructor(
+    protected values: Map<string, Type>,
+  ) {
+    super();
+
+    this.id = ID.generate();
+  }
 
   exactEquals(other: Type): boolean {
     while (other.isReferenceType()) other = other.dereference();
@@ -401,7 +402,7 @@ export class StructureType extends Type {
       if (contents.nextIs({ type: TokenType.Separator, value: "," }, { type: TokenType.Separator, value: ";" })) contents.read();
     }
     
-    return new StructureType("", v);
+    return new StructureType(v);
   }
 }
 
@@ -427,7 +428,7 @@ export class ReferenceType extends Type {
   getName(): string { return this.name }
 
   exactEquals(other: Type): boolean {
-    if (other.isReferenceType()) return this.dereference().exactEquals(other.dereference());
+    if (other.isReferenceType()) return this.getName() === other.getName();
 
     return this.dereference().exactEquals(other);
   }
@@ -479,5 +480,41 @@ export class HeapReferenceType extends Type {
     reader.expect({ type: TokenType.Separator, value: "&" });
 
     return new HeapReferenceType(Type.build(reader), name);
+  }
+}
+
+export class MethodType extends Type {
+  constructor(
+    protected readonly args: [string, Type][],
+    protected readonly returnType: Type,
+  )
+}
+
+export class ClassType extends Type {
+  constructor(
+    protected readonly struct: StructureType,
+    protected readonly methods: Record<string, { publicity: "public" | "protected" | "private", method: MethodType }>,
+    protected readonly ctor: { publicity: "public" | "protected" | "private", method: MethodType },
+    protected readonly name: string,
+  ) { super() }
+
+  getName(): string { return this.name }
+  getMethods() { return this.methods }
+  getStruct() { return this.struct }
+
+  exactEquals(other: Type): boolean {
+    return other.isClassType() && other.getName() === this.getName() && other.getStruct().exactEquals(this.getStruct());
+  }
+
+  extends(other: Type): boolean {
+    return other.isClassType() && Object.entries(this.getMethods()).every(m => Object.entries(other.getMethods()).find(m2 => m2[0] === m[0] && m2[1].extends(m[1])) !== undefined) && other.getStruct().extends(this.getStruct());
+  }
+
+  isClassType(): this is ClassType { return true }
+
+  getHeapName(): string | undefined { return "global" /* todo, allow classes to be defined in other heaps */ }
+
+  static build(reader: LexReader): ClassType {
+    throw new Error("Cannot build a class type");
   }
 }

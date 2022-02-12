@@ -26,7 +26,7 @@ import { NumberLiteralNode } from "../../types/ast/nodes/numberLiteral";
 import { ParenthesisedExpressionNode } from "../../types/ast/nodes/parenthesisedExpression";
 import { PropertyReferenceNode } from "../../types/ast/nodes/propertyReference";
 import { SelfReferenceNode } from "../../types/ast/nodes/selfReferenceNode";
-import { HeapCopyOperation } from "../../types/ast/nodes/stackCopyOperation";
+import { HeapCopyOperation } from "../../types/ast/nodes/heapCopyOperation";
 import { StringLiteralNode } from "../../types/ast/nodes/stringLiteral";
 import { StructLiteralNode } from "../../types/ast/nodes/structLiteral";
 import { ThisNode } from "../../types/ast/nodes/thisNode";
@@ -36,6 +36,40 @@ import { BooleanType, HeapReferenceType, ListType, LiteralType, NumberType, Self
 import { ListApi } from "./api/list";
 import { SelfApi } from "./api/self";
 import { Context, typeApplyContext } from "./context";
+
+function resolvePropertyReferenceType(baseType: Type, node: PropertyReferenceNode, context: Context): Type {
+  while (baseType.isReferenceType()) baseType = baseType.dereference();
+
+  if (baseType.isStructureType()) {
+    const v = baseType.getValue(node.getProperty());
+
+    // if (v === undefined && baseType.getName() !== "") {
+    //   const klass = context.getClass(baseType.getName());
+
+    //   if (klass === undefined) throw new Error("Unknown class: " + baseType.getName());
+
+    //   const m = klass.getMethods()[node.getProperty()];
+
+    //   if (m === undefined) throw new Error("Unknown method: " + node.getProperty());
+
+    //   return m.method.getReturnType();
+    // }
+
+    if (v === undefined) throw new Error("missing property " + node.getProperty());
+
+    return v;
+  }
+
+  if (baseType.isListType()) {
+    return ListApi.getType(node.getProperty());
+  }
+
+  if (baseType.isSelfType()) {
+    return SelfApi.getType(node.getProperty());
+  }
+
+  throw new Error("property reference on non-structure type: " + (baseType as any).constructor.name);
+}
 
 export function getType(node: ValueTreeNode | Input | Variable | List | { name: string, type: Type } | string, ctx: Context): Type {
   if (typeof node === "string") {
@@ -137,7 +171,7 @@ export function getType(node: ValueTreeNode | Input | Variable | List | { name: 
         const klass = ctx.getClass(baseType.getName());
 
         if (klass === undefined) {
-           throw new Error("Expected class; didn't get one");
+          throw new Error("Expected class; didn't get one");
         }
 
         return klass.getMethods()[ref.getProperty()].method.getReturnType();
@@ -159,23 +193,11 @@ export function getType(node: ValueTreeNode | Input | Variable | List | { name: 
     typeApplyContext(baseType, ctx);
     while (baseType.isReferenceType() || baseType.isHeapReferenceType()) baseType = baseType.dereference();
 
-    if (baseType.isStructureType()) {
-      const v = baseType.getValue(node.getProperty());
-
-      if (v === undefined) throw new Error("missing property " + node.getProperty());
-
-      return v;
+    if (baseType.isUnionType()) {
+      return UnionType.reduce(new UnionType(...baseType.getTypes().map(t => resolvePropertyReferenceType(t, node, ctx))));
+    } else {
+      return resolvePropertyReferenceType(baseType, node, ctx)
     }
-
-    if (baseType.isListType()) {
-      return ListApi.getType(node.getProperty());
-    }
-
-    if (baseType.isSelfType()) {
-      return SelfApi.getType(node.getProperty());
-    }
-
-    throw new Error("property reference on non-structure type");
   }
 
   if (node instanceof SelfReferenceNode) {

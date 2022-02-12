@@ -72,7 +72,10 @@ export function getVariableReference(value: ValueTreeNode, target: Target, threa
       return SelfApi.getVariableReference(value.getProperty(), context);
     }
 
-    while (parentType.isReferenceType()) parentType = parentType.dereference();
+    while (parentType.isReferenceType()) {
+      parentType.loadIntoContext(context);
+      parentType = parentType.dereference();
+    }
 
     while (parent.type === "propertyReference" && parentType.isStructureType()) {
       if (parentType.isStructureType()) {

@@ -1,4 +1,5 @@
 import { Project, Sb3 } from "..";
+import { ProjectReference } from "../project/projectReference";
 import { Broadcast } from "./broadcast";
 
 export type SerializedBroadcastStore = Record<string, string>;
@@ -8,7 +9,7 @@ export class BroadcastStore {
 
   static fromReference(project: Project, reference: ProjectReference, json: SerializedBroadcastStore) {
     const broadcastStore = new BroadcastStore;
-    broadcastStore.deserialize(project, sb3, json);
+    broadcastStore.deserialize(project, reference, json);
     return broadcastStore;
   }
 
