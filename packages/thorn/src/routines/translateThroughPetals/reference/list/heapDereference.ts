@@ -1,7 +1,7 @@
 import { Input, Target, Block, NumberInput } from "petals-stem";
 import { Operators } from "petals-stem/dist/src/block/category";
 import { AnyInput } from "petals-stem/dist/src/block/input";
-import { HeapReferenceType, Type } from "../../../../types/ast/type";
+import { ClassType, HeapReferenceType, Type } from "../../../../types/ast/type";
 import { Context } from "../../context";
 import { VariableReference } from "../variable/abstract";
 import { ListReference } from "./abstract";
@@ -10,7 +10,7 @@ export class HeapDereference extends ListReference {
   constructor(
     protected baseInstance: VariableReference,
     protected readonly path: string[],
-    protected parentType: HeapReferenceType
+    protected parentType: HeapReferenceType | ClassType,
   ) {
     super();
   }

@@ -5,13 +5,14 @@ import { LexReader } from "../../reader/lexReader";
 import { TokenType } from "../../token";
 
 export abstract class Type {
-  isHeapReferenceType(): this is HeapReferenceType { return false }
+  isHeapReferenceType(): this is HeapReferenceType | ClassType { return false }
   isStructureType(): this is StructureType { return false }
   isReferenceType(): this is ReferenceType { return false }
   isLiteralType(): this is LiteralType { return false }
   isBooleanType(): this is BooleanType { return false }
   isNumberType(): this is NumberType { return false }
   isStringType(): this is StringType { return false }
+  isMethodType(): this is MethodType { return false }
   isUnionType(): this is UnionType { return false }
   isClassType(): this is ClassType { return false }
   isSelfType(): this is SelfType { return false }
@@ -472,7 +473,7 @@ export class HeapReferenceType extends Type {
     return this.referencedType.extends(other);
   }
 
-  isHeapReferenceType(): this is HeapReferenceType { return true }
+  isHeapReferenceType(): this is HeapReferenceType | ClassType { return true }
   dereference(): Type { return this.referencedType }
   getHeapName(): string | undefined { return this.heapName }
 
@@ -487,30 +488,75 @@ export class MethodType extends Type {
   constructor(
     protected readonly args: [string, Type][],
     protected readonly returnType: Type,
-  )
+  ) { super() }
+
+  isMethodType(): this is MethodType { return true }
+
+  getArgs(): [string, Type][] { return this.args }
+  getReturnType(): Type { return this.returnType }
+
+  exactEquals(other: Type): boolean {
+    if (!other.isMethodType()) return false;
+
+    const otherArgs = other.getArgs();
+
+    if (otherArgs.length !== this.args.length) return false;
+
+    for (let i = 0; i < otherArgs.length; i++) {
+      if (otherArgs[i][0] !== this.args[i][0]) return false;
+
+      if (!otherArgs[i][1].exactEquals(this.args[i][1])) return false;
+    }
+
+    return this.returnType.exactEquals(other.getReturnType());
+  }
+
+  extends(other: Type): boolean {
+    if (!other.isMethodType()) return false;
+
+    const otherArgs = other.getArgs();
+
+    if (otherArgs.length !== this.args.length) return false;
+
+    for (let i = 0; i < otherArgs.length; i++) {
+      if (otherArgs[i][0] !== this.args[i][0]) return false;
+
+      if (!otherArgs[i][1].extends(this.args[i][1])) return false;
+    }
+
+    return this.returnType.extends(other.getReturnType());
+  }
+
+  static build(reader: LexReader): ClassType {
+    throw new Error("Cannot build a method type");
+  }
 }
 
 export class ClassType extends Type {
   constructor(
     protected readonly struct: StructureType,
     protected readonly methods: Record<string, { publicity: "public" | "protected" | "private", method: MethodType }>,
-    protected readonly ctor: { publicity: "public" | "protected" | "private", method: MethodType },
     protected readonly name: string,
+    protected readonly ctor?: { publicity: "public" | "protected" | "private", method: MethodType },
   ) { super() }
+
+  dereference() { return this.struct }
 
   getName(): string { return this.name }
   getMethods() { return this.methods }
+  getMethod(name: string): { publicity: "public" | "protected" | "private", method: MethodType } | undefined { return this.methods[name] }
   getStruct() { return this.struct }
 
   exactEquals(other: Type): boolean {
-    return other.isClassType() && other.getName() === this.getName() && other.getStruct().exactEquals(this.getStruct());
+    return other.isClassType() && other.getName() === this.getName() && Object.entries(this.getMethods()).every(m => Object.entries(other.getMethods()).find(m2 => m2[0] === m[0] && m2[1].publicity === m[1].publicity && m2[1].method.exactEquals(m[1].method)) !== undefined) && other.getStruct().exactEquals(this.getStruct());
   }
 
   extends(other: Type): boolean {
-    return other.isClassType() && Object.entries(this.getMethods()).every(m => Object.entries(other.getMethods()).find(m2 => m2[0] === m[0] && m2[1].extends(m[1])) !== undefined) && other.getStruct().extends(this.getStruct());
+    return other.isClassType() && Object.entries(this.getMethods()).every(m => Object.entries(other.getMethods()).find(m2 => m2[0] === m[0] && m2[1].publicity === m[1].publicity && m2[1].method.extends(m[1].method)) !== undefined) && other.getStruct().extends(this.getStruct());
   }
 
   isClassType(): this is ClassType { return true }
+  isHeapReferenceType(): this is ClassType | HeapReferenceType { return true }
 
   getHeapName(): string | undefined { return "global" /* todo, allow classes to be defined in other heaps */ }
 

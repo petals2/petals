@@ -3,7 +3,7 @@ import { Procedures } from "petals-stem/dist/src/block/category";
 import { AnyInput } from "petals-stem/dist/src/block/input";
 import { getUnknownReference } from "..";
 import { NewNode } from "../../../../types/ast/nodes/newNode";
-import { HeapReferenceType, NumberType } from "../../../../types/ast/type";
+import { ClassType, HeapReferenceType, NumberType } from "../../../../types/ast/type";
 import { Context } from "../../context";
 import { StructTool } from "../../structTool";
 import { BooleanReference } from "../boolean/abstract";
@@ -15,7 +15,7 @@ export class NewResultReference extends VariableReference {
   protected tempRes: VariableReference | undefined;
 
   constructor(
-    protected readonly type: HeapReferenceType,
+    protected readonly type: HeapReferenceType | ClassType,
     protected readonly newNode: NewNode,
   ) { super() }
 
@@ -29,7 +29,7 @@ export class NewResultReference extends VariableReference {
 
   performSideEffects(target: Target, thread: Block<string>, context: Context): void {
     // do the funny malloc
-    thread.append(target.getBlocks().createBlock(Procedures.Call, context.getHeap(this.type.getHeapName()).malloc.getPrototype(), Input.shadowed(new NumberInput(StructTool.getSize(this.type.dereference())))));
+    thread.getTail().append(target.getBlocks().createBlock(Procedures.Call, context.getHeap(this.type.getHeapName()).malloc.getPrototype(), Input.shadowed(new NumberInput(StructTool.getSize(this.type.dereference())))));
 
     // store the funny malloc (in case we do another malloc before the call (for example, if you are creating a ref in the call ( &[] )))
     const temp = context.createVariable("___intermediate_" + ID.generate(), 0, new NumberType());

@@ -8,8 +8,9 @@ import { Vector2 } from "petals-stem/dist/src/types/vector2";
 import { Events } from "petals-stem/dist/src/block/category/events";
 import { Sound } from "petals-stem/dist/src/sound";
 import { translateNodeListIntoBlock } from "../routines/translateThroughPetals/translateInto/block";
-import { Context, FileContext } from "../routines/translateThroughPetals/context";
+import { Context } from "../routines/translateThroughPetals/context";
 import { TransformError } from "../errors/transformError";
+import { ThornError } from "../errors/thornError";
 
 export class ScrProject {
   public petals: PetalsProject = new PetalsProject("Thorns (through Petals2)");
@@ -55,19 +56,22 @@ export class ScrProject {
 
     const entryPoint = stageProject.getContents()[0];
 
-    const fileContext = new FileContext(entryPoint.path, context);
+    context.enterFile(entryPoint.path)
+
+    let estore: ThornError | undefined;
+
     try {
-      const translated = translateNodeListIntoBlock(entryPoint.contents, this.petals.getTargets().getStage(), fileContext).getHead();
+      const translated = translateNodeListIntoBlock(entryPoint.contents, this.petals.getTargets().getStage(), context).getHead();
       mainThread.append(translated);
     } catch (e) {
-      if (e instanceof TransformError) {
-        stageProject.addFileErrors(entryPoint.path, [ e ]);
+      if (e instanceof ThornError) {
+        estore = e;
       } else {
         throw e;
       }
     }
 
-    stageProject.addFileErrors(entryPoint.path, fileContext.getTransformErrors());
+    stageProject.addFileErrors(context.exitFile(), estore ? [ estore, ...context.getTransformErrors() ] : context.getTransformErrors());
 
     spriteProjects.forEach(project => {
       const sprite = this.petals.getTargets().createSprite(project.getManifest().name);

@@ -41,17 +41,13 @@ export function getReferencedMethods(context: Context, ...codeBlock: TreeNode[])
       case "methodCall":
         if (node.getBaseValue().type !== "variableReference") {
           if (node.getBaseValue().type === "propertyReference") {
-            const pr: PropertyReferenceNode = node.getBaseValue() as any;
-            let parentType = getType(pr.getParent(), context);
+            const pr = node.getBaseValue() as PropertyReferenceNode;
+            const bt = getType(pr.getParent(), context);
 
-            while (parentType.isHeapReferenceType() || parentType.isReferenceType()) parentType = parentType.dereference()
-
-            if (parentType.isStructureType() && parentType.getName() !== "") {
-              methods.push("___" + parentType.getName() + "_" + pr.getProperty());
+            if (bt.isClassType()) {
+              methods.push("___" + bt.getName() + "_" + pr.getProperty());
               break;
             }
-
-            console.log("nevermind", parentType);
           }
 
           const t = getType(node.getBaseValue(), context);

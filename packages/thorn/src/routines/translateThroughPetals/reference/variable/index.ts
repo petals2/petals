@@ -48,8 +48,15 @@ export function getVariableReference(value: ValueTreeNode, target: Target, threa
 
     let path = [value.getProperty()];
 
+    while (parentType.isReferenceType()) {
+      parentType.loadIntoContext(context);
+
+      parentType = parentType.dereference()
+    }
+
     if (parentType.isHeapReferenceType()) {
       let baseParentType = parentType.dereference();
+
 
       while (baseParentType.isHeapReferenceType() || baseParentType.isReferenceType()) {
         if (baseParentType.isReferenceType()) baseParentType.loadIntoContext(context);
@@ -78,15 +85,13 @@ export function getVariableReference(value: ValueTreeNode, target: Target, threa
     }
 
     while (parent.type === "propertyReference" && parentType.isStructureType()) {
-      if (parentType.isStructureType()) {
-        path.unshift(parent.getProperty());
-  
-        parent = parent.getParent();
-        parentType = getType(parent, context);
-  
-        while (parentType.isReferenceType()) parentType = parentType.dereference();
-        continue;
-      }
+      path.unshift(parent.getProperty());
+
+      parent = parent.getParent();
+      parentType = getType(parent, context);
+
+      while (parentType.isReferenceType()) parentType = parentType.dereference();
+      continue;
     }
 
     typeApplyContext(parentType, context);
@@ -104,7 +109,13 @@ export function getVariableReference(value: ValueTreeNode, target: Target, threa
   if (value.type === "methodCall") return new MethodCallResultReference(value);
   if (value.type === "heapCopy") return new VariableHeapCopyReference(value);
   if (value.type === "indexReference") return new VariableIndexReference(value);
-  if (value.type === "new") return new NewResultReference(new HeapReferenceType(context.getStruct("___" + value.getClass() + "_struct"), "global"), value)
+  if (value.type === "new") {
+    const klass = context.getClass(value.getClass());
+
+    if (klass === undefined) throw new Error("Unknown class " + value.getClass());
+
+    return new NewResultReference(klass, value)
+  }
 
   throw new InvalidValueError(context, value);
 }

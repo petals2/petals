@@ -44,8 +44,8 @@ export function getListReference(value: ValueTreeNode, target: Target, thread: B
     while (type.isReferenceType()) type = type.dereference();
 
     if (list instanceof VariableReference) {
-      if (type.isHeapReferenceType() || (type.isStructureType() && type.getName() !== "")) {
-        return new HeapDereference(list, [], type.isHeapReferenceType() ? type : new HeapReferenceType(type, "global"));
+      if (type.isHeapReferenceType()) {
+        return new HeapDereference(list, [], type);
       }
 
       throw new Error("Expected a list");
@@ -153,7 +153,7 @@ export function getListReference(value: ValueTreeNode, target: Target, thread: B
 
     if (klass === undefined) throw new Error("Use of this outside of a class");
 
-    return new ThisDereference(new HeapReferenceType(context.getStruct("___" + klass + "_struct"), "global"))
+    return new ThisDereference(klass);
   }
 
   throw new Error("Cannot get list reference for: " + value.type);

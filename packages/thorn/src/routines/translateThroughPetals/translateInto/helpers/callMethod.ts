@@ -35,9 +35,9 @@ export function call(node: MethodCallNode, target: Target, thread: Block, contex
 
       const parent = base.getParent();
 
-      while (parentType.isHeapReferenceType() || parentType.isReferenceType()) parentType = parentType.dereference();
+      while (parentType.isReferenceType()) parentType = parentType.dereference();
 
-      if (parentType.isStructureType() && parent.type === "variableReference" && context.hasClass(parentType.getName())) {
+      if (parentType.isClassType()) {
         const methods = context.getClass(parentType.getName())!.getMethods();
 
         if (methods[base.getProperty()] === undefined) {
@@ -46,7 +46,7 @@ export function call(node: MethodCallNode, target: Target, thread: Block, contex
 
         const method = methods[base.getProperty()];
 
-        if ((method.publicity === "private" || method.publicity === "protected") && context.getCurrentClass() !== parentType.getName()) {
+        if ((method.publicity === "private" || method.publicity === "protected") && context.getCurrentClass()?.getName() !== parentType.getName()) {
           throw new Error("Cannot access " + method.publicity + " method " + base.getProperty() + " outside of class");
         }
 

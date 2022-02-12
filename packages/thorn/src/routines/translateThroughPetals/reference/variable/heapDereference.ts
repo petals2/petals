@@ -1,4 +1,4 @@
-import { HeapReferenceType, StructureType } from "../../../../types/ast/type";
+import { ClassType, HeapReferenceType, StructureType } from "../../../../types/ast/type";
 import { Operators } from "petals-stem/dist/src/block/category/operators";
 import { NumberInput } from "petals-stem/dist/src/block/input/number";
 import { AnyInput, Input } from "petals-stem/dist/src/block/input";
@@ -10,7 +10,7 @@ import { StructTool } from "../../structTool";
 import { Context } from "../../context";
 
 export class VariableHeapDereference extends VariableReference {
-  constructor (protected baseInstance: VariableReference, protected readonly path: string[], protected parentType: HeapReferenceType) {
+  constructor (protected baseInstance: VariableReference, protected readonly path: string[], protected parentType: HeapReferenceType | ClassType) {
     super();
 
     let deref = parentType.dereference();

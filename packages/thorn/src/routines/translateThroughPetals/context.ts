@@ -3,7 +3,7 @@ import { Target } from "petals-stem/dist/src/target";
 import { Block } from "petals-stem/dist/src/block";
 import { List } from "petals-stem/dist/src/list";
 import { ID } from "petals-stem/dist/src/id";
-import { ListType, NumberType, StructureType, Type } from "../../types/ast/type";
+import { ClassType, ListType, NumberType, StructureType, Type } from "../../types/ast/type";
 import { StructDefinitionNode } from "../../types/ast/nodes/structDefinitionNode";
 import { HeapOptions } from "../../types/ast/nodes/heapDefinitionNode";
 import { VariableReference } from "./reference/variable/abstract";
@@ -28,11 +28,12 @@ import { TransformError } from "../../errors/transformError";
 export type HeapReferenceData = { heap: ListReference, heapIndexes: ListReference, options: HeapOptions, mallocReturn: VariableReference, malloc: InstanceType<typeof Procedures.Definition>, free: InstanceType<typeof Procedures.Definition> };
 
 export class Context {
+  protected currentFile: string | undefined;
   protected variableStack: Map<string, Variable | List>[] = [];
   protected listStack: Map<string, List>[] = [];
   protected methodArgsStack: { name: string, type: Type }[][] = [];
-  protected currentClass: ClassDefinitionNode | undefined;
-  protected classes: ClassDefinitionNode[] = [];
+  protected currentClass: ClassType | undefined;
+  protected classes: ClassType[] = [];
 
   protected typeStore: Map<List | Variable | string, Type> = new Map();
   protected heapStore: Map<string, HeapReferenceData> = new Map();
@@ -52,6 +53,20 @@ export class Context {
     }
   }
 
+  enterFile(file: string) {
+    this.currentFile = file;
+  }
+
+  exitFile(): string {
+    if (this.currentFile === undefined) throw new Error("Attempted to exit file without entering file");
+  
+    const res =  this.currentFile;
+
+    this.currentFile = undefined;
+
+    return res;
+  }
+
   setType(item: List, type: ListType): this
   setType(item: Variable | string, type: Type): this
   setType(item: Variable | List | string, type: Type): this
@@ -67,7 +82,7 @@ export class Context {
     return this.typeStore.get(item);
   }
 
-  enterClass(klass: ClassDefinitionNode): void {
+  enterClass(klass: ClassType): void {
     this.currentClass = klass;
     this.classes.push(klass);
   }
@@ -76,15 +91,15 @@ export class Context {
     this.currentClass = undefined;
   }
 
-  getCurrentClass(): string | undefined {
-    return this.currentClass?.getName()
+  getCurrentClass(): ClassType | undefined {
+    return this.currentClass;
   }
 
   hasClass(klass: string): boolean {
     return this.classes.find(v => v.getName() == klass) !== undefined;
   }
 
-  getClass(klass: string): ClassDefinitionNode | undefined {
+  getClass(klass: string): ClassType | undefined {
     return this.classes.find(v => v.getName() == klass);
   }
 
@@ -384,123 +399,6 @@ export class Context {
 
   getTransformErrors() {
     return this.transformErrors;
-  }
-}
-
-export class FileContext extends Context {
-  constructor(public readonly filePath: string, public readonly parent: Context) {
-    super(parent.target, parent.mainThread, false);
-  }
-
-  setType(item: List, type: ListType): this
-  setType(item: Variable | string, type: Type): this
-  setType(item: Variable | List | string, type: Type): this
-  setType(item: List | Variable | string, type: Type): this {
-    this.parent.setType(item, type);
-    return this;
-  }
-
-  getType(item: List): ListType | undefined
-  getType(item: Variable | string): Type | undefined
-  getType(item: Variable | List | string): Type | undefined
-  getType(item: List | Variable | string): Type | undefined {
-    return this.parent.getType(item);
-  }
-
-  enterClass(klass: ClassDefinitionNode): void {
-    this.parent.enterClass(klass);
-  }
-
-  exitClass() {
-    this.parent.exitClass();
-  }
-
-  getCurrentClass(): string | undefined {
-    return this.parent.getCurrentClass();
-  }
-
-  hasClass(klass: string): boolean {
-    return this.parent.hasClass(klass);
-  }
-
-  getClass(klass: string): ClassDefinitionNode | undefined {
-    return this.parent.getClass(klass);
-  }
-
-  enter() {
-    this.parent.enter();
-  }
-
-  getDepth(): number {
-    return this.parent.getDepth();
-  }
-
-  enterMethod(methodName: string, args: { name: string, type: Type }[], returnType: Type, recursive: boolean) {
-    this.parent.enterMethod(methodName, args, returnType, recursive);
-  }
-
-  getReturnVariable(): VariableReference | ListReference | undefined {
-    return this.parent.getReturnVariable();
-  }
-
-  getReturnVariableForMethod(methodName: string): VariableReference | ListReference {
-    return this.parent.getReturnVariableForMethod(methodName);
-  }
-
-  exit() {
-    this.parent.exit();
-  }
-
-  exitMethod() {
-    return this.parent.exitMethod();
-  }
-
-  createVariable(name: string, value: string | number, type: Type): VariableReference {
-    return this.parent.createVariable(name, value, type);
-  }
-
-  createList(name: string, value: string[], type: Type): List {
-    return this.parent.createList(name, value, type);
-  }
-
-  hasVariable(name: string): boolean {
-    return this.parent.hasVariable(name);
-  }
-
-  hasList(name: string): boolean {
-    return this.parent.hasList(name);
-  }
-
-  getVariable(name: string): Variable | List | { name: string, type: Type } {
-    return this.parent.getVariable(name);
-  }
-
-  getList(name: string): List | VariableReference {
-    return this.parent.getList(name);
-  }
-
-  defineStruct(name: string, type: StructureType) {
-    this.parent.defineStruct(name, type);
-  }
-
-  getStruct(name: string): StructureType {
-    return this.parent.getStruct(name);
-  }
-
-  hasStruct(name: string): boolean {
-    return this.parent.hasStruct(name);
-  }
-
-  isInRecursiveMethod(): boolean {
-    return this.parent.isInRecursiveMethod();
-  }
-
-  createHeap(name: string, options: HeapOptions): void {
-    this.parent.createHeap(name, options);
-  }
-
-  getHeap(name?: string): HeapReferenceData {
-    return this.parent.getHeap(name);
   }
 }
 

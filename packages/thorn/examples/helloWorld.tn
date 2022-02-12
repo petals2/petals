@@ -6,30 +6,23 @@ class Vector2 {
     this.x = x;
     this.y = y;
   }
-
-  add(other: Vector2): void {
-    this.x = this.x + other.x;
-    this.y = this.y + other.y;
-  }
 }
 
-function sumVectors(v: &list<Vector2>): &Vector2 {
+function sumVectors(v: &list<Vector2>): Vector2 {
   var sum = new Vector2(0, 0)
 
   for (var i = 0; i < v.length; i++) {
     sum.add(v[i]);
   }
 
-  return &sum;
+  return sum;
 }
 
 var s = sumVectors(&[
   new Vector2(1, 2),
-  new Vector2(5, 6),
   new Vector2(3, 4),
+  new Vector2(5, 6),
 ])
 
 var sx = s.x;
 var sy = s.y;
-
-var klass: class Vector2 {}

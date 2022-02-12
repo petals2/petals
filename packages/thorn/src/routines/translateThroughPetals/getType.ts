@@ -167,7 +167,7 @@ export function getType(node: ValueTreeNode | Input | Variable | List | { name: 
         baseType = baseType.dereference();
       }
 
-      if (baseType.isStructureType() && baseType.getName().length > 0) {
+      if (baseType.isClassType()) {
         const klass = ctx.getClass(baseType.getName());
 
         if (klass === undefined) {
@@ -249,11 +249,15 @@ export function getType(node: ValueTreeNode | Input | Variable | List | { name: 
 
     if (klass == undefined) throw new Error("Use of `this` outside of class");
 
-    return ctx.getStruct("___" + klass + "_struct");
+    return klass.getStruct();
   }
 
   if (node instanceof NewNode) {
-    return new HeapReferenceType(ctx.getStruct("___" + node.getClass() + "_struct"), "global");
+    const klass = ctx.getClass(node.getClass());
+
+    if (klass) return klass;
+
+    throw new Error("Failed to find class: " + node.getClass())
   }
 
   throw new Error("Unsupported node type: " + (node as any).type);
@@ -322,7 +326,7 @@ export function dereferenceType(name: string, ctx: Context): Type {
   }
 
   if (ctx.hasClass(name)) {
-    return ctx.getStruct("___" + name + "_struct");
+    return ctx.getClass(name)!;
   }
 
   throw new Error("Failed to deref type: " + name);

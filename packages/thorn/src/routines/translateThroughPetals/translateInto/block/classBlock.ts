@@ -3,19 +3,33 @@ import { Context, typeApplyContext } from "../../context";
 import { Target } from "petals-stem/dist/src/target";
 import { Block } from "petals-stem/dist/src/block";
 import { ClassDefinitionNode } from "../../../../types/ast/nodes/classDefinitionNode";
-import { NumberType, StructureType } from "../../../../types/ast/type";
+import { ClassType, MethodType, NumberType, StructureType } from "../../../../types/ast/type";
 import translateMethodDefinitionNode from "./methodDefinitionNode";
 import { MethodDefinitionNode } from "../../../../types/ast/nodes/methodDefinition";
 import { TokenRange } from "../../../../types/token";
 
 export default function (node: ClassDefinitionNode, target: Target, thread: Block, ctx: Context): void {
-  ctx.enterClass(node);
-
-  const struct = new StructureType(node.getName(), new Map(Object.entries(node.getFields()).map(e => [e[0], e[1].type])));
+  const struct = new StructureType(new Map(Object.entries(node.getFields()).map(e => [e[0], e[1].type])));
 
   typeApplyContext(struct, ctx);
 
-  ctx.defineStruct("___" + node.getName() + "_struct", struct);
+  const methodType: Record<string, {
+    publicity: "public" | "protected" | "private";
+    method: MethodType;
+  }> = {}
+
+  for (const [key, value] of Object.entries(node.getMethods())) {
+    methodType[key] = { publicity: value.publicity, method: new MethodType(value.method.getArguments().map(a => [a.name, a.type]), value.method.getReturnType()) }
+  }
+
+  const type = new ClassType(
+    struct, 
+    methodType,
+    node.getName(),
+    node.getConstructor() ? { publicity: node.getConstructor()!.publicity, method: new MethodType(node.getConstructor()!.method.getArguments().map(a => [a.name, a.type]), node.getConstructor()!.method.getReturnType()) } : undefined,
+  );
+
+  ctx.enterClass(type);
 
   Object.entries(node.getMethods()).forEach(([name, info]) => {
     translateMethodDefinitionNode(new MethodDefinitionNode(new TokenRange(node.getTokenRange()), "___" + node.getName() + "_" + name, info.method.getReturnType(), [{ name: "___this_arg", type: new NumberType() }, ...info.method.getArguments()], info.method.getContents()), target, thread, ctx);
