@@ -5,6 +5,7 @@ import type { ProjectReference } from "petals-stem/dist/src/project/projectRefer
 import { Client } from "..";
 import { RemixStore } from "./remixStore";
 import { CloudSession } from "./cloudSession";
+import { ProjectCommentStore } from "./commentStore";
 
 export class SiteProject implements ProjectReference {
   protected id: number;
@@ -31,6 +32,7 @@ export class SiteProject implements ProjectReference {
   protected censoredByCommunity: boolean | undefined;
   protected deleted: boolean | undefined;
   protected reshareable: boolean | undefined;
+  protected json: SerializedProject | undefined;
   // protected readonly session = new CloudSession(this.client, this)
 
   constructor(protected readonly client: Client, protected readonly project: number | (Partial<SiteProjectType> & { id: number }) | OldSiteProjectType, authorOverride: User | undefined = undefined) {
@@ -224,7 +226,9 @@ export class SiteProject implements ProjectReference {
   }
 
   async getJson(): Promise<SerializedProject> {
-    return await this.client.getRequestor().getProjectContents(await this.getId());
+    if (this.json) return this.json;
+
+    return this.json = await this.client.getRequestor().getProjectContents(await this.getId());
   }
 
   async isCensored(): Promise<boolean> {
@@ -262,6 +266,6 @@ export class SiteProject implements ProjectReference {
   }
 
   remixes(): RemixStore { return new RemixStore(this.client, this) }
-  // cloud(): CloudSession { return this.session }
   createCloudSession(): CloudSession { return new CloudSession(this.client, this) }
+  comments(): ProjectCommentStore { return new ProjectCommentStore(this.client, this) }
 }

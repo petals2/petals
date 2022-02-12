@@ -9,6 +9,7 @@ import { User } from "./interfaces/user";
 import { OldStudio, Studio } from "./interfaces/studios";
 import { News } from "./interfaces/news";
 import type { Project as PetalsProject, SerializedProject } from "petals-stem"
+import type { Comment } from "./interfaces/comment";
 
 export enum SortFormat {
   Ascending,
@@ -212,6 +213,14 @@ export class Requestor {
 
   async getProjectComments(projectId: number, projectAuthor: string, limit: number, offset: number): Promise<Comment[]> {
     return await this.makeRequest<Comment[]>("GET", `https://api.scratch.mit.edu/users/${projectAuthor}/projects/${projectId}/comments?offset=${offset}&limit=${limit}`);
+  }
+
+  async getProjectComment(projectId: number, projectAuthor: string, comment: string): Promise<Comment> {
+    return await this.makeRequest<Comment>("GET", `https://api.scratch.mit.edu/users/${projectAuthor}/projects/${projectId}/comments/${comment}/`);
+  }
+
+  async getProjectCommentReplies(projectId: number, projectAuthor: string, comment: string, limit: number, offset: number): Promise<Comment[]> {
+    return await this.makeRequest<Comment[]>("GET", `https://api.scratch.mit.edu/users/${projectAuthor}/projects/${projectId}/comments/${comment}/replies?offset=${offset}&limit=${limit}`);
   }
 
   async getProjectStudios(projectId: number, projectAuthor: string, limit: number, offset: number): Promise<Studio[]> {

@@ -37,11 +37,11 @@ export class CloudSession {
       });
 
       this.socket.on("open", async () => {
-        const project = await Project.fromReference(this.project)
+        const serialized = await this.project.getJson()
 
-        const cvar = project.getTargets().getTargets().map(target => target.getVariables().getCloudVariables()).flat();
+        const cvarCount = serialized.targets.map(t => Object.values(t.variables).filter(v => v[2])).flat().length
 
-        this.targetSizeToRes = cvar.length;
+        this.targetSizeToRes = cvarCount;
         this.res = res;
 
         this.sendPacket("handshake");
