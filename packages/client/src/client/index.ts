@@ -2,8 +2,8 @@ import { Requestor } from "../api"
 import { LoggedInSession, Session } from "../api/interfaces/session";
 import { MessageStore } from "./message/store";
 import { NewsStore } from "./news/store";
-import { SiteProject } from "./project";
-import { User } from "./user";
+import { SiteProject } from "./project/project";
+import { User } from "./user/user";
 import { ClientUser } from "./user/client";
 
 export class Client {

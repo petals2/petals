@@ -1,5 +1,5 @@
-import { SiteProject } from "../project";
-import type { User } from ".";
+import { SiteProject } from "../project/project";
+import type { User } from "./user";
 import { Client } from "..";
 import { SortFormat } from "../../api";
 import { ProjectStore } from "./projectStore";

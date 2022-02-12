@@ -1,6 +1,6 @@
-import { SiteProject } from "..";
+import { SiteProject } from "../project";
 import { Client } from "../..";
-import { ProjectComment } from "../comments";
+import { ProjectComment } from "./comment";
 
 const defaultConfig: ProjectCommentReplyStoreConfig = {
   chunkSize: 15,

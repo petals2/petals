@@ -1,6 +1,6 @@
 import { Message as MessageType } from "../../api/interfaces/message";
 import { Requestor } from "../../api";
-import { Message } from ".";
+import { Message } from "./message";
 import { Client } from "..";
 
 const defaultConfig: MessageStoreConfig = {
