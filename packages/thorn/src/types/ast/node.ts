@@ -28,6 +28,10 @@ import { VariableDefinitionNode } from "./nodes/variableDefinition";
 import { VariableRedefinitionNode } from "./nodes/variableRedefinitionNode";
 import { VariableReferenceNode } from "./nodes/variableReference";
 import { WhileNode } from "./nodes/while";
+import { VariableAdditionRedefinitionNode } from "./nodes/variableAdditionRedefinition";
+import { VariableSubtractionRedefinitionNode } from "./nodes/variableSubtractionRedefinition";
+import { VariableMultiplicationRedefinitionNode } from "./nodes/variableMultiplicationRedefinition";
+import { VariableDivisionRedefinitionNode } from "./nodes/variableDivisionRedefinition";
 
 export type GetTreeNode<NodeType extends string> = TreeNode extends { type: NodeType } ? TreeNode : never;
 
@@ -51,9 +55,17 @@ export type ValueTreeNode = ThisNode
   | ComparisonOperationNode
   | MethodDefinitionNode
   | IncrementOperatorNode
-  | DecrementOperatorNode;
+  | DecrementOperatorNode
+  | VariableSubtractionRedefinitionNode
+  | VariableMultiplicationRedefinitionNode
+  | VariableDivisionRedefinitionNode
+  | VariableAdditionRedefinitionNode;
 
 export type TreeNode = VariableDefinitionNode
+  | VariableMultiplicationRedefinitionNode
+  | VariableSubtractionRedefinitionNode
+  | VariableAdditionRedefinitionNode
+  | VariableDivisionRedefinitionNode
   | ParenthesisedExpressionNode
   | VariableRedefinitionNode
   | ComparisonOperationNode

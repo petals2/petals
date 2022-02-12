@@ -1,5 +1,5 @@
 export const validComparators = <const> ["<=", ">=", "<", ">", "==", "!="];
-export const validSeparators = <const> ["{", "}", "[", "]", "(", ")", ".", ",", "=", ";", ":", "|", "<", ">", "&"];
+export const validSeparators = <const> ["+=", "-=", "*=", "/=", "{", "}", "[", "]", "(", ")", ".", ",", "=", ";", ":", "|", "<", ">", "&"];
 export const validOperators = <const> ["--", "++", "+", "-", "*", "/", "!"];
 export const validKeywords = <const> [
   "constructor",

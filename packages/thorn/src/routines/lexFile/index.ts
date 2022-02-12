@@ -47,15 +47,6 @@ export function readToken(reader: StringReader): Token | undefined {
     }
   }
 
-  const operator = reader.nextIsOne(...validOperators);
-
-  if (operator) {
-    return {
-      type: TokenType.Operator,
-      ...reader.expect(operator),
-    };
-  }
-
   const separator = reader.nextIsOne(...validSeparators);
 
   if (separator) {
@@ -76,6 +67,15 @@ export function readToken(reader: StringReader): Token | undefined {
       type: TokenType.Separator,
       ...res,
     }
+  }
+
+  const operator = reader.nextIsOne(...validOperators);
+
+  if (operator) {
+    return {
+      type: TokenType.Operator,
+      ...reader.expect(operator),
+    };
   }
 
   const isNumber = reader.readUntilNot("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".");

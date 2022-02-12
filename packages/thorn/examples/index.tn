@@ -1,0 +1,5 @@
+struct Vector2 { x: number, y: number }
+
+function calculateAngle(v: &Vector2): number { ... }
+
+calculateAngle(&Vector2 { x: mouse.x, y: mouse.y });

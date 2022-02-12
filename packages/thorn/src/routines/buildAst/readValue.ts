@@ -23,6 +23,10 @@ import { VariableRedefinitionNode } from "../../types/ast/nodes/variableRedefini
 import { VariableReferenceNode } from "../../types/ast/nodes/variableReference";
 import { LexReader } from "../../types/reader/lexReader";
 import { TokenRange, TokenType } from "../../types/token";
+import { VariableAdditionRedefinitionNode } from "../../types/ast/nodes/variableAdditionRedefinition";
+import { VariableSubtractionRedefinitionNode } from "../../types/ast/nodes/variableSubtractionRedefinition";
+import { VariableMultiplicationRedefinitionNode } from "../../types/ast/nodes/variableMultiplicationRedefinition";
+import { VariableDivisionRedefinitionNode } from "../../types/ast/nodes/variableDivisionRedefinition";
 
 export function readValue(reader: LexReader): ValueTreeNode {
   let basic: ValueTreeNode
@@ -89,6 +93,22 @@ export function readValue(reader: LexReader): ValueTreeNode {
     if (reader.nextIs({ type: TokenType.Operator }) && !reader.nextIs({ type: TokenType.Operator, value: "++" }, { type: TokenType.Operator, value: "--" })) {
       return MathOperationNode.build(reader, basic)
     }
+  }
+
+  if (reader.nextIs({ type: TokenType.Separator, value: "+=" })) {
+    basic = VariableAdditionRedefinitionNode.build(reader, basic);
+  }
+
+  if (reader.nextIs({ type: TokenType.Separator, value: "-=" })) {
+    basic = VariableSubtractionRedefinitionNode.build(reader, basic);
+  }
+
+  if (reader.nextIs({ type: TokenType.Separator, value: "*=" })) {
+    basic = VariableMultiplicationRedefinitionNode.build(reader, basic);
+  }
+
+  if (reader.nextIs({ type: TokenType.Separator, value: "/=" })) {
+    basic = VariableDivisionRedefinitionNode.build(reader, basic);
   }
 
   if (reader.nextIs({ type: TokenType.Separator, value: "=" })) {
