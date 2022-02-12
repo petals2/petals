@@ -6,7 +6,7 @@ export type SerializedBroadcastStore = Record<string, string>;
 export class BroadcastStore {
   private _store: Map<string, Broadcast> = new Map();
 
-  static fromSb3(project: Project, sb3: Sb3, json: SerializedBroadcastStore) {
+  static fromReference(project: Project, reference: ProjectReference, json: SerializedBroadcastStore) {
     const broadcastStore = new BroadcastStore;
     broadcastStore.deserialize(project, sb3, json);
     return broadcastStore;
@@ -64,7 +64,7 @@ export class BroadcastStore {
     this._store.delete(id);
   }
 
-  protected deserialize(project: Project, sb3: Sb3, json: SerializedBroadcastStore) {
+  protected deserialize(project: Project, reference: ProjectReference, json: SerializedBroadcastStore) {
     const entries = Object.entries(json);
     this._store.clear();
     for (const [ broadcastId, broadcastName ] of entries) {

@@ -1,4 +1,5 @@
 import { Project, Sb3 } from "..";
+import { ProjectReference } from "../project/projectReference";
 import { List } from "./list"
 
 export type SerializedListStore = Record<string, [name: string, values: string[]]>
@@ -6,9 +7,9 @@ export type SerializedListStore = Record<string, [name: string, values: string[]
 export class ListStore {
   private _store: Map<string, List> = new Map();
 
-  static fromSb3(project: Project, sb3: Sb3, json: SerializedListStore) {
+  static fromReference(project: Project, reference: ProjectReference, json: SerializedListStore) {
     const listStore = new ListStore;
-    listStore.deserialize(project, sb3, json);
+    listStore.deserialize(project, reference, json);
     return listStore;
   }
 
@@ -68,7 +69,7 @@ export class ListStore {
     this._store.delete(id);
   }
 
-  protected deserialize(project: Project, sb3: Sb3, json: SerializedListStore) {
+  protected deserialize(project: Project, reference: ProjectReference, json: SerializedListStore) {
     const jsonEntries = Object.entries(json);
     for (const [ variableId, [ jsonName, jsonValue ] ] of jsonEntries) {
       this._store.set(variableId, new List(jsonName, jsonValue));
