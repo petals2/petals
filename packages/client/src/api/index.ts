@@ -73,7 +73,6 @@ export class Requestor {
 
     const setCookies = response.headers["set-cookie"];
 
-
     if (setCookies instanceof Array) {
       setCookies.forEach(cookie => {
         this.jar.setCookieSync(cookie,  url);

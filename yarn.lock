@@ -104,6 +104,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/ws@npm:^8.2.2":
+  version: 8.2.2
+  resolution: "@types/ws@npm:8.2.2"
+  dependencies:
+    "@types/node": "*"
+  checksum: 308957864b9a5a0378ac82f1b084fa31b1bbe85106fb0d84ed2b392e4829404f21ab6ab2c1eb782d556e59cd33d57c75ad2d0cedc4b9b9d0ca3b2311bc915578
+  languageName: node
+  linkType: hard
+
 "acorn-walk@npm:^8.1.1":
   version: 8.2.0
   resolution: "acorn-walk@npm:8.2.0"
@@ -353,6 +362,7 @@ __metadata:
   resolution: "petals-client@workspace:packages/client"
   dependencies:
     "@types/tough-cookie": ^4.0.1
+    "@types/ws": ^8.2.2
     emittery: ^0.10.1
     petals-stem: "workspace:*"
     tough-cookie: ^4.0.0

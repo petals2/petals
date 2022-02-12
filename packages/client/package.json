@@ -14,5 +14,8 @@
     "tough-cookie": "^4.0.0",
     "undici": "^4.13.0",
     "ws": "^8.5.0"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.2.2"
   }
 }

@@ -1,4 +1,4 @@
-import { SiteProject } from ".";
+import { SiteProject } from "./project";
 import { Client } from "..";
 
 const defaultConfig: RemixStoreConfig = {

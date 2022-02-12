@@ -1,6 +1,6 @@
 import { User as UserType } from "../../api/interfaces/user";
 import { Client } from "..";
-import { User } from ".";
+import { User } from "./user";
 import { ClientProjectStore } from "./clientProjectStore";
 
 export class ClientUser extends User {

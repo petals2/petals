@@ -1,7 +1,7 @@
-import { SiteProject } from ".";
+import { SiteProject } from "./project";
 import { Client } from "..";
 import WebSocket from "ws";
-import { Project } from "petals-stem";
+import { Project, ProjectReference } from "petals-stem";
 import { CloudVariable } from "./cloudVariable";
 
 export class CloudSession {

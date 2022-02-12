@@ -1,4 +1,4 @@
-import { NewsItem } from ".";
+import { NewsItem } from "./news";
 import { Client } from "..";
 
 const defaultConfig: NewsStoreConfig = {
