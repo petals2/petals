@@ -1,16 +1,20 @@
-import { readValue } from "../../../routines/buildAst/readValue";
 import { LexReader } from "../../reader/lexReader";
-import { TokenType } from "../../token";
-import { ValueTreeNode } from "../node";
+import { TokenRange, TokenType } from "../../token";
 
 export class ThisNode {
   type = <const>"thisNode";
 
-  constructor() { }
+  constructor(
+    protected readonly tokenRange: TokenRange
+  ) {}
+
+  getTokenRange() {
+    return this.tokenRange;
+  }
 
   static build(reader: LexReader): ThisNode {
-    reader.expect({ type: TokenType.Keyword, value: "this" });
+    const thisToken = reader.expect({ type: TokenType.Keyword, value: "this" });
 
-    return new ThisNode();
+    return new ThisNode(new TokenRange(thisToken));
   }
 }

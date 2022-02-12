@@ -13,6 +13,8 @@ export function methodIsRecursive(method: MethodDefinitionNode, context: Context
     return true;
   }
 
+  return false;
+
   // now the hard part.
 
   throw new Error("TODO");

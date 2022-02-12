@@ -1,8 +1,8 @@
 import { SILO } from "petals-silo";
 import { readValue } from "../../../routines/buildAst/readValue";
-import { buildPemdas } from "../../../routines/PEMDAS";
+import { buildPemdas } from "../../../routines/parenthesisexponentialsmultiplicationdivisionadditionsubtraction";
 import { LexReader } from "../../reader/lexReader";
-import { TokenType, validOperators } from "../../token";
+import { Token, TokenRange, TokenType, validOperators } from "../../token";
 import { ValueTreeNode } from "../node";
 import { ComparisonOperationNode } from "./comparisonOperation";
 
@@ -18,28 +18,37 @@ export class HeapDefinitionNode {
   type = <const>"heapDefinitionNode";
 
   constructor(
+    protected readonly tokenRange: TokenRange,
     protected readonly name: string,
     protected readonly options: HeapOptions,
   ) { }
+
+  getTokenRange() {
+    return this.tokenRange;
+  }
 
   getName() { return this.name }
   getOptions() { return this.options }
 
   static build(reader: LexReader): HeapDefinitionNode {
-    reader.expect({ type: TokenType.Keyword, value: "heap" });
+    const heapToken = reader.expect({ type: TokenType.Keyword, value: "heap" });
 
-    const name = reader.expect({ type: TokenType.Identifier }).value;
+    const nameToken = reader.expect({ type: TokenType.Identifier });
+
+    let endtoken: Token = nameToken;
 
     let options: Partial<HeapOptions> = {};
 
     if (reader.nextIs({ type: TokenType.Separator, value: "{" })) {
-      options = SILO.parse(`{${reader.readBetween("{").toString()}}`) as any;
+      const innerOptions = reader.readBetween("{");
+      options = SILO.parse(`{${innerOptions.toString()}}`) as any;
+      endtoken = innerOptions.getRange().getEnd();
     }
 
     if (reader.nextIs({ type: TokenType.Separator, value: ";" })) {
       reader.read();
     }
 
-    return new HeapDefinitionNode(name, {...defaultHeapOptions, ...options});
+    return new HeapDefinitionNode(new TokenRange(heapToken, endtoken), nameToken.value, {...defaultHeapOptions, ...options});
   }
 }

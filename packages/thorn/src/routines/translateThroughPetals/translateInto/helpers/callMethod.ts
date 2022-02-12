@@ -5,7 +5,9 @@ import { VariableInput } from "petals-stem/dist/src/block/input/variable";
 import { Target } from "petals-stem/dist/src/target";
 import { MethodCallNode } from "../../../../types/ast/nodes/methodCall";
 import { VariableReferenceNode } from "../../../../types/ast/nodes/variableReference";
+import { TokenRange } from "../../../../types/token";
 import { ListApi } from "../../api/list";
+import { SelfApi } from "../../api/self";
 import { Context } from "../../context";
 import { getType } from "../../getType";
 import { getUnknownReference } from "../../reference";
@@ -15,17 +17,20 @@ import { ListReference } from "../../reference/list/abstract";
 import { VariableReference } from "../../reference/variable/abstract";
 import { VariableHeapCopyReference } from "../../reference/variable/heapCopy";
 
-export function call(node: MethodCallNode, target: Target, thread: Block, context: Context): VariableReference | ListReference {
+export function call(node: MethodCallNode, target: Target, thread: Block, context: Context): VariableReference | ListReference | undefined {
   const base = node.getBaseValue();
-
   if (base.type !== "variableReference") {
     if (base.type === "propertyReference") {
       let parentType = getType(base.getParent(), context);
-
+      
       if (parentType.isListType()) {
         const parent = getListReference(base.getParent(), target, thread, context);
 
         return ListApi.callListApi(parent, base.getProperty(), node, target, thread, context)
+      }
+
+      if (parentType.isSelfType()) {
+        return SelfApi.callSelfApi(base.getProperty(), node, target, thread, context)
       }
 
       const parent = base.getParent();
@@ -49,7 +54,7 @@ export function call(node: MethodCallNode, target: Target, thread: Block, contex
 
         args.unshift(base.getParent());
 
-        return call(new MethodCallNode(new VariableReferenceNode("___" + parentType.getName() + "_" + base.getProperty()), args), target, thread, context);
+        return call(new MethodCallNode(new TokenRange(parent.getTokenRange().getStart(), TokenRange.fromNodes(args).getEnd()), new VariableReferenceNode(new TokenRange(base.getTokenRange()), "___" + parentType.getName() + "_" + base.getProperty()), args), target, thread, context);
       }
     }
 

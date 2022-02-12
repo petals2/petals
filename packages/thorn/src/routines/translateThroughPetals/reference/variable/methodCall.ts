@@ -1,6 +1,6 @@
 import { Block } from "petals-stem/dist/src/block";
 import { Procedures } from "petals-stem/dist/src/block/category/procedures";
-import { AnyInput, Input } from "petals-stem/dist/src/block/input";
+import { AnyInput, Input, StringInput } from "petals-stem/dist/src/block/input";
 import { VariableInput } from "petals-stem/dist/src/block/input/variable";
 import { ID } from "petals-stem/dist/src/id";
 import { Target } from "petals-stem/dist/src/target";
@@ -38,6 +38,9 @@ export class MethodCallResultReference extends VariableReference {
 
   getValue(target: Target, thread: Block, context: Context): AnyInput {
     const resRef = (this.callResult ?? call(this.node, target, thread, context));
+
+    if (!resRef)
+      return new StringInput("undefined");
 
     if (resRef instanceof ListReference) throw new Error("Expected method call result to be a variable reference");
 

@@ -12,6 +12,7 @@
   "author": "roobscoob",
   "license": "AGPL-3.0-only",
   "dependencies": {
+    "chalk": "4.0.0",
     "petals-render": "workspace:*",
     "petals-silo": "workspace:*",
     "petals-stem": "workspace:*",

@@ -119,7 +119,9 @@ export class TextRenderer extends Renderer<string> {
       case "procedures": return chalk.bgHex(dark ? "#FA002A" : "#FF6680").bold.white(str);
       case "operator": return chalk.bgHex(dark ? "#368F36" : "#59C059").bold.white(str);
       case "control": return chalk.bgHex(dark ? "#C47C00" : "#FFAB19").bold.white(str);
+      case "motion": return chalk.bgHex(dark ? "#00429E" : "#4c97FF").bold.white(str);
       case "event": return chalk.bgHex(dark ? "#B38600" : "#FFBF00").bold.white(str);
+      case "looks": return chalk.bgHex(dark ? "#30008F" : "#9966FF").bold.white(str);
       case "data":
         if ((["data_setvariableto", "data_changevariableby", "data_showvariable", "data_hidevariable"]).includes(opcode)) {
           return chalk.bgHex(dark ? "#C56200" : "#FF8C1A").bold.white(str);

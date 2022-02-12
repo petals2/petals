@@ -7,6 +7,7 @@ import { getType } from "../../getType";
 import { VariableRedefinitionNode } from "../../../../types/ast/nodes/variableRedefinitionNode";
 import { VariableReferenceNode } from "../../../../types/ast/nodes/variableReference";
 import translateVariableRedefinitionNode from "./variableRedefinitionOperator";
+import { TokenRange } from "../../../../types/token";
 
 export default function (node: VariableDefinitionNode, target: Target, thread: Block, context: Context): void {
   let type = node.getType();
@@ -31,6 +32,6 @@ export default function (node: VariableDefinitionNode, target: Target, thread: B
   }
 
   if (node.getInitialValue() !== undefined) {
-    translateVariableRedefinitionNode(new VariableRedefinitionNode(new VariableReferenceNode(node.getName()), node.getInitialValue()!), target, thread, context, context.isInRecursiveMethod());
+    translateVariableRedefinitionNode(new VariableRedefinitionNode(new TokenRange(node.getTokenRange()), new VariableReferenceNode(new TokenRange(node.getTokenRange()), node.getName()), node.getInitialValue()!), target, thread, context, context.isInRecursiveMethod());
   }
 }

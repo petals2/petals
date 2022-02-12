@@ -1,14 +1,23 @@
 import { LexedContextualError } from "../../errors/lexedContextual";
-import { Token, TokenType } from "../token";
+import { Token, TokenRange, TokenType } from "../token";
 import { Reader } from "petals-utils";
+import { LexError } from "../../errors/lexError";
 
 export class LexReader implements Reader {
   protected readHead: number = 0;
+  protected errors: LexError[];
 
-  protected readonly contents: Token[]
+  protected readonly contents: Token[];
+  protected range: TokenRange;
 
-  constructor(contents: Token[]) {
-    this.contents = contents.filter(token => token.type !== TokenType.Comment)
+  constructor(contents: Token[], protected parent?: LexReader, range?: TokenRange) {
+    this.contents = contents.filter(token => token.type !== TokenType.Comment);
+    this.errors = [];
+    this.range = range || TokenRange.fromArray(contents);
+  }
+
+  getRange() {
+    return this.range;
   }
 
   read(): Token {
@@ -19,7 +28,7 @@ export class LexReader implements Reader {
     return this.contents[this.readHead + index];
   }
 
-  expect<T extends ({ type: TokenType } | Token)[]>(...items: T): ({ [key in keyof T]: T[key] extends { type: infer Type, value: infer Value } ? { type: Type, value: Value } : T[key] extends { type: infer Type } ? Extract<Token, { type: Type }> : unknown })[number] {
+  expect<T extends ({ type: TokenType } | Token)[]>(...items: T): ({ [key in keyof T]: T[key] extends { type: infer Type, value: infer Value } ? { type: Type, value: Value, startPos: number, endPos: number } : T[key] extends { type: infer Type } ? Extract<Token, { type: Type }> : unknown })[number] {
     if (this.nextIs(...items)) {
       return this.read() as any;
     };
@@ -76,7 +85,28 @@ export class LexReader implements Reader {
       tokens.push(token);
     } while (depth !== 0)
 
-    return new LexReader(tokens.slice(1, -1));
+    return new LexReader(tokens.slice(1, -1), this, TokenRange.fromArray(tokens));
+  }
+
+  pushLexError(error: LexError) {
+    if (error.fatal) {
+      throw error;
+    }
+
+    if (this.parent) {
+      this.parent.pushLexError(error);
+      return;
+    }
+    
+    this.errors.push(error);
+  }
+
+  getErrors(): LexError[] {
+    if (this.parent) {
+      return this.parent.getErrors();
+    }
+
+    return this.errors;
   }
 
   toString(): string {

@@ -46,6 +46,7 @@ export class CommentStore {
 
   protected deserialize(project: Project, reference: ProjectReference, json: SerializedCommentStore) {
     const entries = Object.entries(json);
+    this._store.clear();
     for (const [ commentId, commentJson ] of entries) {
       this._store.set(commentId, Comment.fromReference(project, reference, commentJson));
     }

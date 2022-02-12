@@ -1,7 +1,7 @@
 import { Block } from "petals-stem/dist/src/block";
 import { Target } from "petals-stem/dist/src/target";
 import { MethodCallNode } from "../../../../types/ast/nodes/methodCall";
-import { NumberType, Type } from "../../../../types/ast/type";
+import { NumberType, ReferenceType, Type } from "../../../../types/ast/type";
 import { Context } from "../../context";
 import { ListReference } from "../../reference/list/abstract";
 import { VariableReference } from "../../reference/variable/abstract";
@@ -12,6 +12,7 @@ import { ListLengthReference } from "./lengthReference";
 export namespace ListApi {
   export function getType(key: string): Type {
     switch(key) {
+      case "push": return new ReferenceType("push");
       case "length": return new NumberType();
     }
   

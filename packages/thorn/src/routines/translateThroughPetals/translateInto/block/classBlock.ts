@@ -6,6 +6,7 @@ import { ClassDefinitionNode } from "../../../../types/ast/nodes/classDefinition
 import { NumberType, StructureType } from "../../../../types/ast/type";
 import translateMethodDefinitionNode from "./methodDefinitionNode";
 import { MethodDefinitionNode } from "../../../../types/ast/nodes/methodDefinition";
+import { TokenRange } from "../../../../types/token";
 
 export default function (node: ClassDefinitionNode, target: Target, thread: Block, ctx: Context): void {
   ctx.enterClass(node);
@@ -17,13 +18,13 @@ export default function (node: ClassDefinitionNode, target: Target, thread: Bloc
   ctx.defineStruct("___" + node.getName() + "_struct", struct);
 
   Object.entries(node.getMethods()).forEach(([name, info]) => {
-    translateMethodDefinitionNode(new MethodDefinitionNode("___" + node.getName() + "_" + name, info.method.getReturnType(), [{ name: "___this_arg", type: new NumberType() }, ...info.method.getArguments()], info.method.getContents()), target, thread, ctx);
+    translateMethodDefinitionNode(new MethodDefinitionNode(new TokenRange(node.getTokenRange()), "___" + node.getName() + "_" + name, info.method.getReturnType(), [{ name: "___this_arg", type: new NumberType() }, ...info.method.getArguments()], info.method.getContents()), target, thread, ctx);
   });
 
   const ctor = node.getConstructor();
 
   if (ctor) {
-    translateMethodDefinitionNode(new MethodDefinitionNode("___" + node.getName() + "_constructor", ctor.method.getReturnType(), [{ name: "___this_arg", type: new NumberType() }, ...ctor.method.getArguments()], ctor.method.getContents()), target, thread, ctx);
+    translateMethodDefinitionNode(new MethodDefinitionNode(new TokenRange(node.getTokenRange()), "___" + node.getName() + "_constructor", ctor.method.getReturnType(), [{ name: "___this_arg", type: new NumberType() }, ...ctor.method.getArguments()], ctor.method.getContents()), target, thread, ctx);
   }
 
   ctx.exitClass();

@@ -1,6 +1,6 @@
 import { buildAst } from "../../../routines/buildAst";
 import { LexReader } from "../../reader/lexReader";
-import { TokenType } from "../../token";
+import { TokenRange, TokenType } from "../../token";
 import { GetTreeNode, TreeNode, ValueTreeNode } from "../node";
 import { Type } from "../type";
 
@@ -8,11 +8,16 @@ export class MethodDefinitionNode {
   type = <const>"methodDefinition";
 
   constructor(
+    protected readonly tokenRange: TokenRange,
     protected readonly name: string,
     protected readonly returnType: Type,
     protected readonly args: { name: string, type: Type }[],
     protected readonly contents: TreeNode[],
   ) { }
+
+  getTokenRange() {
+    return this.tokenRange;
+  }
 
   getName() { return this.name }
   getReturnType() { return this.returnType }
@@ -20,17 +25,19 @@ export class MethodDefinitionNode {
   getContents() { return this.contents }
 
   static build(reader: LexReader): MethodDefinitionNode {
-    if (reader.nextIs({ type: TokenType.Keyword, value: "function" }))
-      reader.expect({ type: TokenType.Keyword, value: "function" });
+    const functionToken = reader.nextIs({ type: TokenType.Keyword, value: "function" })
+      ? reader.expect({ type: TokenType.Keyword, value: "function" })
+      : undefined;
 
-    const name = reader.expect({ type: TokenType.Identifier }).value;
+    const nameToken = reader.expect({ type: TokenType.Identifier });
     const argReader = reader.readBetween("(");
 
     reader.expect({ type: TokenType.Separator, value: ":" });
 
     const returnType = Type.build(reader);
 
-    const contents = buildAst(reader.readBetween("{"));
+    const contentTokens = reader.readBetween("{");
+    const contents = buildAst(contentTokens);
 
     const args: { name: string, type: Type }[] = [];
 
@@ -46,6 +53,6 @@ export class MethodDefinitionNode {
       if (argReader.nextIs({ type: TokenType.Separator, value: "," })) argReader.read();
     }
 
-    return new MethodDefinitionNode(name, returnType, args, contents);
+    return new MethodDefinitionNode(new TokenRange(functionToken ? functionToken : nameToken, contentTokens.getRange().getEnd()), nameToken.value, returnType, args, contents);
   }
 }

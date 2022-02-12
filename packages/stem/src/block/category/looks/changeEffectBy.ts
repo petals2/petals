@@ -9,7 +9,7 @@ export enum Effect {
   Whirl = "WHIRL",
   Pixelate = "PIXELATE",
   Mosaic = "MOSAIC",
-  Brightness = "BRIGHTNESS",
+Brightness = "BRIGHTNESS",
   Ghost = "GHOST",
 }
 

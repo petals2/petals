@@ -1,9 +1,16 @@
+import { Project, Sb3 } from "..";
 import { Broadcast } from "./broadcast";
 
 export type SerializedBroadcastStore = Record<string, string>;
 
 export class BroadcastStore {
   private _store: Map<string, Broadcast> = new Map();
+
+  static fromSb3(project: Project, sb3: Sb3, json: SerializedBroadcastStore) {
+    const broadcastStore = new BroadcastStore;
+    broadcastStore.deserialize(project, sb3, json);
+    return broadcastStore;
+  }
 
   findBroadcastById(id: string): Broadcast | undefined {
     return this._store.get(id);
@@ -55,6 +62,14 @@ export class BroadcastStore {
       throw new Error("Failed to find broadcast by id: " + id);
 
     this._store.delete(id);
+  }
+
+  protected deserialize(project: Project, sb3: Sb3, json: SerializedBroadcastStore) {
+    const entries = Object.entries(json);
+    this._store.clear();
+    for (const [ broadcastId, broadcastName ] of entries) {
+      this._store.set(broadcastId, new Broadcast(broadcastName));
+    }
   }
 
   serialize(): SerializedBroadcastStore {

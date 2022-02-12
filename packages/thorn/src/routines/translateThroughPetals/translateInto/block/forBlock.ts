@@ -5,6 +5,7 @@ import { Block } from "petals-stem/dist/src/block";
 import { translateNodeIntoBlock } from ".";
 import { Context } from "../../context";
 import { WhileNode } from "../../../../types/ast/nodes/while";
+import { TokenRange } from "../../../../types/token";
 
 export default function (forBlock: ForNode, target: Target, thread: Block, context: Context): void {
   const firstStep = forBlock.getFirstStep();
@@ -17,6 +18,7 @@ export default function (forBlock: ForNode, target: Target, thread: Block, conte
 
   translateWhileBlock(
     new WhileNode(
+      new TokenRange(forBlock.getTokenRange()),
       secondStep,
       [ ...forBlock.getContents(), thirdStep ]
     ),

@@ -38,6 +38,9 @@ export enum TokenType {
 }
 
 export type Token = {
+  startPos: number,
+  endPos: number,
+} & ({
   type: TokenType.BooleanLiteral,
   value: boolean,
 } | {
@@ -64,4 +67,56 @@ export type Token = {
 } | {
   type: TokenType.Keyword,
   value: (typeof validKeywords)[number],
+});
+
+export class TokenRange {
+  static fromArray(tokens: Token[]) {
+    const start = tokens[0];
+    const end = tokens[tokens.length - 1];
+
+    return new TokenRange(start, end);
+  }
+
+  static fromNodes<T extends { getTokenRange(): TokenRange }>(nodes: T[]) {
+    const start = nodes[0];
+    const end = nodes[nodes.length - 1];
+
+    return new TokenRange(start.getTokenRange().getStart(), end.getTokenRange().getEnd());
+  }
+
+  protected readonly start: Token;
+  protected readonly end: Token;
+
+  constructor(
+    start: Token|TokenRange,
+    end?: Token|TokenRange
+  ) {
+    if (end) {
+      this.start = start instanceof TokenRange ? start.getStart() : start;
+      this.end = end instanceof TokenRange ? end.getEnd() : end;
+    } else {
+      this.start = start instanceof TokenRange ? start.getStart() : start;
+      this.end = start instanceof TokenRange ? start.getEnd() : start;
+    }
+  }
+
+  getStart() {
+    return this.start;
+  }
+
+  getEnd() {
+    return this.end;
+  }
+
+  expand(other: TokenRange) {
+    const start = other.getStart().startPos < this.start.startPos
+      ? other.getStart()
+      : this.start;
+
+    const end = other.getEnd().endPos > this.end.endPos
+      ? other.getEnd()
+      : this.end;
+
+    return new TokenRange(start, end);
+  }
 }

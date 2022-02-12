@@ -76,12 +76,9 @@ export class VariableStore {
 
   protected deserialize(project: Project, reference: ProjectReference, json: SerializedVariableStore) {
     const jsonEntries = Object.entries(json);
-    for (const [ variableId, [ variableName, variableValue, variableCloud ] ] of jsonEntries) {
-      if (variableCloud) {
-        this._store.set(variableId, new CloudVariable(variableName, variableValue));
-      } else {
-        this._store.set(variableId, new Variable(variableName, variableValue));
-      }
+    this._store.clear();
+    for (const [ variableId, [ variableName, variableValue ] ] of jsonEntries) {
+      this._store.set(variableId, new Variable(variableName, variableValue));
     }
   }
 

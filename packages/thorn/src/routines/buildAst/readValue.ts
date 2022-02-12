@@ -9,11 +9,12 @@ import { IndexReferenceNode } from "../../types/ast/nodes/indexReference";
 import { MathOperationNode } from "../../types/ast/nodes/mathOperation";
 import { MethodCallNode } from "../../types/ast/nodes/methodCall";
 import { MethodDefinitionNode } from "../../types/ast/nodes/methodDefinition";
-import { NegateOperator } from "../../types/ast/nodes/NegateOperator";
+import { NegateOperator } from "../../types/ast/nodes/negateOperator";
 import { NewNode } from "../../types/ast/nodes/newNode";
 import { NumberLiteralNode } from "../../types/ast/nodes/numberLiteral";
 import { ParenthesisedExpressionNode } from "../../types/ast/nodes/parenthesisedExpression";
 import { PropertyReferenceNode } from "../../types/ast/nodes/propertyReference";
+import { SelfReferenceNode } from "../../types/ast/nodes/selfReferenceNode";
 import { HeapCopyOperation } from "../../types/ast/nodes/stackCopyOperation";
 import { StringLiteralNode } from "../../types/ast/nodes/stringLiteral";
 import { StructLiteralNode } from "../../types/ast/nodes/structLiteral";
@@ -21,7 +22,7 @@ import { ThisNode } from "../../types/ast/nodes/thisNode";
 import { VariableRedefinitionNode } from "../../types/ast/nodes/variableRedefinitionNode";
 import { VariableReferenceNode } from "../../types/ast/nodes/variableReference";
 import { LexReader } from "../../types/reader/lexReader";
-import { TokenType } from "../../types/token";
+import { TokenRange, TokenType } from "../../types/token";
 
 export function readValue(reader: LexReader): ValueTreeNode {
   let basic: ValueTreeNode
@@ -63,7 +64,7 @@ export function readValue(reader: LexReader): ValueTreeNode {
         }
       }
   
-      basic = new MethodCallNode(basic, args);
+      basic = new MethodCallNode(new TokenRange(basic.getTokenRange().getStart(), argumentReader.getRange().getEnd()), basic, args);
     }
 
     if (reader.nextIs({ type: TokenType.Separator, value: "." }, { type: TokenType.Separator, value: "[" })) {
@@ -119,6 +120,10 @@ export function readBasicValue(reader: LexReader): Exclude<ValueTreeNode, MathOp
       case TokenType.NumberLiteral:
         return NumberLiteralNode.build(reader) as any;
     }
+  }
+
+  if (reader.nextIs({ type: TokenType.Identifier, value: "self" })) {
+    return SelfReferenceNode.build(reader);
   }
 
   if (reader.nextIs({ type: TokenType.Identifier })) {

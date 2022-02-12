@@ -12,12 +12,13 @@ import { IndexReferenceNode } from "./nodes/indexReference";
 import { MathOperationNode } from "./nodes/mathOperation";
 import { MethodCallNode } from "./nodes/methodCall";
 import { MethodDefinitionNode } from "./nodes/methodDefinition";
-import { NegateOperator } from "./nodes/NegateOperator";
+import { NegateOperator } from "./nodes/negateOperator";
 import { NewNode } from "./nodes/newNode";
 import { NumberLiteralNode } from "./nodes/numberLiteral";
 import { ParenthesisedExpressionNode } from "./nodes/parenthesisedExpression";
 import { PropertyReferenceNode } from "./nodes/propertyReference";
 import { ReturnNode } from "./nodes/return";
+import { SelfReferenceNode } from "./nodes/selfReferenceNode";
 import { HeapCopyOperation } from "./nodes/stackCopyOperation";
 import { StringLiteralNode } from "./nodes/stringLiteral";
 import { StructDefinitionNode } from "./nodes/structDefinitionNode";
@@ -30,7 +31,27 @@ import { WhileNode } from "./nodes/while";
 
 export type GetTreeNode<NodeType extends string> = TreeNode extends { type: NodeType } ? TreeNode : never;
 
-export type ValueTreeNode = ThisNode | NewNode | IndexReferenceNode | HeapCopyOperation | StructLiteralNode | NumberLiteralNode | BooleanLiteralNode | StringLiteralNode | ArrayLiteralNode | VariableRedefinitionNode | NegateOperator | VariableReferenceNode | MathOperationNode | MethodCallNode | PropertyReferenceNode | ParenthesisedExpressionNode | ComparisonOperationNode | MethodDefinitionNode | IncrementOperatorNode | DecrementOperatorNode;
+export type ValueTreeNode = ThisNode
+  | NewNode
+  | IndexReferenceNode
+  | HeapCopyOperation
+  | StructLiteralNode
+  | NumberLiteralNode
+  | BooleanLiteralNode
+  | StringLiteralNode
+  | ArrayLiteralNode
+  | VariableRedefinitionNode
+  | NegateOperator
+  | VariableReferenceNode
+  | MathOperationNode
+  | SelfReferenceNode
+  | MethodCallNode
+  | PropertyReferenceNode
+  | ParenthesisedExpressionNode
+  | ComparisonOperationNode
+  | MethodDefinitionNode
+  | IncrementOperatorNode
+  | DecrementOperatorNode;
 
 export type TreeNode = VariableDefinitionNode
   | ParenthesisedExpressionNode
@@ -51,6 +72,7 @@ export type TreeNode = VariableDefinitionNode
   | NumberLiteralNode
   | StringLiteralNode
   | MathOperationNode
+  | SelfReferenceNode
   | ArrayLiteralNode
   | NegateOperator
   | MethodCallNode

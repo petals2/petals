@@ -1,3 +1,4 @@
 {
-  index: "index.tn"
+  index: "index.tn",
+  name: "name"
 }

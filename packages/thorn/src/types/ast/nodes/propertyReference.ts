@@ -1,15 +1,19 @@
-import { readValue } from "../../../routines/buildAst/readValue";
 import { LexReader } from "../../reader/lexReader";
-import { TokenType } from "../../token";
+import { TokenRange, TokenType } from "../../token";
 import { ValueTreeNode } from "../node";
 
 export class PropertyReferenceNode {
   type = <const>"propertyReference";
 
   constructor(
+    protected readonly tokenRange: TokenRange,
     protected readonly property: string,
     protected readonly element: ValueTreeNode,
   ) { }
+
+  getTokenRange() {
+    return this.tokenRange;
+  }
 
   getProperty() { return this.property }
   getParent() { return this.element }
@@ -17,6 +21,8 @@ export class PropertyReferenceNode {
   static build(reader: LexReader, element: ValueTreeNode): PropertyReferenceNode {
     reader.expect({ type: TokenType.Separator, value: "." });
 
-    return new PropertyReferenceNode(reader.expect({ type: TokenType.Identifier }).value, element);
+    const idToken = reader.expect({ type: TokenType.Identifier });
+
+    return new PropertyReferenceNode(new TokenRange(element.getTokenRange().getStart(), idToken), idToken.value, element);
   }
 }

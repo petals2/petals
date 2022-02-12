@@ -154,6 +154,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"chalk@npm:4.0.0":
+  version: 4.0.0
+  resolution: "chalk@npm:4.0.0"
+  dependencies:
+    ansi-styles: ^4.1.0
+    supports-color: ^7.1.0
+  checksum: a9580afd4af8ffa8add8edb565d1b3f77efb880c5d887d3bb72a948d1bfb2bc764db2ceb6d62a60103aa384f3da71eb1969c7f68e886055e0a3438550e809cde
+  languageName: node
+  linkType: hard
+
 "chalk@npm:^4.0.0":
   version: 4.1.2
   resolution: "chalk@npm:4.1.2"
@@ -408,6 +418,7 @@ __metadata:
   resolution: "petals-thorn@workspace:packages/thorn"
   dependencies:
     "@types/node": ^17.0.10
+    chalk: 4.0.0
     petals-render: "workspace:*"
     petals-silo: "workspace:*"
     petals-stem: "workspace:*"

@@ -1,11 +1,11 @@
 import { SerializedVariableStore, VariableStore } from "../variable/store";
-import type { SerializedListStore } from "../list/store";
+import { ListStore, SerializedListStore } from "../list/store";
 import { Vector2 } from "../types/vector2";
 import type { Stage } from "./stage";
 import { Target } from "./target";
-import { SerializedBroadcastStore } from "../broadcast/store";
-import { SerializedBlockStore } from "../block/store";
-import { SerializedCommentStore } from "../comment/store";
+import { BroadcastStore, SerializedBroadcastStore } from "../broadcast/store";
+import { BlockStore, SerializedBlockStore } from "../block/store";
+import { CommentStore, SerializedCommentStore } from "../comment/store";
 import { CostumeStore, SerializedCostumeStore } from "../costume/store/store";
 import { SerializedSoundStore, SoundStore } from "../sound/store";
 import { Project, TargetCostumeStore } from "..";
@@ -81,10 +81,10 @@ export class Sprite extends Target {
   protected async deserialize(project: Project, reference: ProjectReference, json: SerializedSprite) {
     this.setName(json.name);
     this.variables = VariableStore.fromReference(project, reference, json.variables);
-    // this.getLists().deserialize(project, reference, json.lists);
-    // this.getBroadcasts().deserialize(project, reference, json.broadcasts);
-    // this.getBlocks().deserialize(project, reference, json.blocks);
-    // this.getComments().deserialize(project, reference, json.comments);
+    this.lists = ListStore.fromReference(project, reference, json.lists);
+    this.broadcasts = BroadcastStore.fromReference(project, reference, json.broadcasts);
+    this.blocks = BlockStore.fromReference(project, reference, json.blocks);
+    this.comments = CommentStore.fromReference(project, reference, json.comments);
     this.costumes = await TargetCostumeStore.fromReference(project, reference, json.costumes);
     this.getCostumes().setSelectedIndex(json.currentCostume);
     this.sounds = await SoundStore.fromReference(project, reference, json.sounds);

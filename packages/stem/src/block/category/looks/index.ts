@@ -19,6 +19,7 @@ import { Costume as _Costume } from "./costume";
 import { Think as _Think } from "./think";
 import { Hide as _Hide } from "./hide";
 import { Show as _Show } from "./show";
+import { Size as _Size } from "./size";
 import { Say as _Say } from "./say";
 
 export namespace Looks {
@@ -39,6 +40,7 @@ export namespace Looks {
   export const SetEffectTo = _SetEffectTo;
   export const SetSizeTo = _SetSizeTo;
   export const Show = _Show;
+  export const Size = _Size;
   export const SwitchBackdropTo = _SwitchBackdropTo;
   export const SwitchBackdropToAndWait = _SwitchBackdropToAndWait;
   export const SwitchCostumeTo = _SwitchCostumeTo;

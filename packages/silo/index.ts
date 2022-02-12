@@ -65,7 +65,7 @@ function lex(reader: StringReader): SiloLex[] {
     if (separator) {
       tokens.push({
         type: SiloLexType.Separator,
-        value: reader.expect(separator),
+        value: reader.expect(separator).value,
       });
 
       continue;
@@ -78,7 +78,7 @@ function lex(reader: StringReader): SiloLex[] {
 
       tokens.push({
         type: SiloLexType.Number,
-        value: parseFloat(fullNumber),
+        value: parseFloat(fullNumber.value),
       });
 
       continue;
@@ -106,7 +106,7 @@ function lex(reader: StringReader): SiloLex[] {
 
       tokens.push({
         type: SiloLexType.String,
-        value: reader.readUntil(isStr),
+        value: reader.readUntil(isStr).value
       });
 
       reader.expect(isStr);
@@ -114,7 +114,7 @@ function lex(reader: StringReader): SiloLex[] {
       continue;
     }
 
-    const contents = reader.readUntil("[", "]", "{", "}", ",", "<", ">", ":", "&", "*", ...WhitespaceCharacters);
+    const contents = reader.readUntil("[", "]", "{", "}", ",", "<", ">", ":", "&", "*", ...WhitespaceCharacters).value;
 
     if (!contents) continue;
 

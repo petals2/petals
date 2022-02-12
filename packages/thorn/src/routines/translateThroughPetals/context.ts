@@ -23,7 +23,7 @@ import { StringInput } from "petals-stem/dist/src/block/input/string";
 import { getType } from "./getType";
 import { FunctionArgumentReference } from "./reference/variable/functionArgument";
 import { ClassDefinitionNode } from "../../types/ast/nodes/classDefinitionNode";
-import { C } from "petals-stem/dist/src/block/kinds/c";
+import { TransformError } from "../../errors/transformError";
 
 export type HeapReferenceData = { heap: ListReference, heapIndexes: ListReference, options: HeapOptions, mallocReturn: VariableReference, malloc: InstanceType<typeof Procedures.Definition>, free: InstanceType<typeof Procedures.Definition> };
 
@@ -44,8 +44,12 @@ export class Context {
   protected returnVariables: Record<string, Variable | List> = {};
   protected currentMethod: string | undefined;
 
-  constructor(public readonly target: Target, public readonly mainThread: Block) {
-    this.createHeap("global", { maxSize: 200000 })
+  protected transformErrors: TransformError[] = [];
+
+  constructor(public readonly target: Target, public readonly mainThread: Block, createGlobalHeap = true) {
+    if (createGlobalHeap) {
+      this.createHeap("global", { maxSize: 200000 });
+    }
   }
 
   setType(item: List, type: ListType): this
@@ -364,6 +368,131 @@ export class Context {
     }
 
     return this.heapStore.get("global")!;
+  }
+
+  pushTransformError(error: TransformError) {
+    if (error.fatal) {
+      throw error;
+    }
+
+    this.transformErrors.push(error);
+  }
+
+  getTransformErrors() {
+    return this.transformErrors;
+  }
+}
+
+export class FileContext extends Context {
+  constructor(public readonly filePath: string, public readonly parent: Context) {
+    super(parent.target, parent.mainThread, false);
+  }
+
+  setType(item: List, type: ListType): this
+  setType(item: Variable | string, type: Type): this
+  setType(item: Variable | List | string, type: Type): this
+  setType(item: List | Variable | string, type: Type): this {
+    this.parent.setType(item, type);
+    return this;
+  }
+
+  getType(item: List): ListType | undefined
+  getType(item: Variable | string): Type | undefined
+  getType(item: Variable | List | string): Type | undefined
+  getType(item: List | Variable | string): Type | undefined {
+    return this.parent.getType(item);
+  }
+
+  enterClass(klass: ClassDefinitionNode): void {
+    this.parent.enterClass(klass);
+  }
+
+  exitClass() {
+    this.parent.exitClass();
+  }
+
+  getCurrentClass(): string | undefined {
+    return this.parent.getCurrentClass();
+  }
+
+  hasClass(klass: string): boolean {
+    return this.parent.hasClass(klass);
+  }
+
+  getClass(klass: string): ClassDefinitionNode | undefined {
+    return this.parent.getClass(klass);
+  }
+
+  enter() {
+    this.parent.enter();
+  }
+
+  enterMethod(methodName: string, args: { name: string, type: Type }[], returnType: Type, recursive: boolean) {
+    this.parent.enterMethod(methodName, args, returnType, recursive);
+  }
+
+  getReturnVariable(): VariableReference | ListReference | undefined {
+    return this.parent.getReturnVariable();
+  }
+
+  getReturnVariableForMethod(methodName: string): VariableReference | ListReference {
+    return this.parent.getReturnVariableForMethod(methodName);
+  }
+
+  exit() {
+    this.parent.exit();
+  }
+
+  exitMethod() {
+    return this.parent.exitMethod();
+  }
+
+  createVariable(name: string, value: string | number, type: Type): VariableReference {
+    return this.parent.createVariable(name, value, type);
+  }
+
+  createList(name: string, value: string[], type: Type): List {
+    return this.parent.createList(name, value, type);
+  }
+
+  hasVariable(name: string): boolean {
+    return this.parent.hasVariable(name);
+  }
+
+  hasList(name: string): boolean {
+    return this.parent.hasList(name);
+  }
+
+  getVariable(name: string): Variable | List | { name: string, type: Type } {
+    return this.parent.getVariable(name);
+  }
+
+  getList(name: string): List | VariableReference {
+    return this.parent.getList(name);
+  }
+
+  defineStruct(name: string, type: StructureType) {
+    this.parent.defineStruct(name, type);
+  }
+
+  getStruct(name: string): StructureType {
+    return this.parent.getStruct(name);
+  }
+
+  hasStruct(name: string): boolean {
+    return this.parent.hasStruct(name);
+  }
+
+  isInRecursiveMethod(): boolean {
+    return this.parent.isInRecursiveMethod();
+  }
+
+  createHeap(name: string, options: HeapOptions): void {
+    this.parent.createHeap(name, options);
+  }
+
+  getHeap(name?: string): HeapReferenceData {
+    return this.parent.getHeap(name);
   }
 }
 

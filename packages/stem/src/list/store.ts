@@ -1,9 +1,20 @@
+import { Project, Sb3 } from "..";
 import { List } from "./list"
 
 export type SerializedListStore = Record<string, [name: string, values: string[]]>
 
 export class ListStore {
   private _store: Map<string, List> = new Map();
+
+  static fromSb3(project: Project, sb3: Sb3, json: SerializedListStore) {
+    const listStore = new ListStore;
+    listStore.deserialize(project, sb3, json);
+    return listStore;
+  }
+
+  getLists() {
+    return this._store;
+  }
 
   findListById(id: string): List | undefined {
     return this._store.get(id);
@@ -55,6 +66,13 @@ export class ListStore {
       throw new Error("Failed to find list by id: " + id);
 
     this._store.delete(id);
+  }
+
+  protected deserialize(project: Project, sb3: Sb3, json: SerializedListStore) {
+    const jsonEntries = Object.entries(json);
+    for (const [ variableId, [ jsonName, jsonValue ] ] of jsonEntries) {
+      this._store.set(variableId, new List(jsonName, jsonValue));
+    }
   }
 
   serialize(): SerializedListStore {

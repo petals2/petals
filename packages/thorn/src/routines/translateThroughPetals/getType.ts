@@ -20,19 +20,21 @@ import { IndexReferenceNode } from "../../types/ast/nodes/indexReference";
 import { MathOperationNode } from "../../types/ast/nodes/mathOperation";
 import { MethodCallNode } from "../../types/ast/nodes/methodCall";
 import { MethodDefinitionNode } from "../../types/ast/nodes/methodDefinition";
-import { NegateOperator } from "../../types/ast/nodes/NegateOperator";
+import { NegateOperator } from "../../types/ast/nodes/negateOperator";
 import { NewNode } from "../../types/ast/nodes/newNode";
 import { NumberLiteralNode } from "../../types/ast/nodes/numberLiteral";
 import { ParenthesisedExpressionNode } from "../../types/ast/nodes/parenthesisedExpression";
 import { PropertyReferenceNode } from "../../types/ast/nodes/propertyReference";
+import { SelfReferenceNode } from "../../types/ast/nodes/selfReferenceNode";
 import { HeapCopyOperation } from "../../types/ast/nodes/stackCopyOperation";
 import { StringLiteralNode } from "../../types/ast/nodes/stringLiteral";
 import { StructLiteralNode } from "../../types/ast/nodes/structLiteral";
 import { ThisNode } from "../../types/ast/nodes/thisNode";
 import { VariableRedefinitionNode } from "../../types/ast/nodes/variableRedefinitionNode";
 import { VariableReferenceNode } from "../../types/ast/nodes/variableReference";
-import { BooleanType, HeapReferenceType, ListType, LiteralType, NumberType, StringType, Type, UnionType } from "../../types/ast/type";
+import { BooleanType, HeapReferenceType, ListType, LiteralType, NumberType, SelfType, StringType, Type, UnionType } from "../../types/ast/type";
 import { ListApi } from "./api/list";
+import { SelfApi } from "./api/self";
 import { Context, typeApplyContext } from "./context";
 
 export function getType(node: ValueTreeNode | Input | Variable | List | { name: string, type: Type } | string, ctx: Context): Type {
@@ -169,7 +171,15 @@ export function getType(node: ValueTreeNode | Input | Variable | List | { name: 
       return ListApi.getType(node.getProperty());
     }
 
+    if (baseType.isSelfType()) {
+      return SelfApi.getType(node.getProperty());
+    }
+
     throw new Error("property reference on non-structure type");
+  }
+
+  if (node instanceof SelfReferenceNode) {
+    return new SelfType();
   }
 
   if (node instanceof ParenthesisedExpressionNode) {

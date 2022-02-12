@@ -1,22 +1,35 @@
+import { SelfPassedAsValueError } from "../../../errors/selfPassedAsValue";
 import { readValue } from "../../../routines/buildAst/readValue";
-import { buildPemdas } from "../../../routines/PEMDAS";
+import { buildPemdas } from "../../../routines/parenthesisexponentialsmultiplicationdivisionadditionsubtraction";
 import { LexReader } from "../../reader/lexReader";
-import { TokenType, validOperators } from "../../token";
+import { TokenRange, TokenType, validOperators } from "../../token";
 import { ValueTreeNode } from "../node";
 import { ComparisonOperationNode } from "./comparisonOperation";
+import { SelfReferenceNode } from "./selfReferenceNode";
 
 export class NegateOperator {
   type = <const>"negateOperator";
 
   constructor(
+    protected readonly tokenRange: TokenRange,
     protected readonly node: ValueTreeNode,
   ) { }
+
+  getTokenRange() {
+    return this.tokenRange;
+  }
 
   getNode() { return this.node }
 
   static build(reader: LexReader): NegateOperator | ComparisonOperationNode {
-    reader.expect({ type: TokenType.Operator, value: "!" });
+    const negateToken = reader.expect({ type: TokenType.Operator, value: "!" });
+    
+    const value = readValue(reader);
+    
+    if (value instanceof SelfReferenceNode) {
+      reader.pushLexError(new SelfPassedAsValueError(value));
+    }
 
-    return new NegateOperator(readValue(reader));
+    return new NegateOperator(new TokenRange(negateToken, value.getTokenRange().getEnd()), value);
   }
 }

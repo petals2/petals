@@ -10,6 +10,6 @@ export abstract class File<T> {
   ) {}
 
   get path(): string {
-    return path.join(this.project.absolutePath, this.projectRelativePath);
+    return path.join(this.project.getAbsolutePath(), this.projectRelativePath);
   }
 }

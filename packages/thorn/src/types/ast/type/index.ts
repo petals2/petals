@@ -12,6 +12,7 @@ export abstract class Type {
   isNumberType(): this is NumberType { return false }
   isStringType(): this is StringType { return false }
   isUnionType(): this is UnionType { return false }
+  isSelfType(): this is SelfType { return false }
   isListType(): this is ListType { return false }
   isVoidType(): this is VoidType { return false }
 
@@ -33,6 +34,8 @@ export abstract class Type {
       base = NumberType.build(reader);
     } else if (reader.nextIs({ type: TokenType.Identifier, value: "string" })) {
       base = StringType.build(reader);
+    } else if (reader.nextIs({ type: TokenType.Identifier, value: "self" })) {
+      base = SelfType.build(reader);
     } else if (reader.nextIs({ type: TokenType.Identifier, value: "boolean" })) {
       base = BooleanType.build(reader);
     } else if (reader.nextIs({ type: TokenType.BooleanLiteral }, { type: TokenType.StringLiteral }, { type: TokenType.NumberLiteral })) {
@@ -147,6 +150,28 @@ export class StringType extends Type {
     reader.expect({ type: TokenType.Identifier, value: "string" });
 
     return new StringType();
+  }
+}
+
+export class SelfType extends Type {
+  isSelfType(): this is SelfType { return true }
+
+  exactEquals(other: Type): boolean {
+    return other.isSelfType();
+  }
+
+  extends(other: Type): boolean {
+    return other.isSelfType();
+  }
+
+  static build(reader: LexReader): SelfType {
+    reader.expect({ type: TokenType.Identifier, value: "self" });
+
+    return new SelfType();
+  }
+
+  getName() {
+    return "self";
   }
 }
 
@@ -357,9 +382,7 @@ export class StructureType extends Type {
 
   getValue(name: string): Type | undefined { return this.values.get(name) }
 
-  static build(reader: LexReader): StructureType {
-    const contents = reader.readBetween("{");
-
+  static build(contents: LexReader): StructureType {
     let v = new Map();
 
     while (!contents.isComplete()) {

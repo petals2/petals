@@ -1,18 +1,25 @@
+import { SelfPassedAsValueError } from "../../../errors/selfPassedAsValue";
 import { readValue } from "../../../routines/buildAst/readValue";
-import { buildPemdas } from "../../../routines/PEMDAS";
+import { buildPemdas } from "../../../routines/parenthesisexponentialsmultiplicationdivisionadditionsubtraction";
 import { LexReader } from "../../reader/lexReader";
-import { TokenType, validOperators } from "../../token";
+import { TokenRange, TokenType, validOperators } from "../../token";
 import { ValueTreeNode } from "../node";
 import { ComparisonOperationNode } from "./comparisonOperation";
+import { SelfReferenceNode } from "./selfReferenceNode";
 
 export class MathOperationNode {
   type = <const>"mathOperation";
 
   constructor(
+    protected readonly tokenRange: TokenRange,
     protected readonly leftHand: ValueTreeNode,
     protected readonly operation: (typeof validOperators)[number],
     protected readonly rightHand: ValueTreeNode,
   ) { }
+
+  getTokenRange() {
+    return this.tokenRange;
+  }
 
   getLeftHand() { return this.leftHand }
   getRightHand() { return this.rightHand }
@@ -21,10 +28,24 @@ export class MathOperationNode {
   static build(reader: LexReader, leftHand: ValueTreeNode): MathOperationNode | ComparisonOperationNode {
     const operation = reader.expect({ type: TokenType.Operator });
     const rightHand = readValue(reader);
+    
+    if (leftHand instanceof SelfReferenceNode) {
+      reader.pushLexError(new SelfPassedAsValueError(leftHand));
+    }
+    
+    if (rightHand instanceof SelfReferenceNode) {
+      reader.pushLexError(new SelfPassedAsValueError(rightHand));
+    }
 
     if (rightHand.type === "comparisonOperation") {
       return new ComparisonOperationNode(
-        new MathOperationNode(leftHand, operation.value, rightHand.getLeftHand()),
+        new TokenRange(leftHand.getTokenRange().getStart(), rightHand.getTokenRange().getEnd()),
+        new MathOperationNode(
+          new TokenRange(leftHand.getTokenRange().getStart(), rightHand.getLeftHand().getTokenRange().getEnd()),
+          leftHand,
+          operation.value,
+          rightHand.getLeftHand()
+        ),
         rightHand.getComparison(),
         rightHand.getRightHand(),
       )
@@ -32,6 +53,6 @@ export class MathOperationNode {
 
     // TODO: Perform PEMDAS
 
-    return buildPemdas(new MathOperationNode(leftHand, operation.value, rightHand)) as MathOperationNode;
+    return buildPemdas(new MathOperationNode(new TokenRange(leftHand.getTokenRange().getStart(), rightHand.getTokenRange().getEnd()), leftHand, operation.value, rightHand)) as MathOperationNode;
   }
 }

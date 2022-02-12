@@ -1,14 +1,21 @@
+import { SelfPassedAsValueError } from "../../../errors/selfPassedAsValue";
 import { readValue } from "../../../routines/buildAst/readValue";
 import { LexReader } from "../../reader/lexReader";
-import { TokenType } from "../../token";
+import { TokenRange, TokenType } from "../../token";
 import { ValueTreeNode } from "../node";
+import { SelfReferenceNode } from "./selfReferenceNode";
 
 export class ArrayLiteralNode {
   type = <const>"arrayLiteral";
 
   constructor(
+    protected readonly tokenRange: TokenRange,
     protected readonly values: ValueTreeNode[],
   ) { }
+
+  getTokenRange() {
+    return this.tokenRange;
+  }
 
   getValues() { return this.values }
 
@@ -18,11 +25,17 @@ export class ArrayLiteralNode {
     let vals: ValueTreeNode[] = [];
 
     while (!argumentReader.isComplete()) {
-      vals.push(readValue(argumentReader));
+      const val = readValue(argumentReader);
+
+      if (val instanceof SelfReferenceNode) {
+        reader.pushLexError(new SelfPassedAsValueError(val));
+      }
+
+      vals.push(val);
 
       if (argumentReader.nextIs({ type: TokenType.Separator, value: "," })) argumentReader.read();
     }
 
-    return new ArrayLiteralNode(vals);
+    return new ArrayLiteralNode(argumentReader.getRange(), vals);
   }
 }

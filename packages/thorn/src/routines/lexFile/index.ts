@@ -6,9 +6,12 @@ export function readToken(reader: StringReader): Token | undefined {
 
   const booleanCheck = reader.nextIsOne("true", "false");
   if (booleanCheck) {
+    const boolStr = reader.expect(booleanCheck);
     return {
       type: TokenType.BooleanLiteral,
-      value: reader.expect(booleanCheck) === "true",
+      value: boolStr.value === "true",
+      startPos: boolStr.startPos,
+      endPos: boolStr.endPos
     }
   }
 
@@ -17,12 +20,12 @@ export function readToken(reader: StringReader): Token | undefined {
   if (commentCheck == "//") {
     return {
       type: TokenType.Comment,
-      value: reader.readUntil("\n", "\r"),
+      ...reader.readUntil("\n", "\r")
     };
   } else if (commentCheck == "/*") {
     return {
       type: TokenType.Comment,
-      value: reader.readUntil("*/"),
+      ...reader.readUntil("*/")
     };
   }
 
@@ -31,7 +34,7 @@ export function readToken(reader: StringReader): Token | undefined {
   if (possibleKeyword) {
     return {
       type: TokenType.Keyword,
-      value: reader.expect(possibleKeyword),
+      ...reader.expect(possibleKeyword),
     };
   }
 
@@ -40,7 +43,7 @@ export function readToken(reader: StringReader): Token | undefined {
   if (comparator) {
     return {
       type: TokenType.Comparison,
-      value: reader.expect(comparator),
+      ...reader.expect(comparator),
     }
   }
 
@@ -49,7 +52,7 @@ export function readToken(reader: StringReader): Token | undefined {
   if (operator) {
     return {
       type: TokenType.Operator,
-      value: reader.expect(operator),
+      ...reader.expect(operator),
     };
   }
 
@@ -60,24 +63,29 @@ export function readToken(reader: StringReader): Token | undefined {
 
     const isNumber = reader.nextIsOne("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".");
     if (separator === "." && isNumber) {
+      const floatStr = reader.readUntilNot("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".");
       return {
         type: TokenType.NumberLiteral,
-        value: parseFloat(`0.${reader.readUntilNot("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".")}`)
+        value: parseFloat(`0.${floatStr}`),
+        startPos: floatStr.startPos,
+        endPos: floatStr.endPos
       };
     }
 
     return {
       type: TokenType.Separator,
-      value: res,
+      ...res,
     }
   }
 
   const isNumber = reader.readUntilNot("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ".");
 
-  if (isNumber.length > 0) {
+  if (isNumber.value.length > 0) {
     return {
       type: TokenType.NumberLiteral,
-      value: parseFloat(isNumber),
+      value: parseFloat(isNumber.value),
+      startPos: isNumber.startPos,
+      endPos: isNumber.endPos
     }
   }
 
@@ -92,16 +100,16 @@ export function readToken(reader: StringReader): Token | undefined {
 
     return {
       type: TokenType.StringLiteral,
-      value: contents,
+      ...contents
     }
   }
 
   const identifier = reader.readUntil(" ", "\n", "\t", "\r", ...validSeparators, ...validOperators);
 
-  if (identifier.length > 0) {
+  if (identifier.value.length > 0) {
     return {
       type: TokenType.Identifier,
-      value: identifier,
+      ...identifier
     }
   }
 

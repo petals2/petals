@@ -6,6 +6,7 @@ import path from "path";
 import fs from "fs";
 import { LexedFile } from "./file/lexedFile";
 import { AstFile } from "./file/astFile";
+import { ThornError } from "../errors/thornError";
 
 export type Manifest = {
   index: string;
@@ -13,11 +14,15 @@ export type Manifest = {
 };
 
 export class Project<T extends File<any>> {
+  protected readonly errors: Map<string, ThornError[]>;
+
   constructor(
-    public readonly absolutePath: string,
-    public readonly contents: T[],
-    public readonly manifest: Manifest,
-  ) {}
+    protected absolutePath: string,
+    protected contents: T[],
+    protected manifest: Manifest
+  ) {
+    this.errors = new Map;
+  }
 
   static fromManifestPath(manifestAbsoluteFilePath: string): Project<AstFile> {
     const projectPath = path.join(manifestAbsoluteFilePath, "..");
@@ -27,14 +32,20 @@ export class Project<T extends File<any>> {
   }
 
   static fromManifest(manifest: Manifest, absoluteProjectPath: string): Project<AstFile> {
-    const project = new Project(absoluteProjectPath, [], manifest);
+    const project = new Project(absoluteProjectPath, [] as File<any>[], manifest);
 
     const files = this.recursiveFileDiscovery(absoluteProjectPath, "", ["costumes", "sounds", "sprites"]).map(file => {
-      return AstFile.fromLexed(LexedFile.fromText(new TextFile(new StringReader(fs.readFileSync(path.join(absoluteProjectPath, file), "utf-8")), file, project)));
+      const filePath = path.join(absoluteProjectPath, file);
+      const lexedFile = LexedFile.fromText(new TextFile(new StringReader(fs.readFileSync(filePath, "utf8")), file, project));
+
+      const astFile = AstFile.fromLexed(lexedFile);
+
+      project.addFileErrors(filePath, lexedFile.contents.getErrors());
+
+      return astFile;
     });
 
-    //@ts-ignore
-    project.contents = files;
+    project.setContents(files as File<any>[]);
 
     return project;
   }
@@ -55,5 +66,35 @@ export class Project<T extends File<any>> {
     }
 
     return results;
+  }
+
+  addFileErrors(filePath: string, errors: ThornError[]) {
+    const cachedErrors = this.errors.get(filePath);
+    if (cachedErrors) {
+      cachedErrors.push(...errors);
+      return;
+    }
+
+    this.errors.set(filePath, [...errors]);
+  }
+
+  protected setContents(contents: T[]) {
+    this.contents = contents;
+  }
+
+  getContents() {
+    return this.contents;
+  }
+
+  getAbsolutePath() {
+    return this.absolutePath;
+  }
+
+  getManifest() {
+    return this.manifest;
+  }
+
+  getFileErrors() {
+    return this.errors;
   }
 }

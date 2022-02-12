@@ -39,7 +39,7 @@ export function getReferencedMethods(context: Context, ...codeBlock: TreeNode[])
         if (node.getBaseValue().type !== "variableReference") {
           const t = getType(node.getBaseValue(), context);
 
-          if (!t.isStructureType()) {
+          if (!t.isStructureType() && !t.isReferenceType() && !t.isSelfType()) {
             throw new Error("Method call base must be variable reference or of class type");
           }
 

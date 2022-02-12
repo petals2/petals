@@ -20,6 +20,8 @@ import { VariableIndexReference } from "./indexReference";
 import { Target, Block } from "petals-stem";
 import { NewResultReference } from "./new";
 import { HeapReferenceType } from "../../../../types/ast/type";
+import { SelfApi } from "../../api/self";
+import { InvalidValueError } from "../../../../errors/invalidValue";
 
 export function getVariableReference(value: ValueTreeNode, target: Target, thread: Block, context: Context): VariableReference {
   if (value.type === "parenthesisedExpressionNode") return getVariableReference(value.getContents(), target, thread, context);
@@ -66,6 +68,10 @@ export function getVariableReference(value: ValueTreeNode, target: Target, threa
       return ListApi.getVariableReference(getListReference(parent, target, thread, context), value.getProperty(), context)
     }
 
+    if (parentType.isSelfType()) {
+      return SelfApi.getVariableReference(value.getProperty(), context);
+    }
+
     while (parentType.isReferenceType()) parentType = parentType.dereference();
 
     while (parent.type === "propertyReference" && parentType.isStructureType()) {
@@ -97,5 +103,5 @@ export function getVariableReference(value: ValueTreeNode, target: Target, threa
   if (value.type === "indexReference") return new VariableIndexReference(value);
   if (value.type === "new") return new NewResultReference(new HeapReferenceType(context.getStruct("___" + value.getClass() + "_struct"), "global"), value)
 
-  throw new Error("Cannot get variable reference for " + value.type);
+  throw new InvalidValueError(context, value);
 }
