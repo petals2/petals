@@ -1,6 +1,5 @@
-import { AnyInput, Input } from "petals-stem/dist/src/block/input";
-import { Target } from "petals-stem/dist/src/target";
-import { Block } from "petals-stem/dist/src/block";
+import { AnyInput, Block, Input, Target } from "petals-stem";
+
 import { Context } from "../../context";
 
 export abstract class VariableReference {

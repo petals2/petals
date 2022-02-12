@@ -1,17 +1,19 @@
-import { StopOption } from "petals-stem/dist/src/block/category/control/stop";
-import { Control } from "petals-stem/dist/src/block/category/control";
-import { getVariableReference } from "../../reference/variable";
+import {
+  AnyInput,
+  Block,
+  Blocks,
+  Input,
+  NumberInput,
+  StopOption,
+  Target,
+  VariableInput
+} from "petals-stem";
+
 import { ReturnNode } from "../../../../types/ast/nodes/return";
-import { AnyInput, Input } from "petals-stem/dist/src/block/input";
-import { Target } from "petals-stem/dist/src/target";
-import { Block } from "petals-stem/dist/src/block";
 import { Context } from "../../context";
-import { VariableReference } from "../../reference/variable/abstract";
 import { getUnknownReference } from "../../reference";
 import { ListReference } from "../../reference/list/abstract";
-import { NumberInput } from "petals-stem/dist/src/block/input/number";
-import { Phantom } from "petals-stem/dist/src/block/category/phantom";
-import { VariableInput } from "petals-stem/dist/src/block/input/variable";
+import { VariableReference } from "../../reference/variable/abstract";
 
 export default function (node: ReturnNode, target: Target, thread: Block, context: Context): void {
   const varToUpdate = context.getReturnVariable();
@@ -45,13 +47,13 @@ export default function (node: ReturnNode, target: Target, thread: Block, contex
       varToUpdate.deleteAll(target, thread, context);
       const length = val.getLength(target, thread, context);
       const i = target.getVariables().createVariable("___temp_i", 0)
-      const phantom = target.getBlocks().createBlock(Phantom);
+      const phantom = target.getBlocks().createBlock(Blocks.Phantom);
       varToUpdate.push(Input.shadowed(val.getItemAtIndex(Input.shadowed(new VariableInput(i)), target, phantom, context) as AnyInput), target, phantom, context); 
-      thread.getTail().append(target.getBlocks().createBlock(Control.ForEach, i, Input.shadowed(length), phantom.getHead()));
+      thread.getTail().append(target.getBlocks().createBlock(Blocks.Control.ForEach, i, Input.shadowed(length), phantom.getHead()));
     }
   } else {
     throw new Error("Return type mismatch");
   }
 
-  thread.getTail().append(target.getBlocks().createBlock(Control.Stop, StopOption.ThisScript));
+  thread.getTail().append(target.getBlocks().createBlock(Blocks.Control.Stop, StopOption.ThisScript));
 }

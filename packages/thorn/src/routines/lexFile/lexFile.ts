@@ -1,5 +1,13 @@
 import { StringReader } from "petals-utils";
-import { Token, TokenType, validComparators, validKeywords, validOperators, validSeparators } from "../../types/token";
+
+import {
+  Token,
+  TokenType,
+  validComparators,
+  validKeywords,
+  validOperators,
+  validSeparators
+} from "../../types/token";
 
 export function readToken(reader: StringReader): Token | undefined {
   reader.readUntilNot(" ", "\n", "\t", "\r");

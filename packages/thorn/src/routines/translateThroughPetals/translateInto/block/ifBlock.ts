@@ -1,6 +1,5 @@
-import { Block } from "petals-stem/dist/src/block";
-import { Control } from "petals-stem/dist/src/block/category/control";
-import { Target } from "petals-stem/dist/src/target";
+import { Block, Blocks, Target } from "petals-stem";
+
 import { translateNodeListIntoBlock } from ".";
 import { ifBlockNode } from "../../../../types/ast/nodes/ifBlock";
 import { Context } from "../../context";
@@ -13,9 +12,9 @@ export default function (node: ifBlockNode, target: Target, thread: Block, conte
   if (node.getElseContents()) {
     const elseContents = translateNodeListIntoBlock(node.getElseContents()!, target, context);
 
-    thread.getTail().append(target.getBlocks().createBlock(Control.IfElse, comparison.getValue(target, thread, context), contents, elseContents));
+    thread.getTail().append(target.getBlocks().createBlock(Blocks.Control.IfElse, comparison.getValue(target, thread, context), contents, elseContents));
     return;
   }
 
-  thread.getTail().append(target.getBlocks().createBlock(Control.If, comparison.getValue(target, thread, context), contents));
+  thread.getTail().append(target.getBlocks().createBlock(Blocks.Control.If, comparison.getValue(target, thread, context), contents));
 }

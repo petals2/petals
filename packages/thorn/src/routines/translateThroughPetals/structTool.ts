@@ -140,4 +140,3 @@ export class StructTool {
     return [];
   }
 }
-

@@ -1,8 +1,5 @@
-import { Block } from "petals-stem/dist/src/block";
-import { Procedures } from "petals-stem/dist/src/block/category/procedures";
-import { Input } from "petals-stem/dist/src/block/input";
-import { VariableInput } from "petals-stem/dist/src/block/input/variable";
-import { Target } from "petals-stem/dist/src/target";
+import { Block, Blocks, Input, Target, VariableInput } from "petals-stem";
+
 import { MethodCallNode } from "../../../../types/ast/nodes/methodCall";
 import { VariableReferenceNode } from "../../../../types/ast/nodes/variableReference";
 import { TokenRange } from "../../../../types/token";
@@ -68,7 +65,7 @@ export function call(node: MethodCallNode, target: Target, thread: Block, contex
 
     if (arg instanceof ListReference) throw new Error("Cannot pass lists into malloc");
 
-    let call2 = target.getBlocks().createBlock(Procedures.Call, context.getHeap("global").malloc.getPrototype(), Input.shadowed(arg.getValue(target, thread, context)));
+    let call2 = target.getBlocks().createBlock(Blocks.Procedures.Call, context.getHeap("global").malloc.getPrototype(), Input.shadowed(arg.getValue(target, thread, context)));
 
     thread.getTail().append(call2.getHead());
 
@@ -85,7 +82,7 @@ export function call(node: MethodCallNode, target: Target, thread: Block, contex
 
   let argValues = (args as (BooleanReference | VariableReference)[]).map(arg => Input.shadowed(arg.getValue(target, thread, context)));
 
-  let call3 = target.getBlocks().createBlock(Procedures.Call, def.getPrototype(), ...argValues);
+  let call3 = target.getBlocks().createBlock(Blocks.Procedures.Call, def.getPrototype(), ...argValues);
 
   args.forEach((v, i) => {
     if (v instanceof VariableHeapCopyReference) {
@@ -94,7 +91,7 @@ export function call(node: MethodCallNode, target: Target, thread: Block, contex
       if (heap === undefined)
         throw new Error("Failed to free v? This should never happen, since arg.getValue is always called before this.");
 
-      call3 = call3.getTail().append(target.getBlocks().createBlock(Procedures.Call, heap.free.getPrototype(), argValues[i]));
+      call3 = call3.getTail().append(target.getBlocks().createBlock(Blocks.Procedures.Call, heap.free.getPrototype(), argValues[i]));
     }
   })
 

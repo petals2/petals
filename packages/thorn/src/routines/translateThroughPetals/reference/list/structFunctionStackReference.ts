@@ -1,9 +1,5 @@
-import { Block } from "petals-stem/dist/src/block";
-import { Argument } from "petals-stem/dist/src/block/category/argument";
-import { Operators } from "petals-stem/dist/src/block/category/operators";
-import { Input, AnyInput } from "petals-stem/dist/src/block/input";
-import { NumberInput } from "petals-stem/dist/src/block/input/number";
-import { Target } from "petals-stem/dist/src/target";
+import { AnyInput, Block, Blocks, Input, NumberInput, Target } from "petals-stem";
+
 import { StructureType, Type } from "../../../../types/ast/type";
 import { Context } from "../../context";
 import { StructTool } from "../../structTool";
@@ -46,9 +42,9 @@ export class StructFunctionStackReference extends KnownLengthListReference {
 
     if (index2 === undefined) throw new Error("Invalid path");
 
-    const myOffset = target.getBlocks().createBlock(Operators.Add, Input.shadowed(new NumberInput(index2)), Input.shadowed(target.getBlocks().createBlock(Operators.Multiply, StructTool.getSize(this.baseType), Input.shadowed(target.getBlocks().createBlock(Argument.ReporterStringNumber, "___cidx")))));
+    const myOffset = target.getBlocks().createBlock(Blocks.Operators.Add, Input.shadowed(new NumberInput(index2)), Input.shadowed(target.getBlocks().createBlock(Blocks.Operators.Multiply, StructTool.getSize(this.baseType), Input.shadowed(target.getBlocks().createBlock(Blocks.Argument.ReporterStringNumber, "___cidx")))));
 
-    return this.baseList.getItemAtIndex(Input.shadowed(target.getBlocks().createBlock(Operators.Add, index, Input.shadowed(myOffset))), target, thread, context)
+    return this.baseList.getItemAtIndex(Input.shadowed(target.getBlocks().createBlock(Blocks.Operators.Add, index, Input.shadowed(myOffset))), target, thread, context)
   }
 
   getKnownLength(context: Context): number {
@@ -64,8 +60,8 @@ export class StructFunctionStackReference extends KnownLengthListReference {
 
     if (index2 === undefined) throw new Error("Invalid path");
 
-    const myOffset = target.getBlocks().createBlock(Operators.Add, Input.shadowed(new NumberInput(index2)), Input.shadowed(target.getBlocks().createBlock(Operators.Multiply, StructTool.getSize(this.baseType), Input.shadowed(target.getBlocks().createBlock(Argument.ReporterStringNumber, "___cidx")))));
+    const myOffset = target.getBlocks().createBlock(Blocks.Operators.Add, Input.shadowed(new NumberInput(index2)), Input.shadowed(target.getBlocks().createBlock(Blocks.Operators.Multiply, StructTool.getSize(this.baseType), Input.shadowed(target.getBlocks().createBlock(Blocks.Argument.ReporterStringNumber, "___cidx")))));
 
-    return this.baseList.overwriteAtIndex(Input.shadowed(target.getBlocks().createBlock(Operators.Add, index, Input.shadowed(myOffset))), value, target, thread, context)
+    return this.baseList.overwriteAtIndex(Input.shadowed(target.getBlocks().createBlock(Blocks.Operators.Add, index, Input.shadowed(myOffset))), value, target, thread, context)
   }
 }

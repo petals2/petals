@@ -1,6 +1,5 @@
-import { Input, Target, Block, NumberInput } from "petals-stem";
-import { Operators } from "petals-stem/dist/src/block/category";
-import { AnyInput } from "petals-stem/dist/src/block/input";
+import { AnyInput, Block, Blocks, Input, Target } from "petals-stem";
+
 import { ClassType, HeapReferenceType, Type } from "../../../../types/ast/type";
 import { Context } from "../../context";
 import { VariableReference } from "../variable/abstract";
@@ -42,7 +41,7 @@ export class HeapDereference extends ListReference {
 
     if (v0 instanceof ListReference) throw new Error("PANIC! HeapIndexes itemAtIndex returned a ListReference");
 
-    const v = heap.heap.getItemAtIndex(Input.shadowed(target.getBlocks().createBlock(Operators.Add, Input.shadowed(v0), index)), target, thread, context)
+    const v = heap.heap.getItemAtIndex(Input.shadowed(target.getBlocks().createBlock(Blocks.Operators.Add, Input.shadowed(v0), index)), target, thread, context)
 
     if (v instanceof ListReference) throw new Error("PANIC! VariableHeapDereference actually points to a ListReference");
 

@@ -1,4 +1,5 @@
-import { Target, Block } from "petals-stem";
+import { Block, Target } from "petals-stem";
+
 import { ValueTreeNode } from "../../../../types/ast/node";
 import { Context } from "../../context";
 import { getVariableReference } from "../variable";

@@ -1,5 +1,5 @@
-import { Block } from "petals-stem/dist/src/block";
-import { Target } from "petals-stem/dist/src/target";
+import { Block, Target } from "petals-stem";
+
 import { translateNodeIntoBlock } from ".";
 import { ComparisonOperationNode } from "../../../../types/ast/nodes/comparisonOperation";
 import { Context } from "../../context";

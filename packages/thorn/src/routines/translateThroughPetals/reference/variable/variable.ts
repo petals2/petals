@@ -1,27 +1,26 @@
-import { List } from "petals-stem/dist/src/list";
-import { Variable } from "petals-stem/dist/src/variable";
+import { Block, List, Target, Variable } from "petals-stem";
+
+import { InvalidValueError } from "../../../../errors/invalidValue";
 import { ValueTreeNode } from "../../../../types/ast/node";
+import { HeapReferenceType } from "../../../../types/ast/type";
+import { ListApi } from "../../api/list";
+import { SelfApi } from "../../api/self";
 import { Context, typeApplyContext } from "../../context";
 import { getType } from "../../getType";
 import { getListReference } from "../list";
 import { VariableReference } from "./abstract";
 import { FunctionArgumentReference } from "./functionArgument";
 import { VariableFunctionStackReference } from "./functionStackReference";
+import { VariableHeapCopyReference } from "./heapCopy";
+import { VariableHeapDereference } from "./heapDereference";
+import { VariableIndexReference } from "./indexReference";
 import { VariableInstanceReference } from "./instanceReference";
 import { MathOperationReference } from "./mathOperation";
+import { MethodCallResultReference } from "./methodCall";
+import { NewResultReference } from "./new";
 import { NumberLiteralReference } from "./numberLiteralReference";
 import { StringLiteralReference } from "./stringLiteralReference";
 import { VariableStructMemberReference } from "./structMember";
-import { MethodCallResultReference } from "./methodCall";
-import { VariableHeapCopyReference } from "./heapCopy";
-import { VariableHeapDereference } from "./heapDereference";
-import { ListApi } from "../../api/list";
-import { VariableIndexReference } from "./indexReference";
-import { Target, Block } from "petals-stem";
-import { NewResultReference } from "./new";
-import { HeapReferenceType } from "../../../../types/ast/type";
-import { SelfApi } from "../../api/self";
-import { InvalidValueError } from "../../../../errors/invalidValue";
 
 export function getVariableReference(value: ValueTreeNode, target: Target, thread: Block, context: Context): VariableReference {
   if (value.type === "parenthesisedExpressionNode") return getVariableReference(value.getContents(), target, thread, context);

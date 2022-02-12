@@ -1,13 +1,14 @@
-import { VariableReference } from "./variable/abstract";
+import { Block, Target } from "petals-stem";
+
 import { ValueTreeNode } from "../../../types/ast/node";
-import { ListReference } from "./list/abstract";
 import { Context } from "../context";
-import { getListReference } from "./list";
-import { getVariableReference } from "./variable";
 import { getType } from "../getType";
 import { getBooleanReference } from "./boolean";
 import { BooleanReference } from "./boolean/abstract";
-import { Target, Block } from "petals-stem";
+import { getListReference } from "./list";
+import { ListReference } from "./list/abstract";
+import { getVariableReference } from "./variable";
+import { VariableReference } from "./variable/abstract";
 
 export function getUnknownReference(value: ValueTreeNode, target: Target, thread: Block, context: Context): VariableReference | ListReference | BooleanReference {
   if (value.type === "parenthesisedExpressionNode") return getUnknownReference(value.getContents(), target, thread, context);

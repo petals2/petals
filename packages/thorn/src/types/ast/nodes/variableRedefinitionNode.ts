@@ -2,7 +2,7 @@ import { SelfPassedAsValueError } from "../../../errors/selfPassedAsValue";
 import { readValue } from "../../../routines/buildAst/readValue";
 import { LexReader } from "../../reader/lexReader";
 import { TokenRange, TokenType } from "../../token";
-import { ValueTreeNode } from "../node"
+import { ValueTreeNode } from "../node";
 import { SelfReferenceNode } from "./selfReferenceNode";
 
 export class VariableRedefinitionNode {

@@ -387,8 +387,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "petals-runtime@workspace:packages/runtime"
   dependencies:
+    "@types/node": ^17.0.10
     chalk: ^4.0.0
     petals-stem: "workspace:*"
+    ts-node: latest
+    typescript: latest
   languageName: unknown
   linkType: soft
 

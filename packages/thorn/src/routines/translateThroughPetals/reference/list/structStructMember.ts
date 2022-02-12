@@ -1,18 +1,9 @@
-import { AnyInput, Input } from "petals-stem/dist/src/block/input";
-import { Target } from "petals-stem/dist/src/target";
-import { Block } from "petals-stem/dist/src/block";
-import { Context } from "../../context";
+import { AnyInput, Block, Blocks, Input, List, Target } from "petals-stem";
+
 import { StructureType, Type } from "../../../../types/ast/type";
-import { Variables } from "petals-stem/dist/src/block/category/variables";
-import { List } from "petals-stem/dist/src/list";
-import { KnownLengthListReference, ListReference } from "./abstract";
+import { Context } from "../../context";
 import { StructTool } from "../../structTool";
-import { NumberInput } from "petals-stem/dist/src/block/input/number";
-import { Operators } from "petals-stem/dist/src/block/category/operators";
-import { VariableReference } from "../variable/abstract";
-import { Control } from "petals-stem/dist/src/block/category/control";
-import { Phantom } from "petals-stem/dist/src/block/category/phantom";
-import { VariableInput } from "petals-stem/dist/src/block/input/variable";
+import { KnownLengthListReference, ListReference } from "./abstract";
 
 export class StructStructMemberReference extends KnownLengthListReference {
   constructor(
@@ -49,7 +40,7 @@ export class StructStructMemberReference extends KnownLengthListReference {
   getItemAtIndex(index: Input, target: Target, thread: Block, context: Context): ListReference | AnyInput {
     const myOffset = StructTool.getIndex(this.baseType, this.path);
 
-    return this.baseList.getItemAtIndex(Input.shadowed(target.getBlocks().createBlock(Operators.Add, index, myOffset)), target, thread, context)
+    return this.baseList.getItemAtIndex(Input.shadowed(target.getBlocks().createBlock(Blocks.Operators.Add, index, myOffset)), target, thread, context)
   }
 
   getKnownLength(context: Context): number {
@@ -63,6 +54,6 @@ export class StructStructMemberReference extends KnownLengthListReference {
   overwriteAtIndex(index: Input, value: Input, target: Target, thread: Block, context: Context): Block {
     const myOffset = StructTool.getIndex(this.baseType, this.path);
 
-    return this.baseList.overwriteAtIndex(Input.shadowed(target.getBlocks().createBlock(Operators.Add, index, myOffset)), value, target, thread, context)
+    return this.baseList.overwriteAtIndex(Input.shadowed(target.getBlocks().createBlock(Blocks.Operators.Add, index, myOffset)), value, target, thread, context)
   }
 }

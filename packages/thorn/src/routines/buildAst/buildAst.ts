@@ -4,7 +4,6 @@ import { ForNode } from "../../types/ast/nodes/forNode";
 import { FreeNode } from "../../types/ast/nodes/freeNode";
 import { HeapDefinitionNode } from "../../types/ast/nodes/heapDefinitionNode";
 import { ifBlockNode } from "../../types/ast/nodes/ifBlock";
-import { MethodDefinitionNode } from "../../types/ast/nodes/methodDefinition";
 import { ReturnNode } from "../../types/ast/nodes/return";
 import { StructDefinitionNode } from "../../types/ast/nodes/structDefinitionNode";
 import { VariableDefinitionNode } from "../../types/ast/nodes/variableDefinition";

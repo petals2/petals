@@ -1,15 +1,9 @@
-import { Variables } from "petals-stem/dist/src/block/category/variables";
-import { Operators } from "petals-stem/dist/src/block/category/operators";
-import { Argument } from "petals-stem/dist/src/block/category/argument";
-import { Input } from "petals-stem/dist/src/block/input";
-import { Target } from "petals-stem/dist/src/target";
-import { VariableReference } from "./abstract";
-import { Block } from "petals-stem/dist/src/block";
-import { List } from "petals-stem/dist/src/list";
-import { Context } from "../../context";
+import { Block, Blocks, Input, List, NumberInput, Target } from "petals-stem";
+
 import { Type } from "../../../../types/ast/type";
-import { NumberInput } from "petals-stem/dist/src/block/input/number";
+import { Context } from "../../context";
 import { StructTool } from "../../structTool";
+import { VariableReference } from "./abstract";
 
 export class VariableFunctionStackReference extends VariableReference {
   constructor(public readonly list: List, public readonly contentType: Type) {
@@ -18,18 +12,18 @@ export class VariableFunctionStackReference extends VariableReference {
 
   performSideEffects(target: Target, thread: Block, context: Context): void { }
 
-  changeValue(value: Input, target: Target, thread: Block, context: Context): InstanceType<typeof Variables.ReplaceItemOfList> {
+  changeValue(value: Input, target: Target, thread: Block, context: Context): InstanceType<typeof Blocks.Variables.ReplaceItemOfList> {
     return thread.getTail().append(
-      target.getBlocks().createBlock(Variables.ReplaceItemOfList, this.list,
-        Input.shadowed(target.getBlocks().createBlock(Operators.Multiply,
-          Input.shadowed(target.getBlocks().createBlock(Argument.ReporterStringNumber, "___cidx")),
+      target.getBlocks().createBlock(Blocks.Variables.ReplaceItemOfList, this.list,
+        Input.shadowed(target.getBlocks().createBlock(Blocks.Operators.Multiply,
+          Input.shadowed(target.getBlocks().createBlock(Blocks.Argument.ReporterStringNumber, "___cidx")),
           Input.shadowed(new NumberInput(StructTool.getSize(this.contentType)))
         )),
-        Input.shadowed(target.getBlocks().createBlock(Operators.Add,
-          Input.shadowed(target.getBlocks().createBlock(Variables.ItemOfList,
+        Input.shadowed(target.getBlocks().createBlock(Blocks.Operators.Add,
+          Input.shadowed(target.getBlocks().createBlock(Blocks.Variables.ItemOfList,
             this.list,
-            Input.shadowed(target.getBlocks().createBlock(Operators.Multiply,
-              Input.shadowed(target.getBlocks().createBlock(Argument.ReporterStringNumber, "___cidx")),
+            Input.shadowed(target.getBlocks().createBlock(Blocks.Operators.Multiply,
+              Input.shadowed(target.getBlocks().createBlock(Blocks.Argument.ReporterStringNumber, "___cidx")),
               Input.shadowed(new NumberInput(StructTool.getSize(this.contentType)))
             ))
           )),
@@ -39,11 +33,11 @@ export class VariableFunctionStackReference extends VariableReference {
     )
   }
 
-  setValue(value: Input, target: Target, thread: Block, context: Context): InstanceType<typeof Variables.ReplaceItemOfList> {
+  setValue(value: Input, target: Target, thread: Block, context: Context): InstanceType<typeof Blocks.Variables.ReplaceItemOfList> {
     return thread.getTail().append(
-      target.getBlocks().createBlock(Variables.ReplaceItemOfList, this.list,
-        Input.shadowed(target.getBlocks().createBlock(Operators.Multiply,
-          Input.shadowed(target.getBlocks().createBlock(Argument.ReporterStringNumber, "___cidx")),
+      target.getBlocks().createBlock(Blocks.Variables.ReplaceItemOfList, this.list,
+        Input.shadowed(target.getBlocks().createBlock(Blocks.Operators.Multiply,
+          Input.shadowed(target.getBlocks().createBlock(Blocks.Argument.ReporterStringNumber, "___cidx")),
           Input.shadowed(new NumberInput(StructTool.getSize(this.contentType)))
         )),
         value,
@@ -51,10 +45,10 @@ export class VariableFunctionStackReference extends VariableReference {
     )
   }
 
-  getValue(target: Target, thread: Block, context: Context): InstanceType<typeof Variables.ItemOfList> {
-    return target.getBlocks().createBlock(Variables.ItemOfList, this.list,
-      Input.shadowed(target.getBlocks().createBlock(Operators.Multiply,
-        Input.shadowed(target.getBlocks().createBlock(Argument.ReporterStringNumber, "___cidx")),
+  getValue(target: Target, thread: Block, context: Context): InstanceType<typeof Blocks.Variables.ItemOfList> {
+    return target.getBlocks().createBlock(Blocks.Variables.ItemOfList, this.list,
+      Input.shadowed(target.getBlocks().createBlock(Blocks.Operators.Multiply,
+        Input.shadowed(target.getBlocks().createBlock(Blocks.Argument.ReporterStringNumber, "___cidx")),
         Input.shadowed(new NumberInput(StructTool.getSize(this.contentType)))
       ))
     );

@@ -1,25 +1,23 @@
+import { Block, Blocks, Input, List, Target, Variable } from "petals-stem";
+
 import { ValueTreeNode } from "../../../../types/ast/node";
-import { ListReference } from "./abstract";
-import { Context } from "../../context";
-import { ListInstanceReference } from "./instanceReference";
-import { ListLiteralReference } from "./arrayLiteralReference";
-import { StructLiteralReference } from "./structLiteralReference";
-import { StructTool } from "../../structTool";
-import { getType } from "../../getType";
-import { StructStructMemberReference } from "./structStructMember";
-import { KnownLengthInstanceReference } from "./knownLengthInstanceReference";
-import { StructFunctionStackReference } from "./structFunctionStackReference";
-import { KnownLengthStackReference } from "./knownLengthStackReference";
-import { List } from "petals-stem/dist/src/list";
-import { VariableReference } from "../variable/abstract";
-import { MethodCallListReference } from "./methodCall";
-import { Block, Input, Target, Variable } from "petals-stem";
-import { HeapDereference } from "./heapDereference";
-import { VariableInstanceReference } from "../variable/instanceReference";
-import { getVariableReference } from "../variable";
-import { ListIndexListReference, ListIndexStructureReference } from "./indexReference";
 import { HeapReferenceType, ListType, StructureType } from "../../../../types/ast/type";
-import { Operators } from "petals-stem/dist/src/block/category";
+import { Context } from "../../context";
+import { getType } from "../../getType";
+import { StructTool } from "../../structTool";
+import { getVariableReference } from "../variable";
+import { VariableReference } from "../variable/abstract";
+import { ListReference } from "./abstract";
+import { ListLiteralReference } from "./arrayLiteralReference";
+import { HeapDereference } from "./heapDereference";
+import { ListIndexListReference, ListIndexStructureReference } from "./indexReference";
+import { ListInstanceReference } from "./instanceReference";
+import { KnownLengthInstanceReference } from "./knownLengthInstanceReference";
+import { KnownLengthStackReference } from "./knownLengthStackReference";
+import { MethodCallListReference } from "./methodCall";
+import { StructFunctionStackReference } from "./structFunctionStackReference";
+import { StructLiteralReference } from "./structLiteralReference";
+import { StructStructMemberReference } from "./structStructMember";
 import { ThisDereference } from "./thisDereference";
 
 export function getListReference(value: ValueTreeNode, target: Target, thread: Block, context: Context): ListReference {
@@ -81,8 +79,8 @@ export function getListReference(value: ValueTreeNode, target: Target, thread: B
     while (t.isReferenceType()) t = t.dereference();
 
     const index = target.getBlocks().createBlock(
-      Operators.Add,
-      Input.shadowed(target.getBlocks().createBlock(Operators.Multiply, Input.shadowed(value2.getValue(target, thread, context)), StructTool.getSize(t))),
+      Blocks.Operators.Add,
+      Input.shadowed(target.getBlocks().createBlock(Blocks.Operators.Multiply, Input.shadowed(value2.getValue(target, thread, context)), StructTool.getSize(t))),
       1,
     );
 

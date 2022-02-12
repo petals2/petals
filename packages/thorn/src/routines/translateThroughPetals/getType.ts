@@ -1,20 +1,24 @@
-import { Block } from "petals-stem/dist/src/block";
-import { AnyInput, Input } from "petals-stem/dist/src/block/input";
-import { AngleInput } from "petals-stem/dist/src/block/input/angle";
-import { IntegerInput } from "petals-stem/dist/src/block/input/integer";
-import { ListInput } from "petals-stem/dist/src/block/input/list";
-import { NumberInput } from "petals-stem/dist/src/block/input/number";
-import { PositiveIntegerInput } from "petals-stem/dist/src/block/input/positiveInteger";
-import { PositiveNumberInput } from "petals-stem/dist/src/block/input/positiveNumber";
-import { StringInput } from "petals-stem/dist/src/block/input/string";
-import { VariableInput } from "petals-stem/dist/src/block/input/variable";
-import { List } from "petals-stem/dist/src/list";
-import { Variable } from "petals-stem/dist/src/variable";
+import {
+  AngleInput,
+  Block,
+  Input,
+  IntegerInput,
+  List,
+  ListInput,
+  NumberInput,
+  PositiveIntegerInput,
+  PositiveNumberInput,
+  StringInput,
+  Variable,
+  VariableInput
+} from "petals-stem";
+
 import { ValueTreeNode } from "../../types/ast/node";
 import { ArrayLiteralNode } from "../../types/ast/nodes/arrayLiteral";
 import { BooleanLiteralNode } from "../../types/ast/nodes/booleanLiteral";
 import { ComparisonOperationNode } from "../../types/ast/nodes/comparisonOperation";
 import { DecrementOperatorNode } from "../../types/ast/nodes/decrementOperator";
+import { HeapCopyOperation } from "../../types/ast/nodes/heapCopyOperation";
 import { IncrementOperatorNode } from "../../types/ast/nodes/incrementOperator";
 import { IndexReferenceNode } from "../../types/ast/nodes/indexReference";
 import { MathOperationNode } from "../../types/ast/nodes/mathOperation";
@@ -26,13 +30,22 @@ import { NumberLiteralNode } from "../../types/ast/nodes/numberLiteral";
 import { ParenthesisedExpressionNode } from "../../types/ast/nodes/parenthesisedExpression";
 import { PropertyReferenceNode } from "../../types/ast/nodes/propertyReference";
 import { SelfReferenceNode } from "../../types/ast/nodes/selfReferenceNode";
-import { HeapCopyOperation } from "../../types/ast/nodes/heapCopyOperation";
 import { StringLiteralNode } from "../../types/ast/nodes/stringLiteral";
 import { StructLiteralNode } from "../../types/ast/nodes/structLiteral";
 import { ThisNode } from "../../types/ast/nodes/thisNode";
 import { VariableRedefinitionNode } from "../../types/ast/nodes/variableRedefinitionNode";
 import { VariableReferenceNode } from "../../types/ast/nodes/variableReference";
-import { BooleanType, HeapReferenceType, ListType, LiteralType, NumberType, SelfType, StringType, Type, UnionType } from "../../types/ast/type";
+import {
+  BooleanType,
+  HeapReferenceType,
+  ListType,
+  LiteralType,
+  NumberType,
+  SelfType,
+  StringType,
+  Type,
+  UnionType
+} from "../../types/ast/type";
 import { ListApi } from "./api/list";
 import { SelfApi } from "./api/self";
 import { Context, typeApplyContext } from "./context";

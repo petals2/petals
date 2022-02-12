@@ -1,15 +1,10 @@
-import { Variables } from "petals-stem/dist/src/block/category/variables";
-import { VariableInput } from "petals-stem/dist/src/block/input/variable";
-import { Variable } from "petals-stem/dist/src/variable";
-import { AnyInput, Input } from "petals-stem/dist/src/block/input";
-import { Target } from "petals-stem/dist/src/target";
-import { VariableReference } from "./abstract";
-import { Block } from "petals-stem/dist/src/block";
-import { Context, HeapReferenceData } from "../../context";
+import { AnyInput, Block, Input, Target, Variable } from "petals-stem";
+
 import { HeapCopyOperation } from "../../../../types/ast/nodes/heapCopyOperation";
-import { getUnknownReference } from "..";
+import { Context, HeapReferenceData } from "../../context";
 import { copyOntoHeap } from "../../translateInto/helpers/copyOntoHeap";
 import { HeapReference } from "../list/heapReference";
+import { VariableReference } from "./abstract";
 
 export class VariableHeapCopyReference extends VariableReference {
   protected capturedIndex: HeapReference | undefined;

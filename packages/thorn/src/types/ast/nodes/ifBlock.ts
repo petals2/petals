@@ -1,7 +1,6 @@
 import { SelfPassedAsValueError } from "../../../errors/selfPassedAsValue";
 import { buildAst, readNode } from "../../../routines/buildAst";
 import { readValue } from "../../../routines/buildAst/readValue";
-import { lex } from "../../../routines/lexFile";
 import { LexReader } from "../../reader/lexReader";
 import { TokenRange, TokenType } from "../../token";
 import { TreeNode, ValueTreeNode } from "../node";

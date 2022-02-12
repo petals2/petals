@@ -1,6 +1,14 @@
-import { Input, Target, Block, NumberInput, VariableInput, ID } from "petals-stem";
-import { Procedures } from "petals-stem/dist/src/block/category";
-import { AnyInput } from "petals-stem/dist/src/block/input";
+import {
+  AnyInput,
+  Block,
+  Blocks,
+  ID,
+  Input,
+  NumberInput,
+  Target,
+  VariableInput
+} from "petals-stem";
+
 import { getUnknownReference } from "..";
 import { NewNode } from "../../../../types/ast/nodes/newNode";
 import { ClassType, HeapReferenceType, NumberType } from "../../../../types/ast/type";
@@ -29,7 +37,7 @@ export class NewResultReference extends VariableReference {
 
   performSideEffects(target: Target, thread: Block<string>, context: Context): void {
     // do the funny malloc
-    thread.getTail().append(target.getBlocks().createBlock(Procedures.Call, context.getHeap(this.type.getHeapName()).malloc.getPrototype(), Input.shadowed(new NumberInput(StructTool.getSize(this.type.dereference())))));
+    thread.getTail().append(target.getBlocks().createBlock(Blocks.Procedures.Call, context.getHeap(this.type.getHeapName()).malloc.getPrototype(), Input.shadowed(new NumberInput(StructTool.getSize(this.type.dereference())))));
 
     // store the funny malloc (in case we do another malloc before the call (for example, if you are creating a ref in the call ( &[] )))
     const temp = context.createVariable("___intermediate_" + ID.generate(), 0, new NumberType());
@@ -47,7 +55,7 @@ export class NewResultReference extends VariableReference {
 
       argValues.unshift(Input.shadowed(temp.getValue(target, thread, context)));
 
-      let call = target.getBlocks().createBlock(Procedures.Call, def.getPrototype(), ...argValues);
+      let call = target.getBlocks().createBlock(Blocks.Procedures.Call, def.getPrototype(), ...argValues);
 
       args.forEach((v, i) => {
         if (v instanceof VariableHeapCopyReference) {
@@ -56,7 +64,7 @@ export class NewResultReference extends VariableReference {
           if (heap === undefined)
             throw new Error("Failed to free v? This should never happen, since arg.getValue is always called before this.");
     
-          call = call.getTail().append(target.getBlocks().createBlock(Procedures.Call, heap.free.getPrototype(), argValues[i]));
+          call = call.getTail().append(target.getBlocks().createBlock(Blocks.Procedures.Call, heap.free.getPrototype(), argValues[i]));
         }
       })
 

@@ -1,34 +1,32 @@
-import { Phantom } from "petals-stem/dist/src/block/category/phantom";
-import { TreeNode } from "../../../../types/ast/node";
-import { Target } from "petals-stem/dist/src/target";
-import { Block } from "petals-stem/dist/src/block";
-import { Context } from "../../context";
+import { Block, Blocks, Target } from "petals-stem";
 
-import translateVariableRedefinitionOperator from "./variableRedefinitionOperator";
-import translateMethodDefinitionNode from "./methodDefinitionNode";
-import translateComparisonOperator from "./comparisonOperator";
-import translateHeapDefinitionNode from "./heapDefinitionNode";
-import translateVariableDefinition from "./variableDefinition";
-import translateIncrementOperator from "./incrementOperator";
-import translateDecrementOperator from "./decrementOperator";
-import translateStructDefinition from "./structDefinition";
-import translateMethodCallNode from "./methodCall";
-import translateMathOperator from "./mathOperator";
-import translateReturnBlock from "./returnBlock";
-import translateClassBlock from "./classBlock";
-import translateWhileBlock from "./whileBlock";
-import translateFreeBlock from "./freeBlock";
-import translateForBlock from "./forBlock";
-import translateIfBlock from "./ifBlock";
-import { getVariableReference } from "../../reference/variable";
 import { TransformError } from "../../../../errors/transformError";
+import { TreeNode } from "../../../../types/ast/node";
+import { Context } from "../../context";
+import { getVariableReference } from "../../reference/variable";
+import translateClassBlock from "./classBlock";
+import translateComparisonOperator from "./comparisonOperator";
+import translateDecrementOperator from "./decrementOperator";
+import translateForBlock from "./forBlock";
+import translateFreeBlock from "./freeBlock";
+import translateHeapDefinitionNode from "./heapDefinitionNode";
+import translateIfBlock from "./ifBlock";
+import translateIncrementOperator from "./incrementOperator";
+import translateMathOperator from "./mathOperator";
+import translateMethodCallNode from "./methodCall";
+import translateMethodDefinitionNode from "./methodDefinitionNode";
+import translateReturnBlock from "./returnBlock";
+import translateStructDefinition from "./structDefinition";
+import translateVariableDefinition from "./variableDefinition";
+import translateVariableRedefinitionOperator from "./variableRedefinitionOperator";
+import translateWhileBlock from "./whileBlock";
 
 export function translateNodeListIntoBlock(node: TreeNode[], target: Target, ctx: Context): Block {
   ctx.enter();
 
   const v = node.reduce((block, node) => {
     return block.append(translateNodeIntoBlock(node, target, ctx)).getTail();
-  }, target.getBlocks().createBlock(Phantom));
+  }, target.getBlocks().createBlock(Blocks.Phantom));
 
   ctx.exit();
 
@@ -36,7 +34,7 @@ export function translateNodeListIntoBlock(node: TreeNode[], target: Target, ctx
 }
 
 export function translateNodeIntoBlock(node: TreeNode, target: Target, ctx: Context): Block {
-  const thread = target.getBlocks().createBlock(Phantom);
+  const thread = target.getBlocks().createBlock(Blocks.Phantom);
 
   try {
     switch(node.type) {

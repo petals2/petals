@@ -27,3 +27,5 @@ export namespace Control {
   export const While = _While;
   export const ForEach = _ForEach;
 }
+
+export { StopOption } from "./stop";

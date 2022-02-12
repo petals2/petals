@@ -1,4 +1,5 @@
-import { Input, Target, Block, AnyInput, NumberInput } from "petals-stem";
+import { AnyInput, Block, Input, NumberInput, Target } from "petals-stem";
+
 import { Context } from "../../context";
 import { VariableReference } from "./abstract";
 

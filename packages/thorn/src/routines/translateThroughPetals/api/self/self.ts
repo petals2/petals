@@ -1,9 +1,11 @@
 import { Block, Target } from "petals-stem";
+
 import { MethodCallNode } from "../../../../types/ast/nodes/methodCall";
 import { NumberType, Type, VoidType } from "../../../../types/ast/type";
 import { Context } from "../../context";
 import { ListReference } from "../../reference/list/abstract";
 import { VariableReference } from "../../reference/variable/abstract";
+import { InvalidSelfMethodError } from "./errors/invalidSelfMethod";
 import {
   callChangeX,
   callChangeY,
@@ -15,18 +17,8 @@ import {
   callTurnLeft,
   callTurnRight
 } from "./functions/motion";
-
-import {
-  DirectionReference,
-  XPositionReference,
-  YPositionReference
-} from "./variables/motion";
-
-import {
-  SizeReference
-} from "./variables/looks";
-import { TransformError } from "../../../../errors/transformError";
-import { InvalidSelfMethodError } from "./errors/invalidSelfMethod";
+import { SizeReference } from "./variables/looks";
+import { DirectionReference, XPositionReference, YPositionReference } from "./variables/motion";
 
 export namespace SelfApi {
   export function getType(key: string): Type {

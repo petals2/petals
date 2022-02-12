@@ -1,16 +1,11 @@
-import { AnyInput, Input } from "petals-stem/dist/src/block/input";
-import { Target } from "petals-stem/dist/src/target";
-import { VariableReference } from "./abstract";
-import { Block } from "petals-stem/dist/src/block";
-import { Context } from "../../context";
+import { AnyInput, Block, Blocks, Input, List, NumberInput, Target } from "petals-stem";
+
 import { StructureType } from "../../../../types/ast/type";
-import { Variables } from "petals-stem/dist/src/block/category/variables";
-import { List } from "petals-stem/dist/src/list";
-import { ListReference } from "../list/abstract";
+import { Context } from "../../context";
 import { StructTool } from "../../structTool";
-import { NumberInput } from "petals-stem/dist/src/block/input/number";
-import { Operators } from "petals-stem/dist/src/block/category/operators";
+import { ListReference } from "../list/abstract";
 import { ListIndexListReference, ListIndexStructureReference } from "../list/indexReference";
+import { VariableReference } from "./abstract";
 
 export class VariableStructMemberReference extends VariableReference {
   constructor(
@@ -23,7 +18,7 @@ export class VariableStructMemberReference extends VariableReference {
 
   changeValue(value: Input, target: Target, thread: Block, context: Context): Block {
     return this.setValue(Input.shadowed(target.getBlocks().createBlock(
-      Operators.Add,
+      Blocks.Operators.Add,
       Input.shadowed(this.getValue(target, thread, context)),
       value,
     )), target, thread, context)

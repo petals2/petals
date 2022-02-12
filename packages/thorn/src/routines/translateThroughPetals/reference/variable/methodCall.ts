@@ -1,15 +1,9 @@
-import { Block } from "petals-stem/dist/src/block";
-import { Procedures } from "petals-stem/dist/src/block/category/procedures";
-import { AnyInput, Input, StringInput } from "petals-stem/dist/src/block/input";
-import { VariableInput } from "petals-stem/dist/src/block/input/variable";
-import { ID } from "petals-stem/dist/src/id";
-import { Target } from "petals-stem/dist/src/target";
-import { getUnknownReference } from "..";
+import { AnyInput, Block, ID, Input, StringInput, Target } from "petals-stem";
+
 import { MethodCallNode } from "../../../../types/ast/nodes/methodCall";
 import { Context } from "../../context";
-import { getInputLayerType, getType } from "../../getType";
+import { getInputLayerType } from "../../getType";
 import { call } from "../../translateInto/helpers/callMethod";
-import { BooleanReference } from "../boolean/abstract";
 import { ListReference } from "../list/abstract";
 import { VariableReference } from "./abstract";
 

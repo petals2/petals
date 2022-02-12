@@ -1,5 +1,5 @@
-import { Block } from "petals-stem/dist/src/block";
-import { Target } from "petals-stem/dist/src/target";
+import { Block, Target } from "petals-stem";
+
 import { MethodCallNode } from "../../../../types/ast/nodes/methodCall";
 import { NumberType, ReferenceType, Type } from "../../../../types/ast/type";
 import { Context } from "../../context";

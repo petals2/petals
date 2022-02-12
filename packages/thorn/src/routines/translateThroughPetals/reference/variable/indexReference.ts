@@ -1,8 +1,5 @@
-import { Block } from "petals-stem/dist/src/block";
-import { Operators } from "petals-stem/dist/src/block/category/operators";
-import { Input, AnyInput } from "petals-stem/dist/src/block/input";
-import { NumberInput } from "petals-stem/dist/src/block/input/number";
-import { Target } from "petals-stem/dist/src/target";
+import { AnyInput, Block, Blocks, Input, Target } from "petals-stem";
+
 import { getVariableReference } from ".";
 import { IndexReferenceNode } from "../../../../types/ast/nodes/indexReference";
 import { Context } from "../../context";
@@ -28,18 +25,18 @@ export class VariableIndexReference extends VariableReference {
   setValue(value: Input, target: Target, thread: Block, context: Context): Block {
     if (!this.base || !this.value) this.performSideEffects(target, thread, context);
 
-    return this.base!.overwriteAtIndex(Input.shadowed(target.getBlocks().createBlock(Operators.Add, 1, Input.shadowed(this.value!.getValue(target, thread, context)))), value, target, thread, context)
+    return this.base!.overwriteAtIndex(Input.shadowed(target.getBlocks().createBlock(Blocks.Operators.Add, 1, Input.shadowed(this.value!.getValue(target, thread, context)))), value, target, thread, context)
   }
 
   changeValue(value: Input, target: Target, thread: Block, context: Context): Block {
     if (!this.base || !this.value) this.performSideEffects(target, thread, context);
 
-    return this.setValue(Input.shadowed(target.getBlocks().createBlock(Operators.Add, Input.shadowed(this.getValue(target, thread, context)), value)), target, thread, context)
+    return this.setValue(Input.shadowed(target.getBlocks().createBlock(Blocks.Operators.Add, Input.shadowed(this.getValue(target, thread, context)), value)), target, thread, context)
   }
 
   getValue(target: Target, thread: Block, context: Context): AnyInput {
     if (!this.base || !this.value) this.performSideEffects(target, thread, context);
 
-    return this.base!.getItemAtIndex(Input.shadowed(target.getBlocks().createBlock(Operators.Add, 1, Input.shadowed(this.value!.getValue(target, thread, context)))), target, thread, context) as AnyInput;
+    return this.base!.getItemAtIndex(Input.shadowed(target.getBlocks().createBlock(Blocks.Operators.Add, 1, Input.shadowed(this.value!.getValue(target, thread, context)))), target, thread, context) as AnyInput;
   }
 }

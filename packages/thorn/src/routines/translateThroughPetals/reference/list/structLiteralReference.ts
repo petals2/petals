@@ -1,21 +1,24 @@
-import { StructLiteralNode } from "../../../../types/ast/nodes/structLiteral";
-import { KnownLengthListReference, KnownListContentsReference, ListReference } from "./abstract";
-import { Context } from "../../context";
-import { Block } from "petals-stem/dist/src/block";
-import { AnyInput, Input } from "petals-stem/dist/src/block/input";
-import { Target } from "petals-stem/dist/src/target";
-import { StructTool } from "../../structTool";
-import { NumberInput } from "petals-stem/dist/src/block/input/number";
+import {
+  AngleInput,
+  AnyInput,
+  Block,
+  Input,
+  IntegerInput,
+  NumberInput,
+  PositiveIntegerInput,
+  PositiveNumberInput,
+  Target
+} from "petals-stem";
+
 import { getUnknownReference } from "..";
-import { VariableReference } from "../variable/abstract";
-import { getType } from "../../getType";
+import { StructLiteralNode } from "../../../../types/ast/nodes/structLiteral";
 import { Type, UnionType } from "../../../../types/ast/type";
-import { PositiveNumberInput } from "petals-stem/dist/src/block/input/positiveNumber";
-import { IntegerInput } from "petals-stem/dist/src/block/input/integer";
-import { PositiveIntegerInput } from "petals-stem/dist/src/block/input/positiveInteger";
-import { AngleInput } from "petals-stem/dist/src/block/input/angle";
+import { Context } from "../../context";
+import { getType } from "../../getType";
+import { StructTool } from "../../structTool";
 import { BooleanReference } from "../boolean/abstract";
-import util from "util";
+import { VariableReference } from "../variable/abstract";
+import { KnownListContentsReference, ListReference } from "./abstract";
 
 export class StructLiteralReference extends KnownListContentsReference {
   constructor(protected readonly structLiteral: StructLiteralNode) {

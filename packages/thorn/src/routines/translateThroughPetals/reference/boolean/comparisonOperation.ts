@@ -1,15 +1,14 @@
-import { Block } from "petals-stem/dist/src/block";
-import { Control } from "petals-stem/dist/src/block/category/control";
-import { Operators } from "petals-stem/dist/src/block/category/operators";
-import { Phantom } from "petals-stem/dist/src/block/category/phantom";
-import { Variables } from "petals-stem/dist/src/block/category/variables";
-import { AnyInput, Input } from "petals-stem/dist/src/block/input";
-import { NumberInput } from "petals-stem/dist/src/block/input/number";
-import { StringInput } from "petals-stem/dist/src/block/input/string";
-import { VariableInput } from "petals-stem/dist/src/block/input/variable";
-import { ID } from "petals-stem/dist/src/id";
-import { Target } from "petals-stem/dist/src/target";
-import { Variable } from "petals-stem/dist/src/variable";
+import {
+  AnyInput,
+  Block,
+  Blocks,
+  Input,
+  NumberInput,
+  StringInput,
+  Target,
+  Variable
+} from "petals-stem";
+
 import { getUnknownReference } from "..";
 import { ValueTreeNode } from "../../../../types/ast/node";
 import { BooleanType, NumberType } from "../../../../types/ast/type";
@@ -52,9 +51,9 @@ export class BooleanComparisonOperationReference extends BooleanReference {
     if (this.leftHandRef.isKnownLength() && this.rightHandRef.isKnownLength()) {
       requiresStorage = true;
       if (this.leftHandRef.getKnownLength(context) != this.rightHandRef.getKnownLength(context)) {
-        eq = target.getBlocks().createBlock(Operators.And);
+        eq = target.getBlocks().createBlock(Blocks.Operators.And);
       } else if (this.leftHandRef.getKnownLength(context) === 0) {
-        eq = target.getBlocks().createBlock(Operators.Not);
+        eq = target.getBlocks().createBlock(Blocks.Operators.Not);
       } else {
         let remainingLength = this.leftHandRef.getKnownLength(context);
         let tri = 0;
@@ -68,7 +67,7 @@ export class BooleanComparisonOperationReference extends BooleanReference {
         tri++;
         tli++;
 
-        eq = target.getBlocks().createBlock(Operators.Equals, Input.shadowed(tl), Input.shadowed(tr));
+        eq = target.getBlocks().createBlock(Blocks.Operators.Equals, Input.shadowed(tl), Input.shadowed(tr));
 
         while (remainingLength > 1) {
           let tr = this.rightHandRef.getItemAtIndex(Input.shadowed(new NumberInput(tri)), target, thread, context);
@@ -80,7 +79,7 @@ export class BooleanComparisonOperationReference extends BooleanReference {
             continue;
           }
 
-          eq = target.getBlocks().createBlock(Operators.And, eq, target.getBlocks().createBlock(Operators.Equals, Input.shadowed(tl), Input.shadowed(tr)));
+          eq = target.getBlocks().createBlock(Blocks.Operators.And, eq, target.getBlocks().createBlock(Blocks.Operators.Equals, Input.shadowed(tl), Input.shadowed(tr)));
           remainingLength--;
           tli++; tri++;
           continue;
@@ -91,32 +90,32 @@ export class BooleanComparisonOperationReference extends BooleanReference {
 
       const index = context.createVariable("index", 1, new NumberType());
 
-      this.listComparisonResult.setValue(Input.shadowed(target.getBlocks().createBlock(Operators.Equals,
+      this.listComparisonResult.setValue(Input.shadowed(target.getBlocks().createBlock(Blocks.Operators.Equals,
         Input.shadowed(this.leftHandRef.getLength(target, thread, context)),
         Input.shadowed(this.rightHandRef.getLength(target, thread, context)),
       )), target, thread, context);
 
       index.setValue(Input.shadowed(new NumberInput(1)), target, thread, context);
 
-      const phantom = target.getBlocks().createBlock(Phantom);
+      const phantom = target.getBlocks().createBlock(Blocks.Phantom);
 
-      this.listComparisonResult.setValue(Input.shadowed(target.getBlocks().createBlock(Operators.Equals,
+      this.listComparisonResult.setValue(Input.shadowed(target.getBlocks().createBlock(Blocks.Operators.Equals,
         Input.shadowed(this.leftHandRef.getItemAtIndex(Input.shadowed(index.getValue(target, phantom, context)), target, phantom, context) as AnyInput),
         Input.shadowed(this.rightHandRef.getItemAtIndex(Input.shadowed(index.getValue(target, phantom, context)), target, phantom, context) as AnyInput),
       )), target, phantom, context);
 
       index.changeValue(Input.shadowed(new NumberInput(1)), target, phantom, context);
 
-      thread.getTail().append(target.getBlocks().createBlock(Control.While,
-        target.getBlocks().createBlock(Operators.Equals, Input.shadowed(this.listComparisonResult.getValue(target, thread, context)), Input.shadowed(new StringInput("true"))),
+      thread.getTail().append(target.getBlocks().createBlock(Blocks.Control.While,
+        target.getBlocks().createBlock(Blocks.Operators.Equals, Input.shadowed(this.listComparisonResult.getValue(target, thread, context)), Input.shadowed(new StringInput("true"))),
         phantom
       ))
 
-      eq = target.getBlocks().createBlock(Operators.Equals, Input.shadowed(this.listComparisonResult.getValue(target, thread, context)), Input.shadowed(new StringInput("true")));
+      eq = target.getBlocks().createBlock(Blocks.Operators.Equals, Input.shadowed(this.listComparisonResult.getValue(target, thread, context)), Input.shadowed(new StringInput("true")));
     }
 
     if (this.operation === "!=")
-      return [requiresStorage, target.getBlocks().createBlock(Operators.Not, eq)];
+      return [requiresStorage, target.getBlocks().createBlock(Blocks.Operators.Not, eq)];
 
     return [requiresStorage, eq];
   }
@@ -140,21 +139,21 @@ export class BooleanComparisonOperationReference extends BooleanReference {
 
   getValue(target: Target, thread: Block, context: Context): Block {
     if (this.leftHandRef instanceof ListReference || this.rightHandRef instanceof ListReference) {
-      if (!(this.leftHandRef instanceof ListReference && this.rightHandRef instanceof ListReference)) return target.getBlocks().createBlock(Operators.And);
+      if (!(this.leftHandRef instanceof ListReference && this.rightHandRef instanceof ListReference)) return target.getBlocks().createBlock(Blocks.Operators.And);
 
       if (this.listComparisonResult)
-        return target.getBlocks().createBlock(Operators.Equals, Input.shadowed(this.listComparisonResult.getValue(target, thread, context)), Input.shadowed(new StringInput("true")));
+        return target.getBlocks().createBlock(Blocks.Operators.Equals, Input.shadowed(this.listComparisonResult.getValue(target, thread, context)), Input.shadowed(new StringInput("true")));
 
       return this.computeListEquivalence(target, thread, context)[1];
     }
 
     switch (this.operation) {
-      case "==": return target.getBlocks().createBlock(Operators.Equals, Input.shadowed(this.leftHandRef.getValue(target, thread, context)), Input.shadowed(this.rightHandRef.getValue(target, thread, context)));
-      case "!=": return target.getBlocks().createBlock(Operators.Not, target.getBlocks().createBlock(Operators.Equals, Input.shadowed(this.leftHandRef.getValue(target, thread, context)), Input.shadowed(this.rightHandRef.getValue(target, thread, context))));
-      case "<": return target.getBlocks().createBlock(Operators.Lt, Input.shadowed(this.leftHandRef.getValue(target, thread, context)), Input.shadowed(this.rightHandRef.getValue(target, thread, context)));
-      case ">": return target.getBlocks().createBlock(Operators.Gt, Input.shadowed(this.leftHandRef.getValue(target, thread, context)), Input.shadowed(this.rightHandRef.getValue(target, thread, context)));
-      case ">=": return target.getBlocks().createBlock(Operators.Not, target.getBlocks().createBlock(Operators.Lt, Input.shadowed(this.leftHandRef.getValue(target, thread, context)), Input.shadowed(this.rightHandRef.getValue(target, thread, context))));
-      case "<=": return target.getBlocks().createBlock(Operators.Not, target.getBlocks().createBlock(Operators.Gt, Input.shadowed(this.leftHandRef.getValue(target, thread, context)), Input.shadowed(this.rightHandRef.getValue(target, thread, context))));
+      case "==": return target.getBlocks().createBlock(Blocks.Operators.Equals, Input.shadowed(this.leftHandRef.getValue(target, thread, context)), Input.shadowed(this.rightHandRef.getValue(target, thread, context)));
+      case "!=": return target.getBlocks().createBlock(Blocks.Operators.Not, target.getBlocks().createBlock(Blocks.Operators.Equals, Input.shadowed(this.leftHandRef.getValue(target, thread, context)), Input.shadowed(this.rightHandRef.getValue(target, thread, context))));
+      case "<": return target.getBlocks().createBlock(Blocks.Operators.Lt, Input.shadowed(this.leftHandRef.getValue(target, thread, context)), Input.shadowed(this.rightHandRef.getValue(target, thread, context)));
+      case ">": return target.getBlocks().createBlock(Blocks.Operators.Gt, Input.shadowed(this.leftHandRef.getValue(target, thread, context)), Input.shadowed(this.rightHandRef.getValue(target, thread, context)));
+      case ">=": return target.getBlocks().createBlock(Blocks.Operators.Not, target.getBlocks().createBlock(Blocks.Operators.Lt, Input.shadowed(this.leftHandRef.getValue(target, thread, context)), Input.shadowed(this.rightHandRef.getValue(target, thread, context))));
+      case "<=": return target.getBlocks().createBlock(Blocks.Operators.Not, target.getBlocks().createBlock(Blocks.Operators.Gt, Input.shadowed(this.leftHandRef.getValue(target, thread, context)), Input.shadowed(this.rightHandRef.getValue(target, thread, context))));
     }
 
     throw new Error("Unsupported operation");

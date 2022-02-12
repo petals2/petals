@@ -1,10 +1,8 @@
-import { Input, Target, Block, NumberInput } from "petals-stem";
-import { Operators } from "petals-stem/dist/src/block/category";
-import { AnyInput } from "petals-stem/dist/src/block/input";
+import { AnyInput, Block, Blocks, Input, NumberInput, Target } from "petals-stem";
+
 import { ListType, StructureType, Type } from "../../../../types/ast/type";
 import { Context } from "../../context";
 import { StructTool } from "../../structTool";
-import { VariableReference } from "../variable/abstract";
 import { KnownLengthListReference, ListReference } from "./abstract";
 
 export class ListIndexListReference extends ListReference {
@@ -36,7 +34,7 @@ export class ListIndexListReference extends ListReference {
 
   overwriteAtIndex(index: Input, value: Input, target: Target, thread: Block, context: Context): Block {
     return this.base.overwriteAtIndex(
-      Input.shadowed(target.getBlocks().createBlock(Operators.Add, 
+      Input.shadowed(target.getBlocks().createBlock(Blocks.Operators.Add, 
         this.index,
         index
       )),
@@ -49,7 +47,7 @@ export class ListIndexListReference extends ListReference {
     console.trace(index);
 
     return this.base.getItemAtIndex(
-      Input.shadowed(target.getBlocks().createBlock(Operators.Add, 
+      Input.shadowed(target.getBlocks().createBlock(Blocks.Operators.Add, 
         this.index,
         index
       )),
@@ -107,7 +105,7 @@ export class ListIndexStructureReference extends KnownLengthListReference {
 
   overwriteAtIndex(index: Input, value: Input, target: Target, thread: Block, context: Context): Block {
     return this.base.overwriteAtIndex(
-      Input.shadowed(target.getBlocks().createBlock(Operators.Add, 
+      Input.shadowed(target.getBlocks().createBlock(Blocks.Operators.Add, 
         this.index,
         index
       )),
@@ -118,7 +116,7 @@ export class ListIndexStructureReference extends KnownLengthListReference {
 
   getItemAtIndex(index: Input, target: Target, thread: Block, context: Context): ListReference | AnyInput {
     return this.base.getItemAtIndex(
-      Input.shadowed(target.getBlocks().createBlock(Operators.Add, 
+      Input.shadowed(target.getBlocks().createBlock(Blocks.Operators.Add, 
         this.index,
         index
       )),

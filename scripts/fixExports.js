@@ -9,56 +9,6 @@ if (!packageLoc)
 const allFileRenames = new Map;
 const allOpenedFileImports = new Map;
 
-const tempWrittenData = new Map;
-
-// fs.writeFileSync = (file, bytes) => {
-//   console.log("wrote %s bytes to %s", bytes.length, file);
-//   tempWrittenData.set(file, bytes);
-// }
-// fs.renameSync = (srcFile, dstFile) => console.log("renamed %s to %s", srcFile, path.relative(srcFile, dstFile));
-
-// const origReadFile = fs.readFileSync;
-// fs.readFileSync = (filePath, encoding) => {
-//   try {
-//     return origReadFile(filePath, encoding);
-//   } catch (e) {
-//     for (const [ srcFilePath, dstFilePath ] of allFileRenames) {
-//       if (path.relative(dstFilePath, path.resolve(filePath)) === "") {
-//         return origReadFile(srcFilePath, encoding);
-//       }
-//     }
-
-//     for (const [ tempFilePath, tempFileData ] of tempWrittenData) {
-//       if (path.relative(tempFilePath, path.resolve(filePath)) === "") {
-//         return tempFileData;
-//       }
-//     }
-
-//     throw e;
-//   }
-// }
-
-// const origStat = fs.statSync;
-// fs.statSync = (filePath) => {
-//   try {
-//     return origStat(filePath);
-//   } catch (e) {
-//     for (const [ srcFilePath, dstFilePath ] of allFileRenames) {
-//       if (path.relative(dstFilePath, path.resolve(filePath)) === "") {
-//         return origStat(srcFilePath);
-//       }
-//     }
-
-//     for (const [ tempFilePath, tempFileData ] of tempWrittenData) {
-//       if (path.relative(tempFilePath, path.resolve(filePath)) === "") {
-//         return { isDirectory() { return false } };
-//       }
-//     }
-
-//     throw e;
-//   }
-// }
-
 function getAllOpenFilesWithImport(importPath) {
   const filesWithImport = [];
   if (importPath.endsWith("/index.ts")) {
@@ -125,10 +75,28 @@ function recursiveFixDirectory(baseDir, directoryName) {
 
     updateFileImports(filePath);
   }
+
+  const allExportLines = [];
+  for (const fileInDir of filesInDirectory) {
+    const filePath = path.resolve(absoluteDir, fileInDir);
+    const fileStat = fs.statSync(filePath);
+
+    if (fileInDir === "index.ts") {
+      continue;
+    }
+    
+    if (fileStat.isDirectory()) {
+      allExportLines.push("export * from \"./" + path.basename(fileInDir, ".ts") + "\";");
+      continue;
+    }
+    
+    const fileData = fs.readFileSync(filePath);
+    if (fileData.includes("export ")) {
+      allExportLines.push("export * from \"./" + path.basename(fileInDir, ".ts") + "\";");
+    }
+  }
   
-  fs.writeFileSync(path.resolve(absoluteDir, "index.ts"), filesInDirectory.map(fileInDir => {
-    return "export * from \"./" + path.basename(fileInDir, ".ts") + "\";";
-  }).join("\n"), "utf8");
+  fs.writeFileSync(path.resolve(absoluteDir, "index.ts"), allExportLines.join("\n"), "utf8");
 
   for (const file of filesInDirectory) {
     if (file === "index.ts") {
@@ -147,4 +115,9 @@ function recursiveFixDirectory(baseDir, directoryName) {
   }
 }
 
+const startDate = Date.now();
 recursiveFixDirectory(path.resolve(process.cwd(), packageLoc), "src");
+const endDate = Date.now();
+const tookMs = endDate - startDate;
+
+console.log("Took %sms to fix exports for %s", tookMs, packageLoc);
