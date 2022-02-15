@@ -148,11 +148,7 @@ function printTargetProjectErrors(project: Project<AstFile>) {
 
   fs.writeFileSync(path.resolve(__dirname, "out.sb3"), sb3);
   
-  for (let head of stage.getBlocks().getAllBlockHeads()) {
-    const renderer = new TextRenderer("English")
-  
-    console.log(renderer.renderStack(head, false));
-  }
+  console.log(project.petals.serialize());
   
   const allProjects = [ project.stageProject, ...project.spriteProjects ];
   const numErrors = countErrors(allProjects);

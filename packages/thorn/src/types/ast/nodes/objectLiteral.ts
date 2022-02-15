@@ -5,14 +5,12 @@ import { ValueTreeNode } from "../node";
 import { readValue } from "../../../routines/buildAst/readValue";
 import { SelfReferenceNode } from "./selfReferenceNode";
 import { SelfPassedAsValueError } from "../../../errors/selfPassedAsValue";
-import { StructureType } from "../type";
 
-export class StructLiteralNode {
-  type = <const>"structLiteral";
+export class ObjectLiteralNode {
+  type = <const>"objectLiteral";
 
   constructor(
     protected readonly tokenRange: TokenRange,
-    protected readonly nameOrType: string | StructureType,
     protected readonly value: Record<string, ValueTreeNode>,
   ) { }
 
@@ -20,13 +18,9 @@ export class StructLiteralNode {
     return this.tokenRange;
   }
 
-  getName(): string | undefined { return typeof this.nameOrType === "string" ? this.nameOrType : undefined }
-  getType(): StructureType | undefined { return typeof this.nameOrType === "string" ? undefined : this.nameOrType }
   getValue() { return this.value }
 
-  static build(reader: LexReader): StructLiteralNode {
-    const nameToken = reader.expect({ type: TokenType.Identifier });
-
+  static build(reader: LexReader): ObjectLiteralNode {
     const contents = reader.readBetween("{");
 
     let valueStore: Record<string, ValueTreeNode> = {};
@@ -52,9 +46,8 @@ export class StructLiteralNode {
       valueStore[name] = value;
     }
 
-    return new StructLiteralNode(
-      new TokenRange(nameToken, contents.getRange().getEnd()),
-      nameToken.value,
+    return new ObjectLiteralNode(
+      new TokenRange(contents.getRange()),
       valueStore,
     );
   }

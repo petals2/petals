@@ -27,6 +27,7 @@ import { VariableAdditionRedefinitionNode } from "../../types/ast/nodes/variable
 import { VariableSubtractionRedefinitionNode } from "../../types/ast/nodes/variableSubtractionRedefinition";
 import { VariableMultiplicationRedefinitionNode } from "../../types/ast/nodes/variableMultiplicationRedefinition";
 import { VariableDivisionRedefinitionNode } from "../../types/ast/nodes/variableDivisionRedefinition";
+import { ObjectLiteralNode } from "../../types/ast/nodes/objectLiteral";
 
 export function readValue(reader: LexReader): ValueTreeNode {
   let basic: ValueTreeNode
@@ -154,6 +155,10 @@ export function readBasicValue(reader: LexReader): Exclude<ValueTreeNode, MathOp
     }
 
     return VariableReferenceNode.build(reader) as any;
+  }
+
+  if (reader.nextIs({ type: TokenType.Separator, value: "{" })) {
+    return ObjectLiteralNode.build(reader);
   }
 
   if (reader.nextIs({ type: TokenType.Separator, value: "[" })) {

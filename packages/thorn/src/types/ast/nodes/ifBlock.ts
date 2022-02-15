@@ -34,16 +34,19 @@ export class ifBlockNode {
     }
 
     if (reader.nextIs({ type: TokenType.Separator, value: "{" })) {
-      const contents = buildAst(reader.readBetween("{"));
-      var elseContents: TreeNode[] | undefined = undefined;
-  
+      const contentsReader = reader.readBetween("{");
+      const contents = buildAst(contentsReader);
+      let elseReader: LexReader | undefined = undefined;
+      let elseContents: TreeNode[] | undefined = undefined;
+
       if (reader.nextIs({ type: TokenType.Keyword, value: "else" })) {
         reader.read();
-  
-        elseContents = buildAst(reader.readBetween("{"));
+
+        elseReader = reader.readBetween("{");
+        elseContents = buildAst(elseReader);
       }
-  
-      const bodyRange = elseContents ? TokenRange.fromNodes(elseContents) : TokenRange.fromNodes(contents);
+
+      const bodyRange = elseReader ? new TokenRange(elseReader.getRange()) : new TokenRange(contentsReader.getRange());
       return new ifBlockNode(new TokenRange(ifToken, bodyRange.getEnd()), comparison, contents, elseContents)
     }
 

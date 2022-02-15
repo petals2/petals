@@ -17,7 +17,7 @@ export abstract class Target {
   protected comments: CommentStore = new CommentStore();
   protected costumes: TargetCostumeStore = new TargetCostumeStore();
   protected sounds: SoundStore = new SoundStore();
-  protected layer: number = 0;
+  protected layer: number = 1;
   protected volumeMultiplier: number = 1;
 
   isSprite(): this is Sprite { return false }

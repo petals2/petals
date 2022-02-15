@@ -13,6 +13,7 @@ export abstract class Type {
   isNumberType(): this is NumberType { return false }
   isStringType(): this is StringType { return false }
   isMethodType(): this is MethodType { return false }
+  isObjectType(): this is ObjectType { return false }
   isUnionType(): this is UnionType { return false }
   isClassType(): this is ClassType { return false }
   isSelfType(): this is SelfType { return false }
@@ -45,7 +46,7 @@ export abstract class Type {
       base = LiteralType.build(reader);
     } else if (reader.nextIs({ type: TokenType.Separator, value: "{" })) {
       base = StructureType.build(reader);
-    } else if (reader.nextIs({ type: TokenType.Identifier})) {
+    } else if (reader.nextIs({ type: TokenType.Identifier })) {
       base = ReferenceType.build(reader);
     }
 
@@ -562,5 +563,23 @@ export class ClassType extends Type {
 
   static build(reader: LexReader): ClassType {
     throw new Error("Cannot build a class type");
+  }
+}
+
+export class ObjectType extends Type {
+  constructor() { super() }
+
+  exactEquals(other: Type): boolean {
+    return other.isObjectType();
+  }
+
+  extends(other: Type): boolean {
+    return other.isObjectType();
+  }
+
+  isObjectType(): this is ObjectType { return true }
+
+  static build(reader: LexReader): ObjectType {
+    throw new Error("Cannot build a object type");
   }
 }

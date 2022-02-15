@@ -32,10 +32,11 @@ import { StructLiteralNode } from "../../types/ast/nodes/structLiteral";
 import { ThisNode } from "../../types/ast/nodes/thisNode";
 import { VariableRedefinitionNode } from "../../types/ast/nodes/variableRedefinitionNode";
 import { VariableReferenceNode } from "../../types/ast/nodes/variableReference";
-import { BooleanType, HeapReferenceType, ListType, LiteralType, NumberType, SelfType, StringType, Type, UnionType } from "../../types/ast/type";
+import { BooleanType, HeapReferenceType, ListType, LiteralType, NumberType, ObjectType, SelfType, StringType, Type, UnionType } from "../../types/ast/type";
 import { ListApi } from "./api/list";
 import { SelfApi } from "./api/self";
 import { Context, typeApplyContext } from "./context";
+import { ObjectLiteralNode } from "../../types/ast/nodes/objectLiteral";
 
 function resolvePropertyReferenceType(baseType: Type, node: PropertyReferenceNode, context: Context): Type {
   while (baseType.isReferenceType()) baseType = baseType.dereference();
@@ -76,12 +77,16 @@ export function getType(node: ValueTreeNode | Input | Variable | List | { name: 
     return dereferenceType(node, ctx);
   }
 
+  if (node instanceof ObjectLiteralNode) {
+    return new ObjectType();
+  }
+
   if (node instanceof MethodDefinitionNode) {
     throw new Error("")
   }
 
   if (node instanceof StructLiteralNode) {
-    return ctx.getStruct(node.getName());
+    return node.getName() ? ctx.getStruct(node.getName()!) : node.getType()!;
   }
 
   if (node instanceof HeapCopyOperation) {

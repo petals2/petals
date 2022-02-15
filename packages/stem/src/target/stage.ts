@@ -83,7 +83,7 @@ export class Stage extends Target {
       currentCostume: this.getCostumes().getSelectedIndex(),
       costumes: this.getCostumes().serialize(),
       sounds: this.getSounds().serialize(),
-      layerOrder: this.getLayer(),
+      layerOrder: 0,
       volume: this.getVolumeMultiplier() * 100,
 
       tempo: this.getTempo(),

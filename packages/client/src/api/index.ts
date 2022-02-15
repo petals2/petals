@@ -218,6 +218,10 @@ export class Requestor {
     return await this.makeRequest<Comment>("GET", `https://api.scratch.mit.edu/users/${projectAuthor}/projects/${projectId}/comments/${comment}/`);
   }
 
+  async deleteProjectComment(projectId: number, commentId: number): Promise<{} | { code: string, message: string }> {
+    return await this.makeRequest<{}>("DELETE", `https://api.scratch.mit.edu/proxy/comments/project/${projectId}/comment/${commentId}/`);
+  }
+
   async getProjectCommentReplies(projectId: number, projectAuthor: string, comment: string, limit: number, offset: number): Promise<Comment[]> {
     return await this.makeRequest<Comment[]>("GET", `https://api.scratch.mit.edu/users/${projectAuthor}/projects/${projectId}/comments/${comment}/replies?offset=${offset}&limit=${limit}`);
   }

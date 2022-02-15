@@ -109,7 +109,7 @@ export class ScrProject {
       }
 
       const mainThread = sprite.getBlocks().createBlock(Events.WhenFlagClicked);
-      const context = new Context(sprite, mainThread);
+      const context = new Context(sprite, mainThread, false);
 
       mainThread.append(translateNodeListIntoBlock(project.getContents()[0].contents, sprite, context).getHead());
     });
@@ -119,9 +119,9 @@ export class ScrProject {
     const stageProject = Project.fromManifestPath(manifestAbsoluteFilePath);
     let spriteProjects: Project<AstFile>[] = [];
 
-    if (fs.existsSync(path.join(manifestAbsoluteFilePath, "sprites"))) {
-      spriteProjects = fs.readdirSync(path.join(manifestAbsoluteFilePath, "sprites")).map(v => {
-        return Project.fromManifestPath(path.join(manifestAbsoluteFilePath, "sprites", v));
+    if (fs.existsSync(path.join(manifestAbsoluteFilePath, "..", "sprites"))) {
+      spriteProjects = fs.readdirSync(path.join(manifestAbsoluteFilePath, "..", "sprites")).map(v => {
+        return Project.fromManifestPath(path.join(manifestAbsoluteFilePath, "..", "sprites", v, "package.silo"));
       })
     }
 

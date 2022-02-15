@@ -9,7 +9,7 @@ import { NumberInput } from "petals-stem/dist/src/block/input/number";
 import { getUnknownReference } from "..";
 import { VariableReference } from "../variable/abstract";
 import { getType } from "../../getType";
-import { Type, UnionType } from "../../../../types/ast/type";
+import { StructureType, Type, UnionType } from "../../../../types/ast/type";
 import { PositiveNumberInput } from "petals-stem/dist/src/block/input/positiveNumber";
 import { IntegerInput } from "petals-stem/dist/src/block/input/integer";
 import { PositiveIntegerInput } from "petals-stem/dist/src/block/input/positiveInteger";
@@ -23,7 +23,7 @@ export class StructLiteralReference extends KnownListContentsReference {
   }
 
   structGetItemAtIndex(index: number, target: Target, thread: Block, context: Context) {
-    const thisType = context.getStruct(this.structLiteral.getName());
+    const thisType = this.structLiteral.getType() ?? context.getStruct(this.structLiteral.getName()!);
     const pathAtIndex = StructTool.getPath(thisType, index);
 
     if (pathAtIndex.length === 0) throw new Error("No paths for index: " + index);
@@ -124,11 +124,11 @@ export class StructLiteralReference extends KnownListContentsReference {
   }
 
   getKnownLength(context: Context): number {
-    return StructTool.getSize(context.getStruct(this.structLiteral.getName()));
+    return StructTool.getSize(this.structLiteral.getType() ?? context.getStruct(this.structLiteral.getName()!));
   }
 
   getContents(target: Target, thread: Block, context: Context): (ListReference | AnyInput)[] {
-    const type = context.getStruct(this.structLiteral.getName());
+    const type = this.structLiteral.getType() ?? context.getStruct(this.structLiteral.getName()!);
 
     if (type === undefined) throw new Error("Cannot find struct by name: " + this.structLiteral.getName());
     if (!type.isStructureType()) throw new Error("Internal error: struct literal reference is not a struct type");

@@ -43,5 +43,13 @@ export class ProjectComment {
     return this.parent = new ProjectComment(this.client, this.project, await this.client.getRequestor().getProjectComment(await this.project.getId(), await (await this.project.getAuthor()).getUsername(), this.comment.parent_id.toString()))
   }
 
+  async delete(): Promise<void> {
+    const res = await this.client.getRequestor().deleteProjectComment(await this.project.getId(), this.getId());
+
+    if ("code" in res) {
+      throw new Error("Failed to delete comment: " + res.code);
+    }
+  }
+
   replies(): ProjectCommentReplyStore { return new ProjectCommentReplyStore(this.client, this.project, this) }
 }

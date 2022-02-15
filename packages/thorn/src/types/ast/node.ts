@@ -32,6 +32,7 @@ import { VariableAdditionRedefinitionNode } from "./nodes/variableAdditionRedefi
 import { VariableSubtractionRedefinitionNode } from "./nodes/variableSubtractionRedefinition";
 import { VariableMultiplicationRedefinitionNode } from "./nodes/variableMultiplicationRedefinition";
 import { VariableDivisionRedefinitionNode } from "./nodes/variableDivisionRedefinition";
+import { ObjectLiteralNode } from "./nodes/objectLiteral";
 
 export type GetTreeNode<NodeType extends string> = TreeNode extends { type: NodeType } ? TreeNode : never;
 
@@ -59,6 +60,7 @@ export type ValueTreeNode = ThisNode
   | VariableSubtractionRedefinitionNode
   | VariableMultiplicationRedefinitionNode
   | VariableDivisionRedefinitionNode
+  | ObjectLiteralNode
   | VariableAdditionRedefinitionNode;
 
 export type TreeNode = VariableDefinitionNode
@@ -79,6 +81,7 @@ export type TreeNode = VariableDefinitionNode
   | IndexReferenceNode
   | BooleanLiteralNode
   | HeapDefinitionNode
+  | ObjectLiteralNode
   | HeapCopyOperation
   | StructLiteralNode
   | NumberLiteralNode
