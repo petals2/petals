@@ -1,9 +1,6 @@
-import { Block } from "petals-stem/dist/src/block";
-import { Operators } from "petals-stem/dist/src/block/category/operators";
-import { AnyInput, Input } from "petals-stem/dist/src/block/input";
-import { Target } from "petals-stem/dist/src/target";
+import { Block, Blocks, Target } from "petals-stem";
+
 import { Context } from "../../context";
-import { VariableReference } from "../variable/abstract";
 import { BooleanReference } from "./abstract";
 
 export class BooleanLiteralReference extends BooleanReference {
@@ -14,6 +11,6 @@ export class BooleanLiteralReference extends BooleanReference {
   performSideEffects(target: Target, thread: Block, context: Context): void {}
 
   getValue(target: Target, thread: Block, context: Context): Block {
-    return target.getBlocks().createBlock(this.value ? Operators.Not : Operators.And)
+    return target.getBlocks().createBlock(this.value ? Blocks.Operators.Not : Blocks.Operators.And)
   }
 }

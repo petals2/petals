@@ -1,13 +1,17 @@
-import { Block } from "petals-stem/dist/src/block";
-import { Variables } from "petals-stem/dist/src/block/category/variables";
-import { Input, AnyInput } from "petals-stem/dist/src/block/input";
-import { AngleInput } from "petals-stem/dist/src/block/input/angle";
-import { IntegerInput } from "petals-stem/dist/src/block/input/integer";
-import { NumberInput } from "petals-stem/dist/src/block/input/number";
-import { PositiveIntegerInput } from "petals-stem/dist/src/block/input/positiveInteger";
-import { PositiveNumberInput } from "petals-stem/dist/src/block/input/positiveNumber";
-import { ID } from "petals-stem/dist/src/id";
-import { Target } from "petals-stem/dist/src/target";
+import {
+  AngleInput,
+  AnyInput,
+  Block,
+  Blocks,
+  ID,
+  Input,
+  IntegerInput,
+  NumberInput,
+  PositiveIntegerInput,
+  PositiveNumberInput,
+  Target
+} from "petals-stem";
+
 import { getListReference } from ".";
 import { getUnknownReference } from "..";
 import { ArrayLiteralNode } from "../../../../types/ast/nodes/arrayLiteral";
@@ -49,14 +53,14 @@ export class ListLiteralReference extends KnownListContentsReference {
     const values = this.literal.getValues();
 
     const gen = target.getBlocks().generateStack(function* () {
-      yield new Variables.DeleteAllOfList(l);
+      yield new Blocks.Variables.DeleteAllOfList(l);
       for (let i = 0; i < values.length; i++) {
         const element = values[i];
         const ref = getUnknownReference(element, target, thread, context);
 
         if (ref instanceof ListReference) throw new Error("List literals cannot contain lists");
 
-        yield new Variables.AddToList(l, Input.shadowed(ref.getValue(target, thread, context)));
+        yield new Blocks.Variables.AddToList(l, Input.shadowed(ref.getValue(target, thread, context)));
       }
     });
 
@@ -87,7 +91,7 @@ export class ListLiteralReference extends KnownListContentsReference {
     return this.write(target, thread, context).getItemAtIndex(index, target, thread, context);
   }
 
-  getIndexOfItem(item: Input, target: Target, thread: Block, context: Context): InstanceType<typeof Variables.ItemNumOfList> {
+  getIndexOfItem(item: Input, target: Target, thread: Block, context: Context): InstanceType<typeof Blocks.Variables.ItemNumOfList> {
     return this.write(target, thread, context).getIndexOfItem(item, target, thread, context);
   }
 

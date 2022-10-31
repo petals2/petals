@@ -1,9 +1,9 @@
-import { SILO } from "petals-silo";
 import { ValueTreeNode } from "../../types/ast/node";
 import { ArrayLiteralNode } from "../../types/ast/nodes/arrayLiteral";
 import { BooleanLiteralNode } from "../../types/ast/nodes/booleanLiteral";
 import { ComparisonOperationNode } from "../../types/ast/nodes/comparisonOperation";
 import { DecrementOperatorNode } from "../../types/ast/nodes/decrementOperator";
+import { HeapCopyOperation } from "../../types/ast/nodes/heapCopyOperation";
 import { IncrementOperatorNode } from "../../types/ast/nodes/incrementOperator";
 import { IndexReferenceNode } from "../../types/ast/nodes/indexReference";
 import { MathOperationNode } from "../../types/ast/nodes/mathOperation";
@@ -15,19 +15,17 @@ import { NumberLiteralNode } from "../../types/ast/nodes/numberLiteral";
 import { ParenthesisedExpressionNode } from "../../types/ast/nodes/parenthesisedExpression";
 import { PropertyReferenceNode } from "../../types/ast/nodes/propertyReference";
 import { SelfReferenceNode } from "../../types/ast/nodes/selfReferenceNode";
-import { HeapCopyOperation } from "../../types/ast/nodes/heapCopyOperation";
 import { StringLiteralNode } from "../../types/ast/nodes/stringLiteral";
 import { StructLiteralNode } from "../../types/ast/nodes/structLiteral";
 import { ThisNode } from "../../types/ast/nodes/thisNode";
+import { VariableAdditionRedefinitionNode } from "../../types/ast/nodes/variableAdditionRedefinition";
+import { VariableDivisionRedefinitionNode } from "../../types/ast/nodes/variableDivisionRedefinition";
+import { VariableMultiplicationRedefinitionNode } from "../../types/ast/nodes/variableMultiplicationRedefinition";
 import { VariableRedefinitionNode } from "../../types/ast/nodes/variableRedefinitionNode";
 import { VariableReferenceNode } from "../../types/ast/nodes/variableReference";
+import { VariableSubtractionRedefinitionNode } from "../../types/ast/nodes/variableSubtractionRedefinition";
 import { LexReader } from "../../types/reader/lexReader";
 import { TokenRange, TokenType } from "../../types/token";
-import { VariableAdditionRedefinitionNode } from "../../types/ast/nodes/variableAdditionRedefinition";
-import { VariableSubtractionRedefinitionNode } from "../../types/ast/nodes/variableSubtractionRedefinition";
-import { VariableMultiplicationRedefinitionNode } from "../../types/ast/nodes/variableMultiplicationRedefinition";
-import { VariableDivisionRedefinitionNode } from "../../types/ast/nodes/variableDivisionRedefinition";
-import { ObjectLiteralNode } from "../../types/ast/nodes/objectLiteral";
 
 export function readValue(reader: LexReader): ValueTreeNode {
   let basic: ValueTreeNode

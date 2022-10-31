@@ -1,7 +1,8 @@
+import { Reader } from "petals-utils";
+
+import { LexError } from "../../errors/lexError";
 import { LexedContextualError } from "../../errors/lexedContextual";
 import { Token, TokenRange, TokenType } from "../token";
-import { Reader } from "petals-utils";
-import { LexError } from "../../errors/lexError";
 
 export class LexReader implements Reader {
   protected readHead: number = 0;

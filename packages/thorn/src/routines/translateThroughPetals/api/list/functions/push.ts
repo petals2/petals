@@ -1,6 +1,5 @@
-import { Block } from "petals-stem/dist/src/block";
-import { Input } from "petals-stem/dist/src/block/input";
-import { Target } from "petals-stem/dist/src/target";
+import { Block, Input, Target } from "petals-stem";
+
 import { MethodCallNode } from "../../../../../types/ast/nodes/methodCall";
 import { Context } from "../../../context";
 import { ListReference } from "../../../reference/list/abstract";
@@ -21,5 +20,3 @@ export function callPush(list: ListReference, call: MethodCallNode, target: Targ
     getValue(target, thread, context) { return list.getLength(target, thread, context); },
   };
 }
-
-

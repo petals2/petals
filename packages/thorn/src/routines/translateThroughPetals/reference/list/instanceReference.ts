@@ -1,8 +1,5 @@
-import { Block } from "petals-stem/dist/src/block";
-import { Variables } from "petals-stem/dist/src/block/category/variables";
-import { AnyInput, Input } from "petals-stem/dist/src/block/input";
-import { List } from "petals-stem/dist/src/list";
-import { Target } from "petals-stem/dist/src/target";
+import { Block, Blocks, Input, List, Target } from "petals-stem";
+
 import { ListType, Type } from "../../../../types/ast/type";
 import { Context } from "../../context";
 import { getType } from "../../getType";
@@ -17,73 +14,73 @@ export class ListInstanceReference extends ListReference {
     return (getType(this.list, context) as ListType).getContentType()
   }
 
-  push(value: Input, target: Target, thread: Block, context: Context): InstanceType<typeof Variables.AddToList> {
+  push(value: Input, target: Target, thread: Block, context: Context): InstanceType<typeof Blocks.Variables.AddToList> {
     return thread.getTail().append(target.getBlocks().createBlock(
-      Variables.AddToList,
+      Blocks.Variables.AddToList,
       this.list,
       value,
     ));
   }
 
-  deleteAtIndex(index: Input, target: Target, thread: Block, context: Context): InstanceType<typeof Variables.DeleteOfList> {
+  deleteAtIndex(index: Input, target: Target, thread: Block, context: Context): InstanceType<typeof Blocks.Variables.DeleteOfList> {
     return thread.getTail().append(target.getBlocks().createBlock(
-      Variables.DeleteOfList,
+      Blocks.Variables.DeleteOfList,
       this.list,
       index,
     ))
   }
 
-  deleteAll(target: Target, thread: Block, context: Context): InstanceType<typeof Variables.DeleteAllOfList> {
+  deleteAll(target: Target, thread: Block, context: Context): InstanceType<typeof Blocks.Variables.DeleteAllOfList> {
     return thread.getTail().append(target.getBlocks().createBlock(
-      Variables.DeleteAllOfList,
+      Blocks.Variables.DeleteAllOfList,
       this.list,
     ))
   }
 
-  insertAtIndex(index: Input, value: Input, target: Target, thread: Block, context: Context): InstanceType<typeof Variables.InsertAtList> {
+  insertAtIndex(index: Input, value: Input, target: Target, thread: Block, context: Context): InstanceType<typeof Blocks.Variables.InsertAtList> {
     return thread.getTail().append(target.getBlocks().createBlock(
-      Variables.InsertAtList,
+      Blocks.Variables.InsertAtList,
       this.list,
       index,
       value,
     ));
   }
 
-  overwriteAtIndex(index: Input, value: Input, target: Target, thread: Block, context: Context): InstanceType<typeof Variables.ReplaceItemOfList> {
+  overwriteAtIndex(index: Input, value: Input, target: Target, thread: Block, context: Context): InstanceType<typeof Blocks.Variables.ReplaceItemOfList> {
     return thread.getTail().append(target.getBlocks().createBlock(
-      Variables.ReplaceItemOfList,
+      Blocks.Variables.ReplaceItemOfList,
       this.list,
       index,
       value,
     ));
   }
 
-  getItemAtIndex(index: Input, target: Target, thread: Block, context: Context): InstanceType<typeof Variables.ItemOfList> {
+  getItemAtIndex(index: Input, target: Target, thread: Block, context: Context): InstanceType<typeof Blocks.Variables.ItemOfList> {
     return target.getBlocks().createBlock(
-      Variables.ItemOfList,
+      Blocks.Variables.ItemOfList,
       this.list,
       index,
     );
   }
 
-  getIndexOfItem(item: Input, target: Target, thread: Block, context: Context): InstanceType<typeof Variables.ItemNumOfList> {
+  getIndexOfItem(item: Input, target: Target, thread: Block, context: Context): InstanceType<typeof Blocks.Variables.ItemNumOfList> {
     return target.getBlocks().createBlock(
-      Variables.ItemNumOfList,
+      Blocks.Variables.ItemNumOfList,
       this.list,
       item,
     );
   }
 
-  getLength(target: Target, thread: Block, context: Context): InstanceType<typeof Variables.LengthOfList> {
+  getLength(target: Target, thread: Block, context: Context): InstanceType<typeof Blocks.Variables.LengthOfList> {
     return target.getBlocks().createBlock(
-      Variables.LengthOfList,
+      Blocks.Variables.LengthOfList,
       this.list,
     );
   }
 
-  containsItem(item: Input, target: Target, thread: Block, context: Context): InstanceType<typeof Variables.ListContainsItem> {
+  containsItem(item: Input, target: Target, thread: Block, context: Context): InstanceType<typeof Blocks.Variables.ListContainsItem> {
     return target.getBlocks().createBlock(
-      Variables.ListContainsItem,
+      Blocks.Variables.ListContainsItem,
       this.list,
       item,
     );

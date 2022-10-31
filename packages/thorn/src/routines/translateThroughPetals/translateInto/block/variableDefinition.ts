@@ -1,14 +1,13 @@
-import { VariableDefinitionNode } from "../../../../types/ast/nodes/variableDefinition";
-import { Target } from "petals-stem/dist/src/target";
-import { Block } from "petals-stem/dist/src/block";
-import { Context } from "../../context";
-import { getType } from "../../getType";
+import { Block, Target } from "petals-stem";
 
+import { VariableDefinitionNode } from "../../../../types/ast/nodes/variableDefinition";
 import { VariableRedefinitionNode } from "../../../../types/ast/nodes/variableRedefinitionNode";
 import { VariableReferenceNode } from "../../../../types/ast/nodes/variableReference";
-import translateVariableRedefinitionNode from "./variableRedefinitionOperator";
-import { TokenRange } from "../../../../types/token";
 import { Type } from "../../../../types/ast/type";
+import { TokenRange } from "../../../../types/token";
+import { Context } from "../../context";
+import { getType } from "../../getType";
+import translateVariableRedefinitionNode from "./variableRedefinitionOperator";
 
 function shouldCreateList(t: Type, context: Context): boolean {
   while (t.isReferenceType()) {

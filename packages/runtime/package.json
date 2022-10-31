@@ -15,6 +15,11 @@
     "chalk": "^4.0.0",
     "petals-stem": "workspace:*"
   },
+  "devDependencies": {
+    "@types/node": "^17.0.10",
+    "ts-node": "latest",
+    "typescript": "latest"
+  },
   "files": [
     "./dist"
   ]

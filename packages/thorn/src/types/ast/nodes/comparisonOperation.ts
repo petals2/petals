@@ -1,9 +1,9 @@
+import { SelfPassedAsValueError } from "../../../errors/selfPassedAsValue";
 import { readValue } from "../../../routines/buildAst/readValue";
-import { TokenRange, TokenType, validComparators } from "../../token";
 import { LexReader } from "../../reader/lexReader";
+import { TokenRange, TokenType, validComparators } from "../../token";
 import { ValueTreeNode } from "../node";
 import { SelfReferenceNode } from "./selfReferenceNode";
-import { SelfPassedAsValueError } from "../../../errors/selfPassedAsValue";
 
 export class ComparisonOperationNode<Left extends ValueTreeNode = ValueTreeNode, Right extends ValueTreeNode = ValueTreeNode, Comparison extends (typeof validComparators)[number] = (typeof validComparators)[number]> {
   type = <const>"comparisonOperation";

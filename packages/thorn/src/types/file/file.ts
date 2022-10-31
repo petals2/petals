@@ -1,5 +1,6 @@
-import { Project } from "../project";
 import path from "path";
+
+import { Project } from "../project";
 
 export abstract class File<T> {
   public abstract contents: T;

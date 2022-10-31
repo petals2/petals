@@ -3,7 +3,7 @@ import { readValue } from "../../../routines/buildAst/readValue";
 import { getType } from "../../../routines/translateThroughPetals/getType";
 import { LexReader } from "../../reader/lexReader";
 import { TokenRange, TokenType } from "../../token";
-import { ValueTreeNode } from "../node"
+import { ValueTreeNode } from "../node";
 import { Type } from "../type";
 import { SelfReferenceNode } from "./selfReferenceNode";
 

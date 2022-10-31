@@ -1,3 +1,6 @@
+export * from "./api";
+export * from "./interfaces";
+
 import { HttpMethod } from "undici/types/dispatcher";
 import { Cookie, CookieJar } from "tough-cookie";
 import { LoginResponse } from "./interfaces/login";

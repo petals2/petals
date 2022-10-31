@@ -1,8 +1,5 @@
-import { Block } from "petals-stem/dist/src/block";
-import { Operators } from "petals-stem/dist/src/block/category/operators";
-import { Input } from "petals-stem/dist/src/block/input";
-import { NumberInput } from "petals-stem/dist/src/block/input/number";
-import { Target } from "petals-stem/dist/src/target";
+import { Block, Blocks, Input, NumberInput, Target } from "petals-stem";
+
 import { ValueTreeNode } from "../../../../types/ast/node";
 import { Context } from "../../context";
 import { getUnknownReference } from "../../reference";
@@ -27,7 +24,7 @@ export function copyOntoHeap(value: ValueTreeNode, heapName: string, target: Tar
   }
 
   if (ref instanceof ListReference) {
-    const heapRef = HeapReference.allocate(heap, Input.shadowed(target.getBlocks().createBlock(Operators.Multiply, Input.shadowed(ref.getLength(target, thread, context)), Input.shadowed(new NumberInput(StructTool.getSize(ref.getContentType(context)))))), target, thread, context);
+    const heapRef = HeapReference.allocate(heap, Input.shadowed(target.getBlocks().createBlock(Blocks.Operators.Multiply, Input.shadowed(ref.getLength(target, thread, context)), Input.shadowed(new NumberInput(StructTool.getSize(ref.getContentType(context)))))), target, thread, context);
 
     ref.copyInto(heapRef, target, thread, context, false);
 

@@ -3,7 +3,6 @@ import { readValue } from "../../../routines/buildAst/readValue";
 import { LexReader } from "../../reader/lexReader";
 import { TokenRange, TokenType } from "../../token";
 import { ValueTreeNode } from "../node";
-import { MethodCallNode } from "./methodCall";
 import { SelfReferenceNode } from "./selfReferenceNode";
 
 export class NewNode {

@@ -1,16 +1,12 @@
-import { Project as PetalsProject } from "petals-stem";
+import { Blocks, Costume, Project as PetalsProject, Sound, Vector2 } from "petals-stem";
+import fs from "fs";
+import path from "path";
+
+import { ThornError } from "../errors/thornError";
+import { Context } from "../routines/translateThroughPetals/context";
+import { translateNodeListIntoBlock } from "../routines/translateThroughPetals/translateInto/block";
 import { AstFile } from "./file/astFile";
 import { Project } from "./project";
-import path from "path";
-import fs from "fs";
-import { Costume } from "petals-stem/dist/src/costume";
-import { Vector2 } from "petals-stem/dist/src/types/vector2";
-import { Events } from "petals-stem/dist/src/block/category/events";
-import { Sound } from "petals-stem/dist/src/sound";
-import { translateNodeListIntoBlock } from "../routines/translateThroughPetals/translateInto/block";
-import { Context } from "../routines/translateThroughPetals/context";
-import { TransformError } from "../errors/transformError";
-import { ThornError } from "../errors/thornError";
 
 export class ScrProject {
   public petals: PetalsProject = new PetalsProject("Thorns (through Petals2)");
@@ -51,7 +47,7 @@ export class ScrProject {
       });
     }
 
-    const mainThread = this.petals.getTargets().getStage().getBlocks().createBlock(Events.WhenFlagClicked);
+    const mainThread = this.petals.getTargets().getStage().getBlocks().createBlock(Blocks.Events.WhenFlagClicked);
     const context = new Context(this.petals.getTargets().getStage(), mainThread);
 
     const entryPoint = stageProject.getContents()[0];
@@ -108,7 +104,7 @@ export class ScrProject {
         });
       }
 
-      const mainThread = sprite.getBlocks().createBlock(Events.WhenFlagClicked);
+      const mainThread = sprite.getBlocks().createBlock(Blocks.Events.WhenFlagClicked);
       const context = new Context(sprite, mainThread, false);
 
       mainThread.append(translateNodeListIntoBlock(project.getContents()[0].contents, sprite, context).getHead());

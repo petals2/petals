@@ -1,8 +1,5 @@
-import { Block } from "petals-stem/dist/src/block";
-import { Operators } from "petals-stem/dist/src/block/category/operators";
-import { AnyInput, Input } from "petals-stem/dist/src/block/input";
-import { NumberInput } from "petals-stem/dist/src/block/input/number";
-import { Target } from "petals-stem/dist/src/target";
+import { AnyInput, Block, Blocks, Input, Target } from "petals-stem";
+
 import { getVariableReference } from ".";
 import { ValueTreeNode } from "../../../../types/ast/node";
 import { Context } from "../../context";
@@ -49,22 +46,22 @@ export class MathOperationReference extends VariableReference {
       const rightType = getType(this.rightHand, context);
 
       if (leftType.isNumberType() && rightType.isNumberType()) {
-        return target.getBlocks().createBlock(Operators.Add, Input.shadowed(leftHand), Input.shadowed(rightHand));
+        return target.getBlocks().createBlock(Blocks.Operators.Add, Input.shadowed(leftHand), Input.shadowed(rightHand));
       } else {
-        return target.getBlocks().createBlock(Operators.Join, Input.shadowed(leftHand), Input.shadowed(rightHand));
+        return target.getBlocks().createBlock(Blocks.Operators.Join, Input.shadowed(leftHand), Input.shadowed(rightHand));
       }
     }
 
     if (this.operation === "-") {
-      return target.getBlocks().createBlock(Operators.Subtract, Input.shadowed(leftHand), Input.shadowed(rightHand));
+      return target.getBlocks().createBlock(Blocks.Operators.Subtract, Input.shadowed(leftHand), Input.shadowed(rightHand));
     }
 
     if (this.operation === "*") {
-      return target.getBlocks().createBlock(Operators.Multiply, Input.shadowed(leftHand), Input.shadowed(rightHand));
+      return target.getBlocks().createBlock(Blocks.Operators.Multiply, Input.shadowed(leftHand), Input.shadowed(rightHand));
     }
 
     if (this.operation === "/") {
-      return target.getBlocks().createBlock(Operators.Divide, Input.shadowed(leftHand), Input.shadowed(rightHand));
+      return target.getBlocks().createBlock(Blocks.Operators.Divide, Input.shadowed(leftHand), Input.shadowed(rightHand));
     }
 
     throw new Error("Cannot translate operation: " + this.operation);

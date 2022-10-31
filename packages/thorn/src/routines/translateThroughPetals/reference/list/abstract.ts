@@ -1,15 +1,17 @@
-import { AnyInput, Input } from "petals-stem/dist/src/block/input";
-import { Target } from "petals-stem/dist/src/target";
-import { Block } from "petals-stem/dist/src/block";
-import { Context } from "../../context";
-import { NumberInput } from "petals-stem/dist/src/block/input/number";
+import {
+  AnyInput,
+  Block,
+  Blocks,
+  ID,
+  Input,
+  NumberInput,
+  Target,
+  VariableInput
+} from "petals-stem";
+
 import { Type } from "../../../../types/ast/type";
-import { Phantom } from "petals-stem/dist/src/block/category/phantom";
-import { ID } from "petals-stem/dist/src/id";
-import { VariableInput } from "petals-stem/dist/src/block/input/variable";
-import { Control } from "petals-stem/dist/src/block/category/control";
+import { Context } from "../../context";
 import { StructTool } from "../../structTool";
-import { getType } from "../../getType";
 
 export abstract class ListReference {
   isKnownLength(): this is KnownLengthListReference { return false };
@@ -28,24 +30,24 @@ export abstract class ListReference {
    copyInto(list: ListReference, target: Target, thread: Block, context: Context, redefining: boolean = true, startIndex?: number): void {
     if (redefining) {
       const intermediate = target.getVariables().createVariable("___intermediate_incrementor_" + ID.generate(), 0);
-      const phantom = target.getBlocks().createBlock(Phantom);
+      const phantom = target.getBlocks().createBlock(Blocks.Phantom);
 
       list.deleteAll(target, thread, context);
 
       list.push(Input.shadowed(this.getItemAtIndex(Input.shadowed(new VariableInput(intermediate)), target, phantom, context) as AnyInput), target, phantom, context);
 
-      thread.getTail().append(target.getBlocks().createBlock(Control.ForEach, intermediate, Input.shadowed(this.getLength(target, thread, context)), phantom));
+      thread.getTail().append(target.getBlocks().createBlock(Blocks.Control.ForEach, intermediate, Input.shadowed(this.getLength(target, thread, context)), phantom));
       return;
     }
 
     const intermediate = target.getVariables().createVariable("___intermediate_incrementor_" + ID.generate(), 0);
-    const phantom = target.getBlocks().createBlock(Phantom);
+    const phantom = target.getBlocks().createBlock(Blocks.Phantom);
 
     list.deleteAll(target, thread, context);
 
     list.overwriteAtIndex(Input.shadowed(new VariableInput(intermediate)), Input.shadowed(this.getItemAtIndex(Input.shadowed(new VariableInput(intermediate)), target, phantom, context) as AnyInput), target, phantom, context);
 
-    thread.getTail().append(target.getBlocks().createBlock(Control.ForEach, intermediate, Input.shadowed(this.getLength(target, thread, context)), phantom));
+    thread.getTail().append(target.getBlocks().createBlock(Blocks.Control.ForEach, intermediate, Input.shadowed(this.getLength(target, thread, context)), phantom));
   }
 }
 

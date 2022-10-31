@@ -1,7 +1,5 @@
-import { Blocks } from "petals-stem";
-import { Block } from "petals-stem/dist/src/block";
-import { Input } from "petals-stem/dist/src/block/input";
-import { Target } from "petals-stem/dist/src/target";
+import { Block, Blocks, Input, Target } from "petals-stem";
+
 import { MethodCallNode } from "../../../../../types/ast/nodes/methodCall";
 import { Context } from "../../../context";
 import { getVariableReference } from "../../../reference/variable";

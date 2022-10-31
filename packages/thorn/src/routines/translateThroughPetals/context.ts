@@ -1,31 +1,28 @@
-import { Variable } from "petals-stem/dist/src/variable";
-import { Target } from "petals-stem/dist/src/target";
-import { Block } from "petals-stem/dist/src/block";
-import { List } from "petals-stem/dist/src/list";
-import { ID } from "petals-stem/dist/src/id";
-import { ClassType, ListType, NumberType, StructureType, Type } from "../../types/ast/type";
-import { StructDefinitionNode } from "../../types/ast/nodes/structDefinitionNode";
+import {
+  Block,
+  Blocks,
+  ID,
+  Input,
+  List,
+  StringInput,
+  Target,
+  Variable,
+  VariableInput
+} from "petals-stem";
+
+import { TransformError } from "../../errors/transformError";
 import { HeapOptions } from "../../types/ast/nodes/heapDefinitionNode";
-import { VariableReference } from "./reference/variable/abstract";
-import { VariableInstanceReference } from "./reference/variable/instanceReference";
-import { VariableFunctionStackReference } from "./reference/variable/functionStackReference";
+import { ClassType, ListType, NumberType, StructureType, Type } from "../../types/ast/type";
+import { getType } from "./getType";
 import { ListReference } from "./reference/list/abstract";
 import { ListInstanceReference } from "./reference/list/instanceReference";
 import { KnownLengthInstanceReference } from "./reference/list/knownLengthInstanceReference";
-import { Procedures } from "petals-stem/dist/src/block/category/procedures";
-import { Variables } from "petals-stem/dist/src/block/category/variables";
-import { Argument } from "petals-stem/dist/src/block/category/argument";
-import { Input } from "petals-stem/dist/src/block/input";
-import { Operators } from "petals-stem/dist/src/block/category/operators";
-import { VariableInput } from "petals-stem/dist/src/block/input/variable";
-import { Control } from "petals-stem/dist/src/block/category/control";
-import { StringInput } from "petals-stem/dist/src/block/input/string";
-import { getType } from "./getType";
+import { VariableReference } from "./reference/variable/abstract";
 import { FunctionArgumentReference } from "./reference/variable/functionArgument";
-import { ClassDefinitionNode } from "../../types/ast/nodes/classDefinitionNode";
-import { TransformError } from "../../errors/transformError";
+import { VariableFunctionStackReference } from "./reference/variable/functionStackReference";
+import { VariableInstanceReference } from "./reference/variable/instanceReference";
 
-export type HeapReferenceData = { heap: ListReference, heapIndexes: ListReference, options: HeapOptions, mallocReturn: VariableReference, malloc: InstanceType<typeof Procedures.Definition>, free: InstanceType<typeof Procedures.Definition> };
+export type HeapReferenceData = { heap: ListReference, heapIndexes: ListReference, options: HeapOptions, mallocReturn: VariableReference, malloc: InstanceType<typeof Blocks.Procedures.Definition>, free: InstanceType<typeof Blocks.Procedures.Definition> };
 
 export class Context {
   protected currentFile: string | undefined;
@@ -312,7 +309,7 @@ export class Context {
 
   createHeap(name: string, options: HeapOptions): void {
     const blockFactory = this.target.getBlocks();
-    const getArg = (name: string) => Input.shadowed(blockFactory.createBlock(Argument.ReporterStringNumber, name));
+    const getArg = (name: string) => Input.shadowed(blockFactory.createBlock(Blocks.Argument.ReporterStringNumber, name));
 
     const heap = this.target.getLists().createList("___heap_" + name, []);
     const heapIndexes = this.target.getLists().createList("___heap_" + name + "_indexes", []);
@@ -326,19 +323,19 @@ export class Context {
     const freeIter = this.target.getVariables().createVariable(ID.generate() + "-___heap_" + name + "_free_iter", 0);
 
     free.append(this.target.getBlocks().generateStack(function* () {
-      yield new Variables.SetVariableTo(freeElemPtr, Input.shadowed(blockFactory.createBlock(Variables.ItemOfList, heapIndexes, getArg("ptr"))));
-      yield new Variables.AddToList(freeHeapIndexes, getArg("ptr"));
-      yield new Variables.SetVariableTo(freeElemSize, Input.shadowed(blockFactory.createBlock(Operators.Add, 1, 
-        Input.shadowed(blockFactory.createBlock(Variables.ItemOfList, heap, Input.shadowed(new VariableInput(freeElemPtr))))
+      yield new Blocks.Variables.SetVariableTo(freeElemPtr, Input.shadowed(blockFactory.createBlock(Blocks.Variables.ItemOfList, heapIndexes, getArg("ptr"))));
+      yield new Blocks.Variables.AddToList(freeHeapIndexes, getArg("ptr"));
+      yield new Blocks.Variables.SetVariableTo(freeElemSize, Input.shadowed(blockFactory.createBlock(Blocks.Operators.Add, 1, 
+        Input.shadowed(blockFactory.createBlock(Blocks.Variables.ItemOfList, heap, Input.shadowed(new VariableInput(freeElemPtr))))
       )));
-      yield new Variables.DeleteOfList(heap, Input.shadowed(new VariableInput(freeElemPtr)));
-      yield new Control.Repeat(Input.shadowed(blockFactory.createBlock(Operators.Subtract, Input.shadowed(new VariableInput(freeElemSize)), 1)), blockFactory.generateStack(function* () {
-        yield new Variables.DeleteOfList(heap, Input.shadowed(new VariableInput(freeElemPtr)));
+      yield new Blocks.Variables.DeleteOfList(heap, Input.shadowed(new VariableInput(freeElemPtr)));
+      yield new Blocks.Control.Repeat(Input.shadowed(blockFactory.createBlock(Blocks.Operators.Subtract, Input.shadowed(new VariableInput(freeElemSize)), 1)), blockFactory.generateStack(function* () {
+        yield new Blocks.Variables.DeleteOfList(heap, Input.shadowed(new VariableInput(freeElemPtr)));
       }));
-      yield new Variables.SetVariableTo(freeIter, Input.shadowed(blockFactory.createBlock(Operators.Add, 1, getArg("ptr"))));
-      yield new Control.Repeat(Input.shadowed(blockFactory.createBlock(Operators.Subtract, Input.shadowed(blockFactory.createBlock(Variables.LengthOfList, heapIndexes)), getArg("ptr"))), blockFactory.generateStack(function* () {
-        yield new Variables.ReplaceItemOfList(heapIndexes, Input.shadowed(new VariableInput(freeIter)), Input.shadowed(blockFactory.createBlock(Operators.Subtract, Input.shadowed(blockFactory.createBlock(Variables.ItemOfList, heapIndexes, Input.shadowed(new VariableInput(freeIter)))), Input.shadowed(new VariableInput(freeElemSize)))));
-        yield new Variables.ChangeVariableBy(freeIter, 1);
+      yield new Blocks.Variables.SetVariableTo(freeIter, Input.shadowed(blockFactory.createBlock(Blocks.Operators.Add, 1, getArg("ptr"))));
+      yield new Blocks.Control.Repeat(Input.shadowed(blockFactory.createBlock(Blocks.Operators.Subtract, Input.shadowed(blockFactory.createBlock(Blocks.Variables.LengthOfList, heapIndexes)), getArg("ptr"))), blockFactory.generateStack(function* () {
+        yield new Blocks.Variables.ReplaceItemOfList(heapIndexes, Input.shadowed(new VariableInput(freeIter)), Input.shadowed(blockFactory.createBlock(Blocks.Operators.Subtract, Input.shadowed(blockFactory.createBlock(Blocks.Variables.ItemOfList, heapIndexes, Input.shadowed(new VariableInput(freeIter)))), Input.shadowed(new VariableInput(freeElemSize)))));
+        yield new Blocks.Variables.ChangeVariableBy(freeIter, 1);
       }));
     }));
 
@@ -348,27 +345,27 @@ export class Context {
     this.typeStore.set(mallocReturn, new NumberType());
 
     malloc.append(this.target.getBlocks().generateStack(function* () {
-      yield new Control.IfElse(
-        blockFactory.createBlock(Operators.Gt, Input.shadowed(blockFactory.createBlock(Operators.Add, getArg("size"), Input.shadowed(blockFactory.createBlock(Variables.LengthOfList, heap)))), 200000), blockFactory.generateStack(function* () {
-          yield new Variables.SetVariableTo(mallocReturn, Input.shadowed(new StringInput("HEAP_FULL_ERROR")));
+      yield new Blocks.Control.IfElse(
+        blockFactory.createBlock(Blocks.Operators.Gt, Input.shadowed(blockFactory.createBlock(Blocks.Operators.Add, getArg("size"), Input.shadowed(blockFactory.createBlock(Blocks.Variables.LengthOfList, heap)))), 200000), blockFactory.generateStack(function* () {
+          yield new Blocks.Variables.SetVariableTo(mallocReturn, Input.shadowed(new StringInput("HEAP_FULL_ERROR")));
         }), blockFactory.generateStack(function* () {
-          yield new Control.IfElse(
-            blockFactory.createBlock(Operators.Lt, Input.shadowed(blockFactory.createBlock(Variables.LengthOfList, heapIndexes)), 200000), blockFactory.generateStack(function* () {
-              yield new Variables.AddToList(heapIndexes, Input.shadowed(blockFactory.createBlock(Operators.Add, 1, Input.shadowed(blockFactory.createBlock(Variables.LengthOfList, heap)))));
-              yield new Variables.SetVariableTo(mallocReturn, Input.shadowed(blockFactory.createBlock(Variables.LengthOfList, heapIndexes)));
+          yield new Blocks.Control.IfElse(
+            blockFactory.createBlock(Blocks.Operators.Lt, Input.shadowed(blockFactory.createBlock(Blocks.Variables.LengthOfList, heapIndexes)), 200000), blockFactory.generateStack(function* () {
+              yield new Blocks.Variables.AddToList(heapIndexes, Input.shadowed(blockFactory.createBlock(Blocks.Operators.Add, 1, Input.shadowed(blockFactory.createBlock(Blocks.Variables.LengthOfList, heap)))));
+              yield new Blocks.Variables.SetVariableTo(mallocReturn, Input.shadowed(blockFactory.createBlock(Blocks.Variables.LengthOfList, heapIndexes)));
             }), blockFactory.generateStack(function* () {
-              yield new Variables.ReplaceItemOfList(
+              yield new Blocks.Variables.ReplaceItemOfList(
                 heapIndexes,
-                Input.shadowed(blockFactory.createBlock(Variables.ItemOfList, freeHeapIndexes, Input.shadowed(blockFactory.createBlock(Variables.LengthOfList, freeHeapIndexes)))),
-                Input.shadowed(blockFactory.createBlock(Operators.Add, 1, Input.shadowed(blockFactory.createBlock(Variables.LengthOfList, heap)))),
+                Input.shadowed(blockFactory.createBlock(Blocks.Variables.ItemOfList, freeHeapIndexes, Input.shadowed(blockFactory.createBlock(Blocks.Variables.LengthOfList, freeHeapIndexes)))),
+                Input.shadowed(blockFactory.createBlock(Blocks.Operators.Add, 1, Input.shadowed(blockFactory.createBlock(Blocks.Variables.LengthOfList, heap)))),
               );
-              yield new Variables.SetVariableTo(mallocReturn, Input.shadowed(blockFactory.createBlock(Variables.ItemOfList, freeHeapIndexes, Input.shadowed(blockFactory.createBlock(Variables.LengthOfList, freeHeapIndexes)))));
-              yield new Variables.DeleteOfList(freeHeapIndexes, Input.shadowed(blockFactory.createBlock(Variables.LengthOfList, freeHeapIndexes)));
+              yield new Blocks.Variables.SetVariableTo(mallocReturn, Input.shadowed(blockFactory.createBlock(Blocks.Variables.ItemOfList, freeHeapIndexes, Input.shadowed(blockFactory.createBlock(Blocks.Variables.LengthOfList, freeHeapIndexes)))));
+              yield new Blocks.Variables.DeleteOfList(freeHeapIndexes, Input.shadowed(blockFactory.createBlock(Blocks.Variables.LengthOfList, freeHeapIndexes)));
             }),
           )
-          yield new Variables.AddToList(heap, getArg("size"));
-          yield new Control.Repeat(getArg("size"), blockFactory.generateStack(function* () {
-            yield new Variables.AddToList(heap, "");
+          yield new Blocks.Variables.AddToList(heap, getArg("size"));
+          yield new Blocks.Control.Repeat(getArg("size"), blockFactory.generateStack(function* () {
+            yield new Blocks.Variables.AddToList(heap, "");
           }))
         })
       )

@@ -1,10 +1,9 @@
+import { SelfPassedAsValueError } from "../../../errors/selfPassedAsValue";
+import { readValue } from "../../../routines/buildAst/readValue";
 import { LexReader } from "../../reader/lexReader";
-import { ReturnSiloType, SILO } from "petals-silo";
 import { TokenRange, TokenType } from "../../token";
 import { ValueTreeNode } from "../node";
-import { readValue } from "../../../routines/buildAst/readValue";
 import { SelfReferenceNode } from "./selfReferenceNode";
-import { SelfPassedAsValueError } from "../../../errors/selfPassedAsValue";
 import { StructureType } from "../type";
 
 export class StructLiteralNode {

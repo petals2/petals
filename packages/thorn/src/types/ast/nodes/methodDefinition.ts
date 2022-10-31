@@ -1,7 +1,7 @@
 import { buildAst } from "../../../routines/buildAst";
 import { LexReader } from "../../reader/lexReader";
 import { TokenRange, TokenType } from "../../token";
-import { GetTreeNode, TreeNode, ValueTreeNode } from "../node";
+import { TreeNode } from "../node";
 import { Type } from "../type";
 
 export class MethodDefinitionNode {

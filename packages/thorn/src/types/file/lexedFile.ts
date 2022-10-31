@@ -1,8 +1,8 @@
-import { LexReader } from "../reader/lexReader";
+import { lex } from "../../routines/lexFile";
 import { Project } from "../project";
+import { LexReader } from "../reader/lexReader";
 import { File } from "./file";
 import { TextFile } from "./textFile";
-import { lex } from "../../routines/lexFile";
 
 export class LexedFile extends File<LexReader> {
   constructor(public readonly contents: LexReader, relativePath: string, public project: Project<LexedFile>) {

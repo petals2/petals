@@ -1,12 +1,11 @@
-import { StructDefinitionNode } from "../../../../types/ast/nodes/structDefinitionNode";
-import { Context, typeApplyContext } from "../../context";
-import { Target } from "petals-stem/dist/src/target";
-import { Block } from "petals-stem/dist/src/block";
+import { Block, Target } from "petals-stem";
+
 import { ClassDefinitionNode } from "../../../../types/ast/nodes/classDefinitionNode";
-import { ClassType, MethodType, NumberType, StructureType } from "../../../../types/ast/type";
-import translateMethodDefinitionNode from "./methodDefinitionNode";
 import { MethodDefinitionNode } from "../../../../types/ast/nodes/methodDefinition";
+import { ClassType, MethodType, NumberType, StructureType } from "../../../../types/ast/type";
 import { TokenRange } from "../../../../types/token";
+import { Context, typeApplyContext } from "../../context";
+import translateMethodDefinitionNode from "./methodDefinitionNode";
 
 export default function (node: ClassDefinitionNode, target: Target, thread: Block, ctx: Context): void {
   const struct = new StructureType(new Map(Object.entries(node.getFields()).map(e => [e[0], e[1].type])));

@@ -1,11 +1,11 @@
-import { ForNode } from "../../../../types/ast/nodes/forNode";
-import { Target } from "petals-stem/dist/src/target";
-import translateWhileBlock from "./whileBlock";
-import { Block } from "petals-stem/dist/src/block";
+import { Block, Target } from "petals-stem";
+
 import { translateNodeIntoBlock } from ".";
-import { Context } from "../../context";
+import { ForNode } from "../../../../types/ast/nodes/forNode";
 import { WhileNode } from "../../../../types/ast/nodes/while";
 import { TokenRange } from "../../../../types/token";
+import { Context } from "../../context";
+import translateWhileBlock from "./whileBlock";
 
 export default function (forBlock: ForNode, target: Target, thread: Block, context: Context): void {
   const firstStep = forBlock.getFirstStep();

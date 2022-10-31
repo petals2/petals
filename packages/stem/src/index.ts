@@ -9,7 +9,8 @@ import {
     Procedures as _Procedures,
     Sensing as _Sensing,
     Sound as _Sound,
-    Variables as _Variables
+    Variables as _Variables,
+    Phantom as _Phantom
 } from "./block";
 
 export namespace Blocks {
@@ -24,7 +25,10 @@ export namespace Blocks {
     export const Sensing = _Sensing;
     export const Sound = _Sound;
     export const Variables = _Variables;
+    export const Phantom = _Phantom;
 }
+
+export { StopOption } from "./block";
 
 export * from "./block/field";
 export * from "./block/input";

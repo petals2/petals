@@ -1,9 +1,7 @@
-import { Input } from "petals-stem/dist/src/block/input";
-import { Target } from "petals-stem/dist/src/target";
-import { VariableReference } from "./abstract";
-import { Block } from "petals-stem/dist/src/block";
+import { Block, Blocks, Input, Target } from "petals-stem";
+
 import { Context } from "../../context";
-import { Argument } from "petals-stem/dist/src/block/category/argument";
+import { VariableReference } from "./abstract";
 
 export class FunctionArgumentReference extends VariableReference {
   constructor(public readonly name: string) {
@@ -20,7 +18,7 @@ export class FunctionArgumentReference extends VariableReference {
     throw new Error("Cannot modify function arguments");
   }
 
-  getValue(target: Target, thread: Block, context: Context): InstanceType<typeof Argument.ReporterStringNumber> {
-    return target.getBlocks().createBlock(Argument.ReporterStringNumber, this.name);
+  getValue(target: Target, thread: Block, context: Context): InstanceType<typeof Blocks.Argument.ReporterStringNumber> {
+    return target.getBlocks().createBlock(Blocks.Argument.ReporterStringNumber, this.name);
   }
 }

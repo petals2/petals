@@ -1,18 +1,13 @@
-import { MethodDefinitionNode } from "../../../../types/ast/nodes/methodDefinition";
-import { Target } from "petals-stem/dist/src/target";
-import { Block } from "petals-stem/dist/src/block";
-import { Context } from "../../context";
-import { NumberType } from "../../../../types/ast/type";
-import { Variables } from "petals-stem/dist/src/block/category/variables";
-import { Phantom } from "petals-stem/dist/src/block/category/phantom";
+import { Block, Blocks, Input, StringInput, Target } from "petals-stem";
+
 import { translateNodeListIntoBlock } from ".";
-import { Control } from "petals-stem/dist/src/block/category/control";
-import { Input } from "petals-stem/dist/src/block/input";
-import { StringInput } from "petals-stem/dist/src/block/input/string";
+import { MethodDefinitionNode } from "../../../../types/ast/nodes/methodDefinition";
+import { NumberType } from "../../../../types/ast/type";
 import { methodIsRecursive } from "../../codeFlowAnalysis/methodIsRecursive";
+import { Context } from "../../context";
 import { getType } from "../../getType";
-import { StructTool } from "../../structTool";
 import { VariableReference } from "../../reference/variable/abstract";
+import { StructTool } from "../../structTool";
 
 export default function (node: MethodDefinitionNode, target: Target, thread: Block, context: Context): void {
   let isRecursive = methodIsRecursive(node, context);
@@ -44,14 +39,14 @@ export default function (node: MethodDefinitionNode, target: Target, thread: Blo
   const variablesDefinedInMethod = context.exitMethod();
 
   if (isRecursive) {
-    cursor = cursor.append(target.getBlocks().createBlock(Variables.ChangeVariableBy, functionIdxCount, 1));
+    cursor = cursor.append(target.getBlocks().createBlock(Blocks.Variables.ChangeVariableBy, functionIdxCount, 1));
 
     for (const variable of variablesDefinedInMethod) {
       const type = getType(variable, context);
       const size = StructTool.getSize(type);
 
       for (let i = 0; i < size; i++) {
-        cursor = cursor.append(target.getBlocks().createBlock(Variables.AddToList, variable, ""));
+        cursor = cursor.append(target.getBlocks().createBlock(Blocks.Variables.AddToList, variable, ""));
       }
     }
   }
@@ -60,7 +55,7 @@ export default function (node: MethodDefinitionNode, target: Target, thread: Blo
 
   const block = cursor.getTail();
 
-  if (block instanceof Control.Stop) {
+  if (block instanceof Blocks.Control.Stop) {
     target.getBlocks().removeBlock(block);
   } else {
     if (returnVariable instanceof VariableReference) {

@@ -1,6 +1,5 @@
-import { Block } from "petals-stem/dist/src/block";
-import { AnyInput } from "petals-stem/dist/src/block/input";
-import { Target } from "petals-stem/dist/src/target";
+import { Block, Target } from "petals-stem";
+
 import { Context } from "../../context";
 
 export abstract class BooleanReference {

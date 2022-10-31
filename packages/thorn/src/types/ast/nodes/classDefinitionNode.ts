@@ -1,8 +1,8 @@
-import { MethodDefinitionNode } from "./methodDefinition";
-import { Type, VoidType } from "../type";
+import { buildAst } from "../../../routines/buildAst";
 import { LexReader } from "../../reader/lexReader";
 import { Token, TokenRange, TokenType } from "../../token";
-import { buildAst } from "../../../routines/buildAst";
+import { Type, VoidType } from "../type";
+import { MethodDefinitionNode } from "./methodDefinition";
 
 export class ClassDefinitionNode {
   type = <const>"classDefinitionNode";

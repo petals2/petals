@@ -1,5 +1,5 @@
-import { Block } from "petals-stem/dist/src/block";
-import { Target } from "petals-stem/dist/src/target";
+import { Block, Target } from "petals-stem";
+
 import { HeapDefinitionNode } from "../../../../types/ast/nodes/heapDefinitionNode";
 import { Context } from "../../context";
 

@@ -1,12 +1,13 @@
-import { StringReader } from "petals-utils";
-import { TextFile } from "./file/textFile";
-import { File } from "./file/file";
 import { SILO } from "petals-silo";
-import path from "path";
+import { StringReader } from "petals-utils";
 import fs from "fs";
-import { LexedFile } from "./file/lexedFile";
-import { AstFile } from "./file/astFile";
+import path from "path";
+
 import { ThornError } from "../errors/thornError";
+import { AstFile } from "./file/astFile";
+import { File } from "./file/file";
+import { LexedFile } from "./file/lexedFile";
+import { TextFile } from "./file/textFile";
 
 export type Manifest = {
   index: string;
