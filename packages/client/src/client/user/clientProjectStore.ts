@@ -25,7 +25,8 @@ export class ClientProjectStore extends ProjectStore {
   }
 
   async *[Symbol.asyncIterator](): AsyncIterator<SiteProject, void, void> {
-    let page = 0;
+    // page starts at 1
+    let page = 1;
 
     while (true) {
       const chunk = await this.client.getRequestor().getOwnProjects(page, this.config.filter, this.config.sortKind, this.config.sortFormat);
@@ -40,6 +41,16 @@ export class ClientProjectStore extends ProjectStore {
 
       if (chunk.length < this.config.chunkSize) break;
     }
+  }
+
+  async all(): Promise<SiteProject[]> {
+    const projects = [];
+
+    for await (const project of this) {
+      projects.push(project);
+    }
+
+    return projects;
   }
 
   chunkSize(size: number): this {

@@ -162,7 +162,7 @@ export function getType(node: ValueTreeNode | Input | Variable | List | { name: 
   }
 
   if (node instanceof MethodCallNode) {
-    const ref = node.getBaseValue();
+    let ref = node.getBaseValue();
 
     if (ref.type === "propertyReference") {
       const base = ref.getParent();
@@ -181,6 +181,22 @@ export function getType(node: ValueTreeNode | Input | Variable | List | { name: 
 
         return klass.getMethods()[ref.getProperty()].method.getReturnType();
       }
+    }
+
+    if (ref.type === "propertyReference") {
+      const base = getType(ref.getParent(), ctx);
+
+      if (base.isClassType()) {
+        const method = base.getMethod(ref.getProperty());
+
+        if (method === undefined) {
+          throw new Error("No method " + ref.getProperty() + " exists on " + base.getName());
+        }
+
+        return method.method;
+      }
+
+      throw new Error("Cannot use a property reference in a funciton call on non-class-instance base objects.")
     }
 
     if (ref.type !== "variableReference") throw new Error("methodCallNode must have a variableReference as base value");

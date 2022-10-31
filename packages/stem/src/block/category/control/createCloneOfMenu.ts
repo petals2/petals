@@ -1,10 +1,23 @@
+import type { BlockStore, SerializedBlockStore } from "../..";
+import type { Project, ProjectReference, SerializedBlock } from "../../..";
+import { DeserializationContext } from "../../../project/deserializationContext";
 import { Sprite } from "../../../target/sprite";
 import { ValueField } from "../../field/value";
 import { BlockKind } from "../../kinds";
 
 export class CreateCloneOfMenu extends BlockKind.Stack<"control_create_clone_of_menu"> {
-  constructor(cloneOption: Sprite | "myself") {
-    super("control_create_clone_of_menu");
+  static fromReference(context: DeserializationContext, serializedStore: SerializedBlockStore, json: SerializedBlock, ID?: string) {
+    if (json.opcode !== "control_create_clone_of_menu")
+      throw new Error(`Expected opcode "control_create_clone_of_menu", got "${json.opcode}"`);
+
+    if (json.fields.CLONE_OPTION == undefined)
+      throw new Error("Expected field CLONE_OPTION on CreateCloneOfMenu");
+
+    return new CreateCloneOfMenu(json.fields.CLONE_OPTION[0].toString(), ID)
+  }
+
+  constructor(cloneOption: Sprite | string, ID?: string) {
+    super("control_create_clone_of_menu", ID);
 
     this.setCloneOption(cloneOption);
   }

@@ -1,4 +1,5 @@
 import { Project } from "..";
+import { DeserializationContext } from "../project/deserializationContext";
 import { ProjectReference } from "../project/projectReference";
 import { SerializedSound, Sound } from "./sound";
 
@@ -7,14 +8,14 @@ export type SerializedSoundStore = SerializedSound[];
 export class SoundStore {
   private sounds: Sound[] = [];
 
-  static async fromReference(project: Project, reference: ProjectReference, json: SerializedSoundStore) {
+  static async fromReference(context: DeserializationContext, json: SerializedSoundStore) {
     const soundStore = new SoundStore();
-    await soundStore.deserialize(project, reference, json);
+    await soundStore.deserialize(context, json);
     return soundStore;
   }
 
-  protected async deserialize(project: Project, reference: ProjectReference, json: SerializedSoundStore) {
-    this.sounds = await Promise.all(json.map(sound => Sound.fromReference(project, reference, sound)));
+  protected async deserialize(context: DeserializationContext, json: SerializedSoundStore) {
+    this.sounds = await Promise.all(json.map(sound => Sound.fromReference(context, sound)));
   }
 
   serialize(): SerializedSoundStore {

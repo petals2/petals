@@ -9,6 +9,7 @@ import { SerializedVariableStore, VariableStore } from "../variable/store";
 import type { Sprite } from "./sprite";
 import { Project, TargetCostumeStore } from "..";
 import { ProjectReference } from "../project/projectReference";
+import { DeserializationContext } from "../project/deserializationContext";
 
 export type SerializedStage = {
   // target generic
@@ -36,10 +37,11 @@ export class Stage extends Target {
   private tempo: number = 60;
   private videoTransparency: number = 0.5;
   private videoState: "on" | "off" | "on-flipped" = "off";
+  private broadcasts = new BroadcastStore();
 
-  static async fromReference(project: Project, reference: ProjectReference, json: SerializedStage) {
+  static async fromReference(context: DeserializationContext, json: SerializedStage) {
     const stage = new Stage();
-    await stage.deserialize(project, reference, json);
+    await stage.deserialize(context, json);
     return stage;
   }
 
@@ -55,20 +57,28 @@ export class Stage extends Target {
   getVideoState(): "on" | "off" | "on-flipped" { return this.videoState }
   setVideoState(videoState: "on" | "off" | "on-flipped"): this { this.videoState = videoState; return this }
 
-  protected async deserialize(project: Project, reference: ProjectReference, json: SerializedStage) {
-    this.variables = VariableStore.fromReference(project, reference, json.variables);
-    // this.lists = ListStore.fromReference(project, reference, json.lists);
-    // this.broadcasts = BroadcastStore.fromReference(project, reference, json.broadcasts);
-    this.blocks = BlockStore.fromReference(project, reference, json.blocks);
-    this.comments = CommentStore.fromReference(project, reference, json.comments);
-    this.costumes = await TargetCostumeStore.fromReference(project, reference, json.costumes);
+  getBroadcasts(): BroadcastStore { return this.broadcasts }
+
+  protected async deserialize(context: DeserializationContext, json: SerializedStage) {
+    context.setCurrentTarget(this);
+
+    context.getProject().getTargets().setStage(this);
+
+    this.variables = VariableStore.fromReference(context, json.variables);
+    // this.lists = ListStore.fromReference(context, json.lists);
+    this.broadcasts = BroadcastStore.fromReference(context, json.broadcasts);
+    this.blocks = BlockStore.fromReference(context, json.blocks);
+    this.comments = CommentStore.fromReference(context, json.comments);
+    this.costumes = await TargetCostumeStore.fromReference(context, json.costumes);
     this.getCostumes().setSelectedIndex(json.currentCostume);
-    this.sounds = await SoundStore.fromReference(project, reference, json.sounds);
+    this.sounds = await SoundStore.fromReference(context, json.sounds);
     this.setLayer(json.layerOrder);
     this.setVolumeMultiplier(json.volume);
     this.setTempo(json.tempo);
     this.setVideoTransparency(json.videoTransparency);
     this.setVideoState(json.videoState);
+
+    context.setCurrentTarget(undefined);
   }
 
   serialize(): SerializedStage {

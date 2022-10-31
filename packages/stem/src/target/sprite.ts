@@ -10,6 +10,7 @@ import { CostumeStore, SerializedCostumeStore } from "../costume/store/store";
 import { SerializedSoundStore, SoundStore } from "../sound/store";
 import { Project, TargetCostumeStore } from "..";
 import { ProjectReference } from "../project/projectReference";
+import { DeserializationContext } from "../project/deserializationContext";
 
 export type SerializedSprite = {
   // target generic
@@ -17,7 +18,7 @@ export type SerializedSprite = {
   name: string,
   variables: SerializedVariableStore,
   lists: SerializedListStore,
-  broadcasts: SerializedBroadcastStore,
+  broadcasts: { },
   blocks: SerializedBlockStore
   comments: SerializedCommentStore,
   currentCostume: number,
@@ -44,9 +45,9 @@ export class Sprite extends Target {
   protected draggable: boolean = false;
   protected rotationStyle: "all around" | "left-right" | "don't rotate" = "all around";
 
-  static async fromReference(project: Project, reference: ProjectReference, json: SerializedSprite) {
+  static async fromReference(context: DeserializationContext, json: SerializedSprite) {
     const sprite = new Sprite(json.name);
-    await sprite.deserialize(project, reference, json);
+    await sprite.deserialize(context, json);
     return sprite;
   }
 
@@ -78,16 +79,17 @@ export class Sprite extends Target {
   getRotationStyle(): "all around" | "left-right" | "don't rotate" { return this.rotationStyle }
   setRotationStyle(rotationStyle: "all around" | "left-right" | "don't rotate"): this { this.rotationStyle = rotationStyle; return this }
 
-  protected async deserialize(project: Project, reference: ProjectReference, json: SerializedSprite) {
+  protected async deserialize(context: DeserializationContext, json: SerializedSprite) {
+    context.setCurrentTarget(this);
+
     this.setName(json.name);
-    this.variables = VariableStore.fromReference(project, reference, json.variables);
-    this.lists = ListStore.fromReference(project, reference, json.lists);
-    this.broadcasts = BroadcastStore.fromReference(project, reference, json.broadcasts);
-    this.blocks = BlockStore.fromReference(project, reference, json.blocks);
-    this.comments = CommentStore.fromReference(project, reference, json.comments);
-    this.costumes = await TargetCostumeStore.fromReference(project, reference, json.costumes);
+    this.variables = VariableStore.fromReference(context, json.variables);
+    this.lists = ListStore.fromReference(context, json.lists);
+    this.costumes = await TargetCostumeStore.fromReference(context, json.costumes);
     this.getCostumes().setSelectedIndex(json.currentCostume);
-    this.sounds = await SoundStore.fromReference(project, reference, json.sounds);
+    this.sounds = await SoundStore.fromReference(context, json.sounds);
+    this.blocks = BlockStore.fromReference(context, json.blocks);
+    this.comments = CommentStore.fromReference(context, json.comments);
     this.setLayer(json.layerOrder);
     this.setVolumeMultiplier(json.volume);
     this.setPosition(new Vector2(json.x, json.y));
@@ -96,6 +98,8 @@ export class Sprite extends Target {
     this.setVisible(json.visible);
     this.setDraggable(json.draggable);
     this.setRotationStyle(json.rotationStyle);
+
+    context.setCurrentTarget(undefined)
   }
 
   serialize(): SerializedSprite {
@@ -104,7 +108,7 @@ export class Sprite extends Target {
       name: this.getName(),
       variables: this.getVariables().serialize(),
       lists: this.getLists().serialize(),
-      broadcasts: this.getBroadcasts().serialize(),
+      broadcasts: { },
       blocks: this.getBlocks().serialize(),
       comments: this.getComments().serialize(),
       currentCostume: this.getCostumes().getSelectedIndex(),

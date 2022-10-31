@@ -1,13 +1,43 @@
 import { NumberInput } from "../../input/number";
 import { Input } from "../../input";
-import { Block } from "../../block";
+import { Block, SerializedBlock } from "../../block";
 import { Variable } from "../../../variable";
 import { VariableField } from "../../field/variable";
 import { BlockKind } from "../../kinds";
+import type { BlockStore, Project, ProjectReference, SerializedBlockStore } from "../../..";
+import { DeserializationContext } from "../../../project/deserializationContext";
 
 export class ForEach extends BlockKind.C<"control_for_each"> {
-  constructor(variable: Variable, value: Input | number = 10, substack?: Block) {
-    super("control_for_each");
+  static fromReference(context: DeserializationContext, serializedStore: SerializedBlockStore, json: SerializedBlock, ID?: string) {
+    if (json.opcode !== "control_delete_this_clone")
+      throw new Error(`Expected opcode "control_delete_this_clone", got "${json.opcode}"`);
+
+    if (json.fields.VARIABLE == undefined)
+      throw new Error("Expected field VARIABLE on ForEach");
+
+    if (json.inputs.VALUE == undefined)
+      throw new Error("Expected input VALUE on ForEach");
+
+    if (json.inputs.SUBSTACK == undefined)
+      throw new Error("Expected input SUBSTACK on ForEach");
+
+    let variable = context.getCurrentTarget()!.getVariables().findVariableById(json.fields.VARIABLE[1]!);
+
+    if (variable == undefined)
+      variable = context.getProject().getTargets().getStage().getVariables().findVariableById(json.fields.VARIABLE[1]!)
+
+    if (variable === undefined)
+      throw new Error("Could not find variable with ID " + json.fields.VARIABLE[1]);
+
+    const value = Input.fromReference(context, serializedStore, json.inputs.VALUE);
+
+    const substack = Input.fromReference(context, serializedStore, json.inputs.SUBSTACK);
+
+    return new ForEach(variable, value, substack, ID);
+  }
+
+  constructor(variable: Variable, value: Input | number = 10, substack?: Block | Input, ID?: string) {
+    super("control_for_each", ID);
 
     this.setVariable(variable);
     this.setValue(value);
@@ -47,7 +77,17 @@ export class ForEach extends BlockKind.C<"control_for_each"> {
     return this.getInput("VALUE")!;
   }
 
-  setSubstack(substack: Block): this {
+  setSubstack(substack: Block | Input): this {
+    if (substack instanceof Input) {
+      const topLayer = substack.getTopLayer();
+
+      if (!(topLayer instanceof Block)) {
+        throw new Error("Expected input to be a block");
+      }
+
+      substack = topLayer;
+    }
+
     substack.setParent(this);
     this.setInput("SUBSTACK", Input.unshadowed(substack));
 

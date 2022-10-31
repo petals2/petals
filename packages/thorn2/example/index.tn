@@ -1,0 +1,5 @@
+function sayHi(name: string): string {
+  return "Hi, " + name;
+}
+
+let x = sayHi("Rose");

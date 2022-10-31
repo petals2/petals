@@ -1,5 +1,6 @@
 import JSZip from "jszip";
 import { SerializedTargetStore, TargetStore } from "../target/store";
+import { DeserializationContext } from "./deserializationContext";
 import { ProjectReference } from "./projectReference";
 import { ProjectMetadata } from "./types";
 
@@ -43,7 +44,9 @@ export class Project {
     this.metadata.vm = json.meta.vm;
     this.metadata.semver = json.meta.semver;
 
-    this.targetStore = await TargetStore.fromReference(this, reference, json.targets);
+    const deserializationContext = new DeserializationContext(this, reference);
+
+    this.targetStore = await TargetStore.fromReference(deserializationContext, json.targets);
   }
 
   serialize(): SerializedProject {

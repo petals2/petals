@@ -3,6 +3,7 @@ import { Asset } from "../asset";
 import { PNG } from "pngjs";
 import { Project } from "../project";
 import { ProjectReference } from "../project/projectReference";
+import { DeserializationContext } from "../project/deserializationContext";
 
 export type SerializedCostume = {
   assetId: string;
@@ -16,8 +17,8 @@ export type SerializedCostume = {
 export class Costume extends Asset {
   protected rotationCenter: Vector2;
 
-  static async fromReference(project: Project, reference: ProjectReference, json: SerializedCostume) {
-    const asset = await reference.getAsset(json.md5ext);
+  static async fromReference(context: DeserializationContext, json: SerializedCostume) {
+    const asset = await context.getProjectReference().getAsset(json.md5ext);
 
     if (!asset) {
       throw new Error("Failed to load costume from JSON: missing asset: " + json.md5ext);

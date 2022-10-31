@@ -1,3 +1,5 @@
+import type { BlockStore, Project, ProjectReference, SerializedBlock, SerializedBlockStore } from "../../..";
+import { DeserializationContext } from "../../../project/deserializationContext";
 import { ValueField } from "../../field/value";
 import { Input } from "../../input";
 import { NumberInput } from "../../input/number";
@@ -9,8 +11,23 @@ export enum WhenGreaterThanMenu {
 }
 
 export class WhenGreaterThan extends BlockKind.Hat<"event_whengreaterthan"> {
-  constructor(whenGreaterThanMenu: WhenGreaterThanMenu, value: Input | number = 10) {
-    super("event_whengreaterthan");
+  static fromReference(context: DeserializationContext, serializedStore: SerializedBlockStore, json: SerializedBlock, ID?: string) {
+    if (json.opcode !== "event_whengreaterthan")
+      throw new Error(`Expected opcode "event_whengreaterthan", got "${json.opcode}"`);
+
+    if (json.fields.WHENGREATERTHANMENU == undefined)
+      throw new Error("Expected field WHENGREATERTHANMENU on WhenGreaterThan");
+
+    if (json.inputs.VALUE == undefined)
+      throw new Error("Expected input VALUE on WhenGreaterThan");
+
+    const value = Input.fromReference(context, serializedStore, json.inputs.VALUE);
+
+    return new WhenGreaterThan(json.fields.WHENGREATERTHANMENU[0] as WhenGreaterThanMenu, value, ID);
+  }
+
+  constructor(whenGreaterThanMenu: WhenGreaterThanMenu, value: Input | number = 10, ID?: string) {
+    super("event_whengreaterthan", ID);
 
     this.setWhenGreaterThanMenu(whenGreaterThanMenu);
     this.setValue(value);

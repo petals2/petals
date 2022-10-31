@@ -1,5 +1,6 @@
 import { CloudVariable } from ".";
 import { Project } from "..";
+import { DeserializationContext } from "../project/deserializationContext";
 import { ProjectReference } from "../project/projectReference";
 import { Variable } from "./variable";
 
@@ -8,9 +9,9 @@ export type SerializedVariableStore = Record<string, [name: string, values: stri
 export class VariableStore {
   private _store: Map<string, Variable> = new Map();
 
-  static fromReference(project: Project, reference: ProjectReference, json: SerializedVariableStore) {
+  static fromReference(context: DeserializationContext, json: SerializedVariableStore) {
     const variableStore = new VariableStore();
-    variableStore.deserialize(project, reference, json);
+    variableStore.deserialize(context, json);
     return variableStore;
   }
 
@@ -74,7 +75,7 @@ export class VariableStore {
     return [...this._store.values()].filter(val => val.isCloudVariable()) as CloudVariable[];
   }
 
-  protected deserialize(project: Project, reference: ProjectReference, json: SerializedVariableStore) {
+  protected deserialize(context: DeserializationContext, json: SerializedVariableStore) {
     const jsonEntries = Object.entries(json);
     this._store.clear();
     for (const [ variableId, [ variableName, variableValue ] ] of jsonEntries) {

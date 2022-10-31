@@ -108,7 +108,10 @@ export class TextRenderer extends Renderer<string> {
     if (top instanceof StringInput)
       return this.chalk.bgWhite.black(includeParns ? `( "${top.getValue()}" )` : ` "${top.getValue()}" `)
 
-    return this.chalk.bgWhite.black(includeParns ? `( ${top.getValue()} )` : ` ${top.getValue()} `)
+    if (top)
+      return this.chalk.bgWhite.black(includeParns ? `( ${top.getValue()} )` : ` ${top.getValue()} `)
+
+    return this.chalk.bgWhite.black(includeParns ? `( ${this.chalk.grey("NULL")} )` : ` ${this.chalk.grey("NULL")} `)
   }
 
   wrapColorForCategory(category: string, opcode: string, str: string, dark: boolean, includeParns: boolean = true): string {

@@ -1,11 +1,13 @@
 import { Project as SiteProjectType, OldProject as OldSiteProjectType } from "../../api/interfaces/project"
 import { User } from "../user/user";
-import type { SerializedProject } from "petals-stem";
+import { Sb3, SerializedProject } from "petals-stem";
 import type { ProjectReference } from "petals-stem";
 import { Client } from "..";
 import { RemixStore } from "./remixStore";
 import { CloudSession } from "./cloudSession";
 import { ProjectCommentStore } from "./commentStore";
+import JSZip from "jszip";
+import { Project as LoadedProject } from "petals-stem";
 
 export class SiteProject implements ProjectReference {
   protected id: number;
@@ -33,6 +35,7 @@ export class SiteProject implements ProjectReference {
   protected deleted: boolean | undefined;
   protected reshareable: boolean | undefined;
   protected json: SerializedProject | undefined;
+  protected zip: JSZip | undefined;
   // protected readonly session = new CloudSession(this.client, this)
 
   constructor(protected readonly client: Client, protected readonly project: number | (Partial<SiteProjectType> & { id: number }) | OldSiteProjectType, authorOverride: User | undefined = undefined) {
@@ -69,11 +72,11 @@ export class SiteProject implements ProjectReference {
       } else if (project.author && (project.author as any).id === this.client.getId()) {
         this.author = this.client.user();
       }
-      this.load(project);
+      this.loadPartial(project);
     }
   }
 
-  private load(project: Partial<SiteProjectType>) {
+  private loadPartial(project: Partial<SiteProjectType>) {
     this.title = project.title;
     this.description = project.description;
     this.instructions = project.instructions;
@@ -110,7 +113,25 @@ export class SiteProject implements ProjectReference {
 
     if ("code" in project) throw new Error(`Failed to fetch project ${this.id}, ${project.code}: ${project.message}`);
 
-    this.load(project);
+    this.loadPartial(project);
+  }
+
+  async load(): Promise<LoadedProject> {
+    const contents = await this.client.getRequestor().getProjectContents(this.id);
+
+    if (contents[0] == "P".charCodeAt(0) && contents[1] == "K".charCodeAt(0)) {
+      this.zip = await JSZip.loadAsync(contents);
+
+      const sb3 = await Sb3.fromReference(this.zip);
+
+      this.json = await sb3.getJson();
+
+      return await LoadedProject.fromReference(sb3);
+    }
+
+    this.json = JSON.parse(contents.toString());
+
+    return await LoadedProject.fromReference(this);
   }
 
   async fetchVisibility(): Promise<void> {
@@ -228,7 +249,24 @@ export class SiteProject implements ProjectReference {
   async getJson(): Promise<SerializedProject> {
     if (this.json) return this.json;
 
-    return this.json = await this.client.getRequestor().getProjectContents(await this.getId());
+    const response = await this.client.getRequestor().getProjectContents(await this.getId());
+
+    if (response[0] == "P".charCodeAt(0) && response[1] == "K".charCodeAt(0))
+      return await this.loadZip(response);
+
+    return this.json = JSON.parse(response.toString());
+  }
+
+  private async loadZip(response: Buffer): Promise<SerializedProject> {
+    this.zip = new JSZip();
+
+    await this.zip.loadAsync(response);
+
+    const project = this.zip.file("project.json");
+
+    if (!project) throw new Error("No project.json file found in zip");
+
+    return this.json = JSON.parse(await project.async("string"));
   }
 
   async isCensored(): Promise<boolean> {
@@ -262,7 +300,10 @@ export class SiteProject implements ProjectReference {
   }
 
   async getAsset(fileName: string): Promise<Buffer | undefined> {
-    return this.client.getRequestor().getProjectFile(fileName);
+    if (!this.zip)
+      return this.client.getRequestor().getProjectFile(fileName);
+
+    return await this.zip.file(fileName)?.async("nodebuffer");
   }
 
   remixes(): RemixStore { return new RemixStore(this.client, this) }

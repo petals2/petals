@@ -24,7 +24,7 @@ import { ListInstanceReference } from "./instanceReference";
 
 export class HeapReference extends ListReference {
   static allocate(heap: HeapReferenceData, size: Input, target: Target, thread: Block, context: Context) {
-    thread.getTail().append(target.getBlocks().createBlock(Procedures.Call, heap.malloc.getPrototype(), size));
+    thread.getTail().append(target.getBlocks().createBlock(Procedures.Call, heap.malloc.getPrototype(), undefined, size));
 
     const retVal = context.createVariable("___intermediate_" + ID.generate(), 0, new UnionType(new NumberType(), new StringType()));
 

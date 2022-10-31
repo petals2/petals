@@ -29,7 +29,7 @@ export class NewResultReference extends VariableReference {
 
   performSideEffects(target: Target, thread: Block<string>, context: Context): void {
     // do the funny malloc
-    thread.getTail().append(target.getBlocks().createBlock(Procedures.Call, context.getHeap(this.type.getHeapName()).malloc.getPrototype(), Input.shadowed(new NumberInput(StructTool.getSize(this.type.dereference())))));
+    thread.getTail().append(target.getBlocks().createBlock(Procedures.Call, context.getHeap(this.type.getHeapName()).malloc.getPrototype(), undefined, Input.shadowed(new NumberInput(StructTool.getSize(this.type.dereference())))));
 
     // store the funny malloc (in case we do another malloc before the call (for example, if you are creating a ref in the call ( &[] )))
     const temp = context.createVariable("___intermediate_" + ID.generate(), 0, new NumberType());
@@ -37,6 +37,8 @@ export class NewResultReference extends VariableReference {
 
     // do the funny method call
     const def = target.getBlocks().getCustomBlockByName("___" + this.newNode.getClass() + "_constructor");
+
+    console.log({ def, name: "___" + this.newNode.getClass() + "_constructor" });
 
     if (def) {
       const args = this.newNode.getArgs().map(arg => getUnknownReference(arg, target, thread, context));
@@ -47,7 +49,7 @@ export class NewResultReference extends VariableReference {
 
       argValues.unshift(Input.shadowed(temp.getValue(target, thread, context)));
 
-      let call = target.getBlocks().createBlock(Procedures.Call, def.getPrototype(), ...argValues);
+      let call = target.getBlocks().createBlock(Procedures.Call, def.getPrototype(), undefined, ...argValues);
 
       args.forEach((v, i) => {
         if (v instanceof VariableHeapCopyReference) {
@@ -56,7 +58,7 @@ export class NewResultReference extends VariableReference {
           if (heap === undefined)
             throw new Error("Failed to free v? This should never happen, since arg.getValue is always called before this.");
     
-          call = call.getTail().append(target.getBlocks().createBlock(Procedures.Call, heap.free.getPrototype(), argValues[i]));
+          call = call.getTail().append(target.getBlocks().createBlock(Procedures.Call, heap.free.getPrototype(), undefined, argValues[i]));
         }
       })
 

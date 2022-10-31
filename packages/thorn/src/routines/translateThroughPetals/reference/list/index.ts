@@ -43,6 +43,8 @@ export function getListReference(value: ValueTreeNode, target: Target, thread: B
 
     while (type.isReferenceType()) type = type.dereference();
 
+    console.log(list);
+
     if (list instanceof VariableReference) {
       if (type.isHeapReferenceType()) {
         return new HeapDereference(list, [], type);

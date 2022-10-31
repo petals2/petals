@@ -3,6 +3,8 @@ import { Argument } from "../argument";
 import { ID } from "../../../id";
 import { Input } from "../../input";
 import { BlockKind } from "../../kinds";
+import { SerializedBlockStore } from "../..";
+import { DeserializationContext } from "../../../project/deserializationContext";
 
 export type SerialzedPrototype = SerializedBlock & {
   mutation: {
@@ -21,10 +23,42 @@ export class Prototype extends BlockKind.Stack<"procedures_prototype"> {
   protected defaultValues!: (string | boolean)[];
   protected warp: boolean = false;
 
-  constructor(private procCode: string, args: ( InstanceType<typeof Argument.ReporterBoolean> | InstanceType<typeof Argument.ReporterStringNumber> )[], defaultValues: (string | boolean)[]) {
-    super("procedures_prototype");
+  static fromReference(context: DeserializationContext, serializedStore: SerializedBlockStore, json: SerializedBlock, ID?: string) {
+    if (json.opcode !== "procedures_prototype")
+      throw new Error(`Expected opcode "procedures_prototype", got "${json.opcode}"`);
 
-    this.setArguments(args, defaultValues);
+    const betterJson = json as SerialzedPrototype;
+    const argIds = JSON.parse(betterJson.mutation.argumentids);
+    const argNames = JSON.parse(betterJson.mutation.argumentnames);
+    const argDefaults = JSON.parse(betterJson.mutation.argumentdefaults);
+
+    const procCodeSplit = betterJson.mutation.proccode.split("%");
+    procCodeSplit.shift();
+
+    const argTypes = procCodeSplit.map(e => e[0]);
+
+    const args: (InstanceType<typeof Argument.ReporterBoolean> | InstanceType<typeof Argument.ReporterStringNumber>)[] = [];
+
+    for (let i = 0; i < argNames.length; i++) {
+      const name = argNames[i];
+      const type = argTypes[i];
+      const id = argIds[i];
+
+      switch (type) {
+        case "s": args.push(context.getCurrentBlockStore()!.createBlock(Argument.ReporterStringNumber, name, id)); break;
+        case "b": args.push(context.getCurrentBlockStore()!.createBlock(Argument.ReporterBoolean, name, id)); break;
+        default:
+          throw new Error("Unknown argument type \"" + type + "\"")
+      }
+    }
+
+    return new Prototype(betterJson.mutation.proccode, args, argDefaults, ID, argIds);
+  }
+
+  constructor(private procCode: string, args: ( InstanceType<typeof Argument.ReporterBoolean> | InstanceType<typeof Argument.ReporterStringNumber> )[], defaultValues: (string | boolean)[], ID?: string, argIds?: string[]) {
+    super("procedures_prototype", ID);
+
+    this.setArguments(args, defaultValues, argIds);
   }
 
   setProcCode(procCode: string): this {
@@ -36,8 +70,9 @@ export class Prototype extends BlockKind.Stack<"procedures_prototype"> {
     return this.procCode;
   }
 
-  setArguments(args: (InstanceType<typeof Argument.ReporterBoolean> | InstanceType<typeof Argument.ReporterStringNumber>)[], defaultValues: (string | boolean)[]): this {
-    this.argIds = new Array(args.length).fill(0).map(e => ID.generate());
+  setArguments(args: (InstanceType<typeof Argument.ReporterBoolean> | InstanceType<typeof Argument.ReporterStringNumber>)[], defaultValues: (string | boolean)[], argIds?: string[]): this {
+    this.argIds = argIds ?? new Array(args.length).fill(0).map(e => ID.generate());
+
     this.defaultValues = defaultValues;
 
     this.clearInputs();

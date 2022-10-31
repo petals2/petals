@@ -1,17 +1,52 @@
 import { Input } from "../../input";
-import { Block } from "../../block";
+import { Block, SerializedBlock } from "../../block";
 import { BlockKind } from "../../kinds";
+import type { BlockStore, Project, ProjectReference, SerializedBlockStore } from "../../..";
+import { DeserializationContext } from "../../../project/deserializationContext";
 
 export class IfElse extends BlockKind.E<"control_if_else"> {
-  constructor(condition?: Block, substackTrue?: Block, substackFalse?: Block) {
-    super("control_if_else");
+  static fromReference(context: DeserializationContext, serializedStore: SerializedBlockStore, json: SerializedBlock, ID?: string) {
+    if (json.opcode !== "control_if_else")
+      throw new Error(`Expected opcode "control_if_else", got "${json.opcode}"`);
+
+    if (json.inputs.CONDITION == undefined) {
+      throw new Error("Expected input CONDITION on IfElse");
+    }
+
+    if (json.inputs.SUBSTACK == undefined) {
+      throw new Error("Expected input SUBSTACK on IfElse");
+    }
+
+    if (json.inputs.SUBSTACK2 == undefined) {
+      throw new Error("Expected input SUBSTACK2 on IfElse");
+    }
+
+    const condition = Input.fromReference(context, serializedStore, json.inputs.CONDITION);
+    const substack = Input.fromReference(context, serializedStore, json.inputs.SUBSTACK);
+    const substack2 = Input.fromReference(context, serializedStore, json.inputs.SUBSTACK2);
+
+    return new IfElse(condition, substack, substack2, ID);
+  }
+
+  constructor(condition?: Block | Input, substackTrue?: Block | Input, substackFalse?: Block | Input, ID?: string) {
+    super("control_if_else", ID);
 
     if (condition) { this.setCondition(condition) }
     if (substackTrue) { this.setSubstackTrue(substackTrue) }
     if (substackFalse) { this.setSubstackFalse(substackFalse) }
   }
 
-  setCondition(condition: Block): this {
+  setCondition(condition: Block | Input): this {
+    if (condition instanceof Input) {
+      const topLayer = condition.getTopLayer();
+
+      if (!(topLayer instanceof Block)) {
+        throw new Error("Expected input to be a block");
+      }
+
+      condition = topLayer;
+    }
+
     condition.setParent(this);
     this.setInput("CONDITION", Input.unshadowed(condition));
     return this;
@@ -31,7 +66,17 @@ export class IfElse extends BlockKind.E<"control_if_else"> {
     }
   }
 
-  setSubstackTrue(substackTrue: Block): this {
+  setSubstackTrue(substackTrue: Block | Input): this {
+    if (substackTrue instanceof Input) {
+      const topLayer = substackTrue.getTopLayer();
+
+      if (!(topLayer instanceof Block)) {
+        throw new Error("Expected input to be a block");
+      }
+
+      substackTrue = topLayer;
+    }
+
     substackTrue.setParent(this);
     this.setInput("SUBSTACK", Input.unshadowed(substackTrue));
     return this;
@@ -51,7 +96,17 @@ export class IfElse extends BlockKind.E<"control_if_else"> {
     }
   }
 
-  setSubstackFalse(substackFalse: Block): this {
+  setSubstackFalse(substackFalse: Block | Input): this {
+    if (substackFalse instanceof Input) {
+      const topLayer = substackFalse.getTopLayer();
+
+      if (!(topLayer instanceof Block)) {
+        throw new Error("Expected input to be a block");
+      }
+
+      substackFalse = topLayer;
+    }
+
     substackFalse.setParent(this);
     this.setInput("SUBSTACK2", Input.unshadowed(substackFalse));
     return this;

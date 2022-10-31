@@ -1,4 +1,5 @@
 import { Project, Sb3 } from "..";
+import { DeserializationContext } from "../project/deserializationContext";
 import { ProjectReference } from "../project/projectReference";
 import { Broadcast } from "./broadcast";
 
@@ -7,9 +8,9 @@ export type SerializedBroadcastStore = Record<string, string>;
 export class BroadcastStore {
   private _store: Map<string, Broadcast> = new Map();
 
-  static fromReference(project: Project, reference: ProjectReference, json: SerializedBroadcastStore) {
+  static fromReference(context: DeserializationContext, json: SerializedBroadcastStore) {
     const broadcastStore = new BroadcastStore;
-    broadcastStore.deserialize(project, reference, json);
+    broadcastStore.deserialize(context, json);
     return broadcastStore;
   }
 
@@ -65,7 +66,7 @@ export class BroadcastStore {
     this._store.delete(id);
   }
 
-  protected deserialize(project: Project, reference: ProjectReference, json: SerializedBroadcastStore) {
+  protected deserialize(context: DeserializationContext, json: SerializedBroadcastStore) {
     const entries = Object.entries(json);
     this._store.clear();
     for (const [ broadcastId, broadcastName ] of entries) {

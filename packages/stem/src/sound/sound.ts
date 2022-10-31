@@ -3,6 +3,7 @@ import { fromBuffer } from "file-type";
 import { Asset } from "../asset";
 import { Project } from "..";
 import { ProjectReference } from "../project/projectReference";
+import { DeserializationContext } from "../project/deserializationContext";
 
 export type SerializedSound = {
   // asset generic
@@ -23,8 +24,8 @@ export class Sound extends Asset {
   protected sampleRate: number;
   protected sampleCount: number;
 
-  static async fromReference(project: Project, reference: ProjectReference, json: SerializedSound) {
-    const el = await reference.getAsset(json.md5ext);
+  static async fromReference(context: DeserializationContext, json: SerializedSound) {
+    const el = await context.getProjectReference().getAsset(json.md5ext);
 
     if (el === undefined) throw new Error("Missing asset: " + json.md5ext);
 

@@ -1,3 +1,5 @@
+import { SerializedBlockStore, SerializedBlock } from "../..";
+import { DeserializationContext } from "../../../project/deserializationContext";
 import { ValueField } from "../../field/value";
 import { Input } from "../../input";
 import { NumberInput } from "../../input/number";
@@ -14,8 +16,23 @@ export enum Effect {
 }
 
 export class SetEffectTo extends BlockKind.Stack<"looks_seteffectto"> {
-  constructor(effect: Effect = Effect.Color, value: Input | number = 25) {
-    super("looks_seteffectto");
+  static fromReference(context: DeserializationContext, serializedStore: SerializedBlockStore, json: SerializedBlock, ID?: string) {
+    if (json.opcode !== "looks_seteffectto")
+      throw new Error(`Expected opcode "looks_seteffectto", got "${json.opcode}"`);
+
+    if (json.fields.EFFECT == undefined)
+      throw new Error("Expected input EFFECT on SetEffectTo")
+
+    if (json.inputs.VALUE == undefined)
+      throw new Error("Expected input VALUE on SetEffectTo")
+
+    const value = Input.fromReference(context, serializedStore, json.inputs.VALUE);
+
+    return new SetEffectTo(json.fields.EFFECT[0] as Effect, value, ID);
+  }
+
+  constructor(effect: Effect = Effect.Color, value: Input | number = 25, ID?: string) {
+    super("looks_seteffectto", ID);
 
     this.setEffect(effect);
     this.setValue(value);

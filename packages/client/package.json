@@ -1,7 +1,7 @@
 {
   "name": "petals-client",
   "packageManager": "yarn@3.1.1",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -10,12 +10,13 @@
   "dependencies": {
     "@types/tough-cookie": "^4.0.1",
     "emittery": "^0.10.1",
+    "jszip": "^3.9.1",
     "petals-stem": "workspace:*",
     "tough-cookie": "^4.0.0",
     "undici": "^4.13.0",
     "ws": "^8.5.0"
   },
   "devDependencies": {
-    "@types/ws": "^8.2.2"
+    "@types/ws": "^8.5.3"
   }
 }

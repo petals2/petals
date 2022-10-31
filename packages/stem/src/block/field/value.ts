@@ -3,5 +3,5 @@ export class ValueField {
 
   getValue(): string | number { return this.val }
 
-  serialize() { return [this.val, null] }
+  serialize() { return <const> [this.val, null] }
 }

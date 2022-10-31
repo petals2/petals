@@ -1,9 +1,20 @@
-struct Vector2 {
-  x: number,
-  y: number,
+class Vec2 {
+  x: number;
+  y: number;
+
+  constructor(x: number, y: number) {
+    this.x = x;
+    this.y = y;
+  }
+
+  add(other: Vec2): Vec2 {
+    return new Vec2(1, 1);
+  }
 }
 
-var s: &Vector2 = &{
-  x: 1,
-  y: 2,
-}
+
+var x = new Vec2(2, 3);
+
+var y = new Vec2(4, 5);
+
+var z = x.add(y);

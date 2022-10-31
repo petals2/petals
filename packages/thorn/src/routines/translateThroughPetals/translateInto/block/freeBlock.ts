@@ -16,5 +16,5 @@ export default function (node: FreeNode, target: Target, thread: Block, context:
 
   const heap = context.getHeap(type.getHeapName());
 
-  thread.getTail().append(target.getBlocks().createBlock(Procedures.Call, heap.free.getPrototype(), Input.shadowed(varToFree.getValue(target, thread, context))));
+  thread.getTail().append(target.getBlocks().createBlock(Procedures.Call, heap.free.getPrototype(), undefined, Input.shadowed(varToFree.getValue(target, thread, context))));
 }

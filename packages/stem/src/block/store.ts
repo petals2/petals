@@ -6,6 +6,7 @@ import { ID } from "../id";
 import { Input } from "./input";
 import { Project } from "..";
 import { ProjectReference } from "../project/projectReference";
+import { DeserializationContext } from "../project/deserializationContext";
 
 export type SerializedBlockStore = Record<string, SerializedBlock>;
 
@@ -13,9 +14,9 @@ export class BlockStore {
   private _store: Map<string, Block> = new Map();
   private _customBlockRefs: Map<string, InstanceType<typeof Procedures.Prototype>> = new Map();
 
-  static fromReference(project: Project, reference: ProjectReference, json: SerializedBlockStore) {
+  static fromReference(context: DeserializationContext, json: SerializedBlockStore) {
     const blockStore = new BlockStore;
-    blockStore.deserialize(project, reference, json);
+    blockStore.deserialize(context, json);
     return blockStore;
   }
 
@@ -63,7 +64,7 @@ export class BlockStore {
     this.removeBlockOnly(block);
 
     for (let testBlock of this._store.values()) {
-      for (let [name, input] of (testBlock as any).inputs.entries() as IterableIterator<[string, Input]>) {
+      for (let { name, input } of testBlock.inputs()) {
         const bottomLayer = input.getBottomLayer();
 
         if (bottomLayer instanceof Block && bottomLayer === block) {
@@ -79,7 +80,7 @@ export class BlockStore {
             if (input.getBottomLayer() !== undefined) {
               input.setTopLayer(input.getBottomLayer()!);
             } else {
-              (testBlock as any as { inputs: Map<string, any> }).inputs.delete(name);
+              (testBlock as any as { _inputs: Map<string, any> })._inputs.delete(name);
             }
           }
         }
@@ -121,6 +122,9 @@ export class BlockStore {
   }
 
   createCustomBlockHat(procCode: string, params: ({ type: "string", name: string, defaultValue: string } | { type: "boolean", name: string, defaultValue: boolean })[]): InstanceType<typeof Procedures.Definition> {
+    if (procCode.includes("%"))
+      throw new Error("Function names cannot include '%'")
+
     const defaultVals = params.map(a => a.defaultValue);
     let uneditedProcCode = procCode;
 
@@ -145,6 +149,7 @@ export class BlockStore {
     blocks.forEach(b => b.setParent(prototype));
 
     this._customBlockRefs.set(uneditedProcCode, prototype);
+    this._customBlockRefs.set(procCode, prototype);
     return this.createBlock(Procedures.Definition, prototype);
   }
 
@@ -210,11 +215,61 @@ export class BlockStore {
     return (cursor.getHead() as InstanceType<typeof Procedures.Definition>);
   }
 
-  deserialize(project: Project, reference: ProjectReference, json: SerializedBlockStore) {
+  deserialize(context: DeserializationContext, json: SerializedBlockStore) {
+    context.setCurrentBlockStore(this);
+
     const blockEntries = Object.entries(json);
-    for (const [ blockId, blockJson ] of blockEntries) {
-      
+
+    for (const [blockId, blockJson] of blockEntries) {
+      if (blockJson.opcode == "procedures_prototype") {
+        // found a stack head
+        const prototype = Procedures.Prototype.fromReference(context, json, blockJson);
+
+        this._store.set(blockId, prototype);
+        this._customBlockRefs.set(prototype.getProcCode(), prototype);
+        this._customBlockRefs.set(prototype.getProcCode().split("%")[0], prototype);
+      }
     }
+
+    for (const [ blockId, blockJson ] of blockEntries) {
+      if (blockJson.parent == undefined) {
+        // found a stack head
+        this.deserializeStack(context, json, blockId);
+      }
+    }
+
+    context.setCurrentBlockStore(undefined);
+  }
+
+  deserializeStack(context: DeserializationContext, store: SerializedBlockStore, blockIdIn: string) {
+    let top: Block | undefined = undefined;
+    let last: Block | undefined = undefined;
+    let blockId: string | null = blockIdIn;
+
+    while (blockId) {
+      const blockJson: SerializedBlock = store[blockId];
+
+      if (blockJson === undefined)
+        throw new Error(`Block ${blockId} not found`);
+
+      const block = Block.fromReference(context, store, blockJson);
+
+      if (last) {
+        last.append(block);
+      }
+
+      if (top === undefined) {
+        top = block;
+      }
+
+      this._store.set(blockId, block);
+
+      blockId = blockJson.next;
+
+      last = block;
+    }
+
+    return top!;
   }
 
   serialize(): SerializedBlockStore {
@@ -231,6 +286,10 @@ export class BlockStore {
     }
 
     return store;
+  }
+
+  getPrototypeByName(name: string): InstanceType<typeof Procedures.Prototype> | undefined {
+    return this._customBlockRefs.get(name);
   }
 
   getCustomBlockByName(name: string): InstanceType<typeof Procedures.Definition> | undefined {

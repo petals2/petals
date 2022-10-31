@@ -1,4 +1,5 @@
 import { Project } from "..";
+import type { DeserializationContext } from "../project/deserializationContext";
 import { ProjectReference } from "../project/projectReference";
 import { SerializedSprite, Sprite } from "./sprite";
 import { SerializedStage, Stage } from "./stage";
@@ -9,9 +10,9 @@ export type SerializedTargetStore = SerializedTarget[];
 export class TargetStore {
   private _store: (Stage | Sprite)[] = [new Stage()];
 
-  static async fromReference(project: Project, reference: ProjectReference, json: SerializedTargetStore) {
+  static async fromReference(context: DeserializationContext, json: SerializedTargetStore) {
     const targetStore = new TargetStore;
-    await targetStore.deserialize(project, reference, json);
+    await targetStore.deserialize(context, json);
     return targetStore;
   }
 
@@ -79,13 +80,13 @@ export class TargetStore {
     return this._store;
   }
 
-  protected async deserialize(project: Project, reference: ProjectReference, json: SerializedTargetStore) {
+  protected async deserialize(context: DeserializationContext, json: SerializedTargetStore) {
+    const stage = await Stage.fromReference(context, json.find(target => target.isStage)! as SerializedStage);
+
     this._store = await Promise.all(json.map(target => {
-      if (target.isStage) {
-        return Stage.fromReference(project, reference, target as SerializedStage);
-      } else {
-        return Sprite.fromReference(project, reference, target as SerializedSprite);
-      }
+      if (target.isStage) return stage;
+
+      return Sprite.fromReference(context, target as SerializedSprite);
     }));
   }
 

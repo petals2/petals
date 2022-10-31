@@ -1,11 +1,29 @@
-import { Block } from "../../block";
+import { SerializedBlockStore } from "../..";
+import { DeserializationContext } from "../../../project/deserializationContext";
+import { SerializedBlock } from "../../block";
 import { Input } from "../../input";
 import { BlockKind } from "../../kinds";
 import { Prototype } from "./prototype";
 
 export class Definition extends BlockKind.Hat<"procedures_definition"> {
-  constructor(customBlock: Prototype) {
-    super("procedures_definition");
+  static fromReference(context: DeserializationContext, serializedStore: SerializedBlockStore, json: SerializedBlock, ID?: string) {
+    if (json.opcode !== "procedures_definition")
+      throw new Error(`Expected opcode "procedures_definition", got "${json.opcode}"`);
+
+    if (json.inputs.custom_block == undefined)
+      throw new Error("Expected input custom_block on Definition")
+
+    const prototypeInput = Input.fromReference(context, serializedStore, json.inputs.custom_block);
+    const prototype = prototypeInput.getTopLayer();
+
+    if (!(prototype instanceof Prototype))
+      throw new Error("Definition input references non-block or non-prototype block in the top layer of it's custom_block input");
+
+    return new Definition(prototype, ID);
+  }
+
+  constructor(customBlock: Prototype, ID?: string) {
+    super("procedures_definition", ID);
 
     this.setPrototype(customBlock);
   }
@@ -25,10 +43,10 @@ export class Definition extends BlockKind.Hat<"procedures_definition"> {
 
     const topLayer = input.getTopLayer();
 
-    if (!(topLayer instanceof Block)) {
-      throw new Error("Definition custom_block input is not a block");
+    if (!(topLayer instanceof Prototype)) {
+      throw new Error("Definition custom_block input is not a block or not a prototype block");
     }
 
-    return topLayer as Prototype;
+    return topLayer;
   }
 }

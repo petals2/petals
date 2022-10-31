@@ -1,6 +1,6 @@
 {
   "name": "petals-thorn",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A custom-made language inspired by TypeScript to compile straight to optimized Scratch blocks, supporting objects, structs, classes and recursive functions - all while being type safe during compile time.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

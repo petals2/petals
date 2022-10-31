@@ -70,6 +70,7 @@ export class StringsManager {
         if (name[i] === "%") {
           i++;
 
+          console.log(args, argIds, "i" + argIds[0]);
           result += args["i" + argIds.shift()];
         } else {
           result += name[i];

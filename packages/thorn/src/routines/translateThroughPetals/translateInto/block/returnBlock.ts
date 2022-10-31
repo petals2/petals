@@ -20,6 +20,8 @@ export default function (node: ReturnNode, target: Target, thread: Block, contex
 
   const val = getUnknownReference(node.getValue(), target, thread, context);
 
+  console.log(varToUpdate, val);
+
   if (varToUpdate instanceof VariableReference && !(val instanceof ListReference)) {
     varToUpdate.setValue(Input.shadowed(val.getValue(target, thread, context)), target, thread, context);
   } else if (varToUpdate instanceof ListReference && val instanceof ListReference) {

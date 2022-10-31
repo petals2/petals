@@ -10,7 +10,6 @@ import type { Stage } from "./stage";
 import { Asset } from "../asset";
 
 export abstract class Target {
-  protected broadcasts: BroadcastStore = new BroadcastStore();
   protected variables: VariableStore = new VariableStore();
   protected lists: ListStore = new ListStore();
   protected blocks: BlockStore = new BlockStore();
@@ -29,7 +28,6 @@ export abstract class Target {
   getLayer(): number { return this.layer }
   setLayer(layer: number): this { this.layer = layer; return this }
 
-  getBroadcasts(): BroadcastStore { return this.broadcasts }
   getVariables(): VariableStore { return this.variables }
   getLists(): ListStore { return this.lists }
   getBlocks(): BlockStore { return this.blocks }

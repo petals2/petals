@@ -164,5 +164,13 @@ function printTargetProjectErrors(project: Project<AstFile>) {
 
   console.log(path.resolve(__dirname, "out.sb3"));
   console.log("Took " + (end - start) + "ms to compile thorn project");
+
+  const renderer = new TextRenderer();
+
+  for (const stack of project.petals.getTargets().getStage().getBlocks().getAllBlockHeads()) {
+    console.log(renderer.renderStack(stack, false));
+
+    console.log();
+  }
 })();
 

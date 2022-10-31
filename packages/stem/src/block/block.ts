@@ -9,6 +9,10 @@ import type { Hat } from "./kinds/hat";
 import type { C } from "./kinds/c";
 import type { E } from "./kinds/e";
 import { ID } from "../id";
+import { Project, ProjectReference } from "..";
+import type { BlockMap } from "./opcodes";
+import type { BlockStore, SerializedBlockStore } from ".";
+import { DeserializationContext } from "../project/deserializationContext";
 
 export type ArgumentOpcodes = ReturnType<InstanceType<(typeof Argument)[keyof typeof Argument]>["getOpcode"]>
 export type ControlOpcodes = ReturnType<InstanceType<(typeof Control)[keyof typeof Control]>["getOpcode"]>
@@ -33,19 +37,39 @@ export type SerializedBlock = {
   topLevel: boolean,
 }
 
+(() => import("./opcodes"))();
+
 export abstract class Block<Opcode extends string = string> {
-  private id: string = ID.generate();
   private _next: Block | undefined;
   private parent: Block | undefined;
-  private inputs: Map<string, Input> = new Map();
-  private fields: Map<string, Field> = new Map();
+  private _inputs: Map<string, Input> = new Map();
+  private _fields: Map<string, Field> = new Map();
   private shadow: boolean = false;
+
+  static getBlockByOpcode<T extends string>(opcode: T): BlockMap extends Record<T, infer U> ? U : (Block<T> | undefined) {
+    throw new Error("Unloaded.");
+
+    // check opcodes.ts
+  }
+
+  static fromReference(context: DeserializationContext, serializedStore: SerializedBlockStore, json: SerializedBlock, ID?: string): Block {
+    const BlockCtr = Block.getBlockByOpcode(json.opcode);
+
+    if (BlockCtr === undefined)
+      throw new Error(`Unknown block opcode: ${json.opcode}`);
+
+    if (BlockCtr.fromReference === undefined || BlockCtr.fromReference === Block.fromReference)
+      throw new Error(`Block ${json.opcode} does not implement a fromReference static function`);
+
+    return BlockCtr.fromReference(context, serializedStore, json, ID);
+  }
 
   constructor(
     protected readonly opcode: Opcode,
+    private id: string = ID.generate()
   ) {}
 
-  next(): Block { 
+  next(): Block {
     if (this._next === undefined)
       throw new Error("No next block");
 
@@ -69,7 +93,7 @@ export abstract class Block<Opcode extends string = string> {
   getChildren(): Block[] {
     let children: Block[] = [];
 
-    for (let input of this.inputs.values()) {
+    for (let input of this._inputs.values()) {
       const topLayer = input.getTopLayer();
 
       if (topLayer instanceof Block) children.push(topLayer);
@@ -102,15 +126,26 @@ export abstract class Block<Opcode extends string = string> {
     return top;
   }
 
-  protected getInput(name: string): Input | undefined { return this.inputs.get(name) }
-  protected setInput(name: string, input: Input): this { this.inputs.set(name, input); return this }
-  protected clearInputs(): this { this.inputs.clear(); return this }
+  getInput(name: string): Input | undefined { return this._inputs.get(name) }
+  setInput(name: string, input: Input): this { this._inputs.set(name, input); return this }
+  clearInputs(): this { this._inputs.clear(); return this }
+  *inputs(): IterableIterator<{ name: string, input: Input }> {
+    for (const [name, input] of this._inputs.entries()) {
+      yield { name, input };
+    }
+  }
 
-  protected getField(name: string): Field | undefined { return this.fields.get(name) }
-  protected setField(name: string, field: Field): this { this.fields.set(name, field); return this }
+  getField(name: string): Field | undefined { return this._fields.get(name) }
+  setField(name: string, field: Field): this { this._fields.set(name, field); return this }
+  clearFields(): this { this._fields.clear(); return this }
+  *fields(): IterableIterator<{ name: string, field: Field }> {
+    for (const [name, field] of this._fields.entries()) {
+      yield { name, field };
+    }
+  }
 
-  protected getShadow(): boolean { return this.shadow }
-  protected setShadow(shadow: boolean): this { this.shadow = shadow; return this }
+  getShadow(): boolean { return this.shadow }
+  setShadow(shadow: boolean): this { this.shadow = shadow; return this }
 
   getOpcode(): Opcode { return this.opcode }
 
@@ -119,13 +154,13 @@ export abstract class Block<Opcode extends string = string> {
   serialize(): SerializedBlock {
     let inputs: Record<string, SerializedInput> = {};
 
-    for (let [name, input] of this.inputs.entries()) {
+    for (let [name, input] of this._inputs.entries()) {
       inputs[name] = input.serialize();
     }
 
     let fields: Record<string, SerializedField> = {};
 
-    for (let [name, field] of this.fields.entries()) {
+    for (let [name, field] of this._fields.entries()) {
       fields[name] = field.serialize();
     }
 

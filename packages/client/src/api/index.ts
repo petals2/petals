@@ -46,7 +46,9 @@ export class Requestor {
     }
   }
 
-  async makeRequest<T>(method: HttpMethod, url: string, body?: any): Promise<T> {
+  async makeBinaryRequest(method: HttpMethod, url: string, body?: any): Promise<Buffer> {
+    console.log(`${method.toUpperCase()} ${url}`)
+
     const headers: Record<string, string> = {
       cookie: this.jar.getCookieStringSync(url),
       referer: "https://scratch.mit.edu/",
@@ -81,7 +83,11 @@ export class Requestor {
       this.jar.setCookieSync(setCookies, url);
     }
 
-    return await response.body.json();
+    return Buffer.from(await response.body.arrayBuffer());
+  }
+
+  async makeRequest<T>(method: HttpMethod, url: string, body?: any): Promise<T> {
+    return JSON.parse((await this.makeBinaryRequest(method, url, body)).toString());
   }
 
   getCookieJar(): CookieJar { return this.jar }
@@ -259,8 +265,8 @@ export class Requestor {
     return await this.makeRequest<User[]>("GET", `https://api.scratch.mit.edu/users/${username}/following/?limit=${limit}&offset=${offset}`);
   }
 
-  async getProjectContents(projectId: number): Promise<SerializedProject> {
-    return await this.makeRequest<SerializedProject>("GET", `https://projects.scratch.mit.edu/${projectId}/`);
+  async getProjectContents(projectId: number): Promise<Buffer> {
+    return await this.makeBinaryRequest("GET", `https://projects.scratch.mit.edu/${projectId}`);
   }
 
   async getProjectFile(hashWExt: string): Promise<Buffer> {

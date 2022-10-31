@@ -91,21 +91,21 @@ export class BooleanComparisonOperationReference extends BooleanReference {
 
       const index = context.createVariable("index", 1, new NumberType());
 
-      this.listComparisonResult.setValue(Input.shadowed(target.getBlocks().createBlock(Operators.Equals,
+      thread.getTail().append(this.listComparisonResult.setValue(Input.shadowed(target.getBlocks().createBlock(Operators.Equals,
         Input.shadowed(this.leftHandRef.getLength(target, thread, context)),
         Input.shadowed(this.rightHandRef.getLength(target, thread, context)),
-      )), target, thread, context);
+      )), target, thread, context));
 
-      index.setValue(Input.shadowed(new NumberInput(1)), target, thread, context);
+      thread.getTail().append(index.setValue(Input.shadowed(new NumberInput(1)), target, thread, context));
 
       const phantom = target.getBlocks().createBlock(Phantom);
 
-      this.listComparisonResult.setValue(Input.shadowed(target.getBlocks().createBlock(Operators.Equals,
+      phantom.getTail().append(this.listComparisonResult.setValue(Input.shadowed(target.getBlocks().createBlock(Operators.Equals,
         Input.shadowed(this.leftHandRef.getItemAtIndex(Input.shadowed(index.getValue(target, phantom, context)), target, phantom, context) as AnyInput),
         Input.shadowed(this.rightHandRef.getItemAtIndex(Input.shadowed(index.getValue(target, phantom, context)), target, phantom, context) as AnyInput),
-      )), target, phantom, context);
+      )), target, phantom, context));
 
-      index.changeValue(Input.shadowed(new NumberInput(1)), target, phantom, context);
+      phantom.getTail().append(index.changeValue(Input.shadowed(new NumberInput(1)), target, phantom, context));
 
       thread.getTail().append(target.getBlocks().createBlock(Control.While,
         target.getBlocks().createBlock(Operators.Equals, Input.shadowed(this.listComparisonResult.getValue(target, thread, context)), Input.shadowed(new StringInput("true"))),
