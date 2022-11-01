@@ -26,8 +26,6 @@ import { StructLiteralNode } from "./nodes/structLiteral";
 import { ThisNode } from "./nodes/thisNode";
 import { VariableAdditionRedefinitionNode } from "./nodes/variableAdditionRedefinition";
 import { VariableDefinitionNode } from "./nodes/variableDefinition";
-import { VariableDivisionRedefinitionNode } from "./nodes/variableDivisionRedefinition";
-import { VariableMultiplicationRedefinitionNode } from "./nodes/variableMultiplicationRedefinition";
 import { VariableRedefinitionNode } from "./nodes/variableRedefinitionNode";
 import { VariableReferenceNode } from "./nodes/variableReference";
 import { VariableSubtractionRedefinitionNode } from "./nodes/variableSubtractionRedefinition";

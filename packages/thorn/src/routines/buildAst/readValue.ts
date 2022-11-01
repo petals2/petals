@@ -12,6 +12,7 @@ import { MethodDefinitionNode } from "../../types/ast/nodes/methodDefinition";
 import { NegateOperator } from "../../types/ast/nodes/negateOperator";
 import { NewNode } from "../../types/ast/nodes/newNode";
 import { NumberLiteralNode } from "../../types/ast/nodes/numberLiteral";
+import { ObjectLiteralNode } from "../../types/ast/nodes/objectLiteral";
 import { ParenthesisedExpressionNode } from "../../types/ast/nodes/parenthesisedExpression";
 import { PropertyReferenceNode } from "../../types/ast/nodes/propertyReference";
 import { SelfReferenceNode } from "../../types/ast/nodes/selfReferenceNode";

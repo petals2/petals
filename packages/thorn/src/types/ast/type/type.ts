@@ -423,6 +423,7 @@ export class ReferenceType extends Type {
   dereference(): Type {
     if (this.context === undefined) throw new Error("Cannot dereference type without context");
 
+    //@ts-ignore
     return getType(this.getName(), this.context);
   }
 

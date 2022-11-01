@@ -11,12 +11,12 @@ export class Play extends BlockKind.Stack<"sound_play"> {
   setSound(sound: Input): this {
     sound.link(this);
 
-    this.setInput("SOUND", sound);
+    this.setInput("SOUND_MENU", sound);
 
     return this;
   }
 
   getSound(): Input {
-    return this.getInput("SOUND")!;
+    return this.getInput("SOUND_MENU")!;
   }
 }

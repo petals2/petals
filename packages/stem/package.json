@@ -1,6 +1,6 @@
 {
   "name": "petals-stem",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "A pure-JavaScript implementation of the Scratch block editor, allowing you to programmatically load, modify and save Scratch projects.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

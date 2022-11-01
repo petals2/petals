@@ -24,7 +24,6 @@ import { IndexReferenceNode } from "../../types/ast/nodes/indexReference";
 import { MathOperationNode } from "../../types/ast/nodes/mathOperation";
 import { MethodCallNode } from "../../types/ast/nodes/methodCall";
 import { MethodDefinitionNode } from "../../types/ast/nodes/methodDefinition";
-import { NegateOperator } from "../../types/ast/nodes/negateOperator";
 import { NewNode } from "../../types/ast/nodes/newNode";
 import { NumberLiteralNode } from "../../types/ast/nodes/numberLiteral";
 import { ParenthesisedExpressionNode } from "../../types/ast/nodes/parenthesisedExpression";
@@ -41,6 +40,7 @@ import {
   ListType,
   LiteralType,
   NumberType,
+  ObjectType,
   SelfType,
   StringType,
   Type,
@@ -50,6 +50,7 @@ import { ListApi } from "./api/list";
 import { SelfApi } from "./api/self";
 import { Context, typeApplyContext } from "./context";
 import { ObjectLiteralNode } from "../../types/ast/nodes/objectLiteral";
+import { NegateOperator } from "../..";
 
 function resolvePropertyReferenceType(baseType: Type, node: PropertyReferenceNode, context: Context): Type {
   while (baseType.isReferenceType()) baseType = baseType.dereference();
